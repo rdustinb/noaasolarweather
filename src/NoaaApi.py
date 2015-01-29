@@ -4,84 +4,153 @@ import urllib.request
 import urllib.error
 
 """
-    Locations of data that I want to capture and eventually graph. This data
-    is provided from the GOES satellites. These satellites also have
+  Locations of data that I want to capture and eventually graph. This data
+  is provided from the GOES satellites. These satellites also have
 
-    GOES Particle Flux
-        http://services.swpc.noaa.gov/text/goes-particle-flux-primary.txt
-    GOES Magnetometer
-        http://services.swpc.noaa.gov/text/goes-magnetometer-primary.txt
-    Proton Flux
-        http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt
-    xRay Imager:
-        http://sxi.ngdc.noaa.gov
-    xRay Flux
-        http://services.swpc.noaa.gov/text/goes-xray-flux-primary.txt
-    Coronograph Imager:
-        http://lasco-www.nrl.navy.mil/index.php?p=content/realtime
+  GOES Particle Flux
+    http://services.swpc.noaa.gov/text/goes-particle-flux-primary.txt
+  GOES Magnetometer
+    http://services.swpc.noaa.gov/text/goes-magnetometer-primary.txt
+  Proton Flux
+    http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt
+  xRay Imager:
+    http://sxi.ngdc.noaa.gov
+  xRay Flux
+    http://services.swpc.noaa.gov/text/goes-xray-flux-primary.txt
+  Coronograph Imager:
+    http://lasco-www.nrl.navy.mil/index.php?p=content/realtime
 
 
 
-    Lots of information about cross-contamination of Electron and Proton
-    data as well as calculating the direction angle of the satellite that
-    is taking the reqpective measurements here:
-        http://www.swpc.noaa.gov/ftpdir/lists/magnetospheric/README.txt
+  Lots of information about cross-contamination of Electron and Proton
+  data as well as calculating the direction angle of the satellite that
+  is taking the reqpective measurements here:
+    http://www.swpc.noaa.gov/ftpdir/lists/magnetospheric/README.txt
 
-    Loads more data to look at here:
-        http://www.swpc.noaa.gov/Data/index.html#measurements
+  Loads more data to look at here:
+    http://www.swpc.noaa.gov/Data/index.html#measurements
 """
 
-def getXrayFlux():
-    """
-        Apparently the NOAA Data Site was restructured which could explain
-        why I was having issues accessing data when I first started writing
-        this script/application.
-    """
-    URL = 'http://services.swpc.noaa.gov/text/goes-xray-flux-primary.txt'
+def getProtonFlux():
+  """
+    Apparently the NOAA Data Site was restructured which could explain
+    why I was having issues accessing data when I first started writing
+    this script/application.
+  """
+  URL = 'http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt'
+  try:
     fh = urllib.request.urlopen(URL)
-    data_info = {}
-    data_units = {}
-    data_measurements = []
-    data_long = []
-    data_short = []
-    data_timestamp = []
-    data_ret = [data_info, data_units, data_short, data_long, data_timestamp, data_measurements]
-    # Loop through the remote data file
-    for read_line in fh.readlines():
-        read_line = read_line.decode('utf-8').split()
-        if(len(read_line) > 1):
-            # Get the data samples
-            if((read_line[0][0] != '#') and (read_line[0][0] != ':')):
-                data_measurements.append(read_line)
-                data_timestamp.append("%s/%s/%s:%s"%(read_line[0],read_line[1],read_line[2],read_line[3]))
-                data_long.append(read_line[7])
-                data_short.append(read_line[6])
-            # Get some header info
-            elif(read_line[1] == 'Label:'):
-                data_info[str(read_line[2])] = ' '.join(map(str, read_line[read_line.index('=')+1:]))
-            # Get some header info
-            elif(read_line[1] == 'Units:'):
-                data_units[str(read_line[2])] = ' '.join(map(str, read_line[read_line.index('=')+1:]))
-    # Convert the data points from strings to numbers
-    data_short = [float(i) for i in data_short]
-    data_long = [float(i) for i in data_long]
-    return data_ret
+  except:
+    print("NoaaApi.getProtonFlux > Error opening File Handle, retrying...")
+    fh = urllib.request.urlopen(URL)
+  # Create the empty data structure
+  data_ret = {
+    "source":"",
+    "data":{
+      "P1" :[],
+      "P2" :[],
+      "P3" :[],
+      "P4" :[],
+      "P5" :[],
+      "P6" :[],
+      "P7" :[],
+      "P8" :[],
+      "P9" :[],
+      "P10":[],
+      "P11":[]
+    },
+    "units":"MeV",
+    "datestamp":[],
+    "rawlines":[]
+  }
+  # Loop through the remote data file
+  for read_line in fh.readlines():
+    read_line = read_line.decode('utf-8').split()
+    if(len(read_line) > 1):
+      # Get the data samples
+      if((read_line[0][0] != '#') and (read_line[0][0] != ':')):
+        data_ret["rawlines"   ].append(read_line)
+        data_ret["datestamp"  ].append("%s/%s/%s:%s"%(read_line[0],read_line[1],read_line[2],read_line[3]))
+        data_ret["data"]["P1" ].append(read_line[6])
+        data_ret["data"]["P2" ].append(read_line[7])
+        data_ret["data"]["P3" ].append(read_line[8])
+        data_ret["data"]["P4" ].append(read_line[9])
+        data_ret["data"]["P5" ].append(read_line[10])
+        data_ret["data"]["P6" ].append(read_line[11])
+        data_ret["data"]["P7" ].append(read_line[12])
+        data_ret["data"]["P8" ].append(read_line[13])
+        data_ret["data"]["P9" ].append(read_line[14])
+        data_ret["data"]["P10"].append(read_line[15])
+        data_ret["data"]["P11"].append(read_line[16])
+      # Get some header info
+      elif(read_line[1] == 'Source:'):
+        data_ret["source"] = str(read_line[2])
+  # Convert the data points from strings to numbers
+  return data_ret
+
+def getXrayFlux():
+  """
+    Apparently the NOAA Data Site was restructured which could explain
+    why I was having issues accessing data when I first started writing
+    this script/application.
+  """
+  URL = 'http://services.swpc.noaa.gov/text/goes-xray-flux-primary.txt'
+  try:
+    fh = urllib.request.urlopen(URL)
+  except:
+    print("NoaaApi.getXrayFlux > Error opening File Handle, retrying...")
+    fh = urllib.request.urlopen(URL)
+  # Create the empty data structure
+  data_ret = {
+    "source":"",
+    "data":{
+      "long" :[],
+      "short":[],
+    },
+    "units":"W/m2",
+    "datestamp":[],
+    "rawlines":[]
+  }
+  # Loop through the remote data file
+  for read_line in fh.readlines():
+    read_line = read_line.decode('utf-8').split()
+    if(len(read_line) > 1):
+      # Get the data samples
+      if((read_line[0][0] != '#') and (read_line[0][0] != ':')):
+        data_ret["rawlines"].append(read_line)
+        data_ret["datestamp"].append("%s/%s/%s:%s"%(read_line[0],read_line[1],read_line[2],read_line[3]))
+        data_ret["data"]["long"].append(read_line[7])
+        data_ret["data"]["short"].append(read_line[6])
+      # Get some header info
+      elif(read_line[1] == 'Source:'):
+        data_ret["source"] = str(read_line[2])
+  # Convert the data points from strings to numbers
+  data_ret["data"]["short"] = [float(i) for i in data_ret["data"]["short"]]
+  data_ret["data"]["long"] = [float(i) for i in data_ret["data"]["long"]]
+  return data_ret
 
 
 if __name__ == '__main__':
-    alldata = getXrayFlux()
-    # Dump final values
-    # print("data_info dictionary is:")
-    # print(alldata[0])
-    # print("data_units dictionary is:")
-    # print(alldata[1])
-    print("data_short data is:")
-    print(alldata[2])
-    print("data_long data is:")
-    print(alldata[3])
-    print("data_timestamp data is:")
-    print(alldata[4])
-    # print("all_data data is:")
-    # print(alldata[5])
-
-
+  # Get XRay Flux Data
+  # alldata = getXrayFlux()
+  # print("data source is:")
+  # print(alldata["source"])
+  # print("data_short data is:")
+  # print(alldata["data"]["short"])
+  # print("data_long data is:")
+  # print(alldata["data"]["long"])
+  # print("data units are:")
+  # print(alldata["units"])
+  # print("timestamps are:")
+  # print(alldata["datestamp"])
+  # Get Proton Flux Data
+  alldata = getProtonFlux()
+  print("data source is:")
+  print(alldata["source"])
+  for key,value in alldata["data"].items():
+    print("%s data is:" % (key))
+    print(value)
+  print("data units are:")
+  print(alldata["units"])
+  print("timestamps are:")
+  print(alldata["datestamp"])
