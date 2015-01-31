@@ -5,21 +5,40 @@ import urllib.error
 
 """
   Locations of data that I want to capture and eventually graph. This data
-  is provided from the GOES satellites. These satellites also have
+  is provided from the GOES and ACE satellites.
 
-  GOES Particle Flux
+  = GOES =
+  Particle Flux
     http://services.swpc.noaa.gov/text/goes-particle-flux-primary.txt
-  GOES Magnetometer
+    http://services.swpc.noaa.gov/text/goes-particle-flux-secondary.txt
+  Magnetometer
     http://services.swpc.noaa.gov/text/goes-magnetometer-primary.txt
+    http://services.swpc.noaa.gov/text/goes-magnetometer-secondary.txt
   Proton Flux
     http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt
-  xRay Imager:
-    http://sxi.ngdc.noaa.gov
+    http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-secondary.txt
   xRay Flux
     http://services.swpc.noaa.gov/text/goes-xray-flux-primary.txt
+    http://services.swpc.noaa.gov/text/goes-xray-flux-secondary.txt
+
+  = ACE =
+  Differential Electron / Proton Flux
+    http://services.swpc.noaa.gov/text/ace-epam.txt
+  Solar Isotope Spectrometer
+    http://services.swpc.noaa.gov/text/ace-sis.txt
+  Interplanetary Magnetic Field
+    http://services.swpc.noaa.gov/text/ace-magnetometer.txt
+  Solar Wind Plasma
+    http://services.swpc.noaa.gov/text/ace-swepam.txt
+
+  xRay Imager:
+    http://sxi.ngdc.noaa.gov
   Coronograph Imager:
     http://lasco-www.nrl.navy.mil/index.php?p=content/realtime
 
+
+  Exhaustive list of text files is located here:
+    http://services.swpc.noaa.gov/text/
 
 
   Lots of information about cross-contamination of Electron and Proton
@@ -31,17 +50,36 @@ import urllib.error
     http://www.swpc.noaa.gov/Data/index.html#measurements
 """
 
+#################################################
+#               GOES Data                       #
+#################################################
+def getParticleFlux():
+  """
+  """
+  pass
+
+def getMagnetometer():
+  """
+  """
+  pass
+
 def getProtonFlux():
   """
     Apparently the NOAA Data Site was restructured which could explain
     why I was having issues accessing data when I first started writing
     this script/application.
+
+    This particular URL happens to be from GOES-13, the primary source of
+    Proton Flux, however GOES-15 also provides Proton Flux measurements as
+    a secondary source.
   """
   URL = 'http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt'
+  URLs = 'http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-secondary.txt'
   try:
     fh = urllib.request.urlopen(URL)
   except:
     print("NoaaApi.getProtonFlux > Error opening File Handle, retrying...")
+    fh = ""
     fh = urllib.request.urlopen(URL)
   # Create the empty data structure
   data_ret = {
@@ -141,20 +179,43 @@ def getXrayFlux():
   data_ret["data"]["long"] = [float(i) for i in data_ret["data"]["long"]]
   return data_ret
 
+#################################################
+#                  ACE Data                     #
+#################################################
+def getDiffElecProtFlux():
+  """
+  """
+  pass
+
+def getSolarIsotopeSpectrometer():
+  """
+  """
+  pass
+
+def getInterplanetMagField():
+  """
+  """
+  pass
+
+def getSolarPlasma():
+  """
+  """
+  pass
 
 if __name__ == '__main__':
   # Get XRay Flux Data
-  # alldata = getXrayFlux()
-  # print("data source is:")
-  # print(alldata["source"])
-  # print("data_short data is:")
-  # print(alldata["data"]["short"])
-  # print("data_long data is:")
-  # print(alldata["data"]["long"])
-  # print("data units are:")
-  # print(alldata["units"])
-  # print("timestamps are:")
-  # print(alldata["datestamp"])
+  alldata = getXrayFlux()
+  print("data source is:")
+  print(alldata["source"])
+  print("data_short data is:")
+  print(alldata["data"]["short"])
+  print("data_long data is:")
+  print(alldata["data"]["long"])
+  print("data units are:")
+  print(alldata["units"])
+  print("timestamps are:")
+  print(alldata["datestamp"])
+
   # Get Proton Flux Data
   alldata = getProtonFlux()
   print("data source is:")
