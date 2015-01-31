@@ -69,7 +69,7 @@ def getProtonFlux():
       "P7" : "110-900 MeV",
       "P8" : "350-420 MeV",
       "P9" : "420-510 MeV",
-      "P10": "510-700 MeV"
+      "P10": "510-700 MeV",
       "P11": ">700 MeV"
     },
     "datestamp":[],
