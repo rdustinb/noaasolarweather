@@ -8,15 +8,18 @@ import urllib.error
   is provided from the GOES and ACE satellites.
 
   = GOES =
-  Particle Flux
-    http://services.swpc.noaa.gov/text/goes-particle-flux-primary.txt
-    http://services.swpc.noaa.gov/text/goes-particle-flux-secondary.txt
-  Magnetometer
-    http://services.swpc.noaa.gov/text/goes-magnetometer-primary.txt
-    http://services.swpc.noaa.gov/text/goes-magnetometer-secondary.txt
-  Proton Flux
+  Energetic Proton Flux
     http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt
     http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-secondary.txt
+  Geomagnetic Components and Total Field
+    http://services.swpc.noaa.gov/text/goes-magnetometer-primary.txt
+    http://services.swpc.noaa.gov/text/goes-magnetometer-secondary.txt
+  Energetic Particle Flux
+    http://services.swpc.noaa.gov/text/goes-magnetospheric-particle-flux-ts1-primary.txt
+    http://services.swpc.noaa.gov/text/goes-magnetospheric-particle-flux-ts1-secondary.txt
+  Solar Particle and Electron Flux
+    http://services.swpc.noaa.gov/text/goes-particle-flux-primary.txt
+    http://services.swpc.noaa.gov/text/goes-particle-flux-secondary.txt
   xRay Flux
     http://services.swpc.noaa.gov/text/goes-xray-flux-primary.txt
     http://services.swpc.noaa.gov/text/goes-xray-flux-secondary.txt
@@ -36,15 +39,8 @@ import urllib.error
   Coronograph Imager:
     http://lasco-www.nrl.navy.mil/index.php?p=content/realtime
 
-
   Exhaustive list of text files is located here:
     http://services.swpc.noaa.gov/text/
-
-
-  Lots of information about cross-contamination of Electron and Proton
-  data as well as calculating the direction angle of the satellite that
-  is taking the reqpective measurements here:
-    http://www.swpc.noaa.gov/ftpdir/lists/magnetospheric/README.txt
 
   Loads more data to look at here:
     http://www.swpc.noaa.gov/Data/index.html#measurements
@@ -53,16 +49,6 @@ import urllib.error
 #################################################
 #               GOES Data                       #
 #################################################
-def getParticleFlux():
-  """
-  """
-  pass
-
-def getMagnetometer():
-  """
-  """
-  pass
-
 def getProtonFlux():
   """
     Apparently the NOAA Data Site was restructured which could explain
@@ -137,6 +123,21 @@ def getProtonFlux():
         data_ret["source"] = str(read_line[2])
   # Convert the data points from strings to numbers
   return data_ret
+
+def getGeomagField():
+  """
+  """
+  pass
+
+def getEnergeticParticleFlux():
+  """
+  """
+  pass
+
+def getSolarParticleFlux():
+  """
+  """
+  pass
 
 def getXrayFlux():
   """
