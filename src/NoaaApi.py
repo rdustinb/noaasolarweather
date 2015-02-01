@@ -126,8 +126,50 @@ def getProtonFlux():
 
 def getGeomagField():
   """
+    This function call will return the three dimensions of geomagnetic Flux
+    density around the earth. The three dimensions and the total field have
+    units of nanotesla.
   """
-  pass
+  URL = 'http://services.swpc.noaa.gov/text/goes-magnetometer-primary.txt'
+  try:
+    fh = urllib.request.urlopen(URL)
+  except:
+    print("NoaaApi.getGeomagField > Error opening File Handle, retrying...")
+    fh = urllib.request.urlopen(URL)
+  # Create the empty data structure
+  data_ret = {
+    "source":"",
+    "data":{
+      "Hp"    :[],
+      "He"    :[],
+      "Hn"    :[],
+      "Total" :[]
+    },
+    "units":"nT",
+    "datestamp":[],
+    "rawlines":[]
+  }
+  # Loop through the remote data file
+  for read_line in fh.readlines():
+    read_line = read_line.decode('utf-8').split()
+    if(len(read_line) > 1):
+      # Get the data samples
+      if((read_line[0][0] != '#') and (read_line[0][0] != ':')):
+        data_ret["rawlines"].append(read_line)
+        data_ret["datestamp"].append("%s/%s/%s:%s"%(read_line[0],read_line[1],read_line[2],read_line[3]))
+        data_ret["data"]["Hp"].append(read_line[6])
+        data_ret["data"]["He"].append(read_line[7])
+        data_ret["data"]["Hn"].append(read_line[8])
+        data_ret["data"]["Total"].append(read_line[9])
+      # Get some header info
+      elif(read_line[1] == 'Source:'):
+        data_ret["source"] = str(read_line[2])
+  # Convert the data points from strings to numbers
+  data_ret["data"]["Hp"] = [float(i) for i in data_ret["data"]["Hp"]]
+  data_ret["data"]["He"] = [float(i) for i in data_ret["data"]["He"]]
+  data_ret["data"]["Hn"] = [float(i) for i in data_ret["data"]["Hn"]]
+  data_ret["data"]["Total"] = [float(i) for i in data_ret["data"]["Total"]]
+  return data_ret
 
 def getEnergeticParticleFlux():
   """
@@ -206,6 +248,10 @@ def getSolarPlasma():
 if __name__ == '__main__':
   # Get XRay Flux Data
   alldata = getXrayFlux()
+  print("")
+  print("------------------------------------")
+  print("           XRay Flux")
+  print("------------------------------------")
   print("data source is:")
   print(alldata["source"])
   print("data_short data is:")
@@ -219,6 +265,26 @@ if __name__ == '__main__':
 
   # Get Proton Flux Data
   alldata = getProtonFlux()
+  print("")
+  print("------------------------------------")
+  print("           Proton Flux")
+  print("------------------------------------")
+  print("data source is:")
+  print(alldata["source"])
+  for key,value in alldata["data"].items():
+    print("%s data is:" % (key))
+    print(value)
+  print("data units are:")
+  print(alldata["units"])
+  print("timestamps are:")
+  print(alldata["datestamp"])
+
+  # Get Geomagnetic Flux Data
+  print("")
+  print("------------------------------------")
+  print("         Geomagnetic Flux")
+  print("------------------------------------")
+  alldata = getGeomagField()
   print("data source is:")
   print(alldata["source"])
   for key,value in alldata["data"].items():
