@@ -49,7 +49,7 @@ import urllib.error
 #################################################
 #               GOES Data                       #
 #################################################
-def getProtonFlux():
+def getGOESRangeProtonFlux():
   """
     Apparently the NOAA Data Site was restructured which could explain
     why I was having issues accessing data when I first started writing
@@ -64,7 +64,7 @@ def getProtonFlux():
   try:
     fh = urllib.request.urlopen(URL)
   except:
-    print("NoaaApi.getProtonFlux > Error opening File Handle, retrying...")
+    print("NoaaApi.getGOESRangeProtonFlux > Error opening File Handle, retrying...")
     fh = ""
     fh = urllib.request.urlopen(URL)
   # Create the empty data structure
@@ -123,9 +123,11 @@ def getProtonFlux():
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
   # Convert the data points from strings to numbers
+  for key in data_ret["data"].keys():
+    data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
   return data_ret
 
-def getGeomagField():
+def getGOESGoemagFieldFlux():
   """
     This function call will return the three dimensions of geomagnetic Flux
     density around the earth. The three dimensions and the total field have
@@ -135,7 +137,7 @@ def getGeomagField():
   try:
     fh = urllib.request.urlopen(URL)
   except:
-    print("NoaaApi.getGeomagField > Error opening File Handle, retrying...")
+    print("NoaaApi.getGOESGoemagFieldFlux > Error opening File Handle, retrying...")
     fh = urllib.request.urlopen(URL)
   # Create the empty data structure
   data_ret = {
@@ -167,13 +169,11 @@ def getGeomagField():
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
   # Convert the data points from strings to numbers
-  data_ret["data"]["Hp"] = [float(i) for i in data_ret["data"]["Hp"]]
-  data_ret["data"]["He"] = [float(i) for i in data_ret["data"]["He"]]
-  data_ret["data"]["Hn"] = [float(i) for i in data_ret["data"]["Hn"]]
-  data_ret["data"]["Total"] = [float(i) for i in data_ret["data"]["Total"]]
+  for key in data_ret["data"].keys():
+    data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
   return data_ret
 
-def getEnergeticParticleFlux():
+def getGOESDiscreteParticleFlux():
   """
     This call will collect the data from the energetic Proton/Electron Flux. This
     API returns a list of 10 data lists of as many distinct proton and electron
@@ -183,7 +183,7 @@ def getEnergeticParticleFlux():
   try:
     fh = urllib.request.urlopen(URL)
   except:
-    print("NoaaApi.getEnergeticParticleFlux > Error opening File Handle, retrying...")
+    print("NoaaApi.getGOESDiscreteParticleFlux > Error opening File Handle, retrying...")
     fh = urllib.request.urlopen(URL)
   # Create the empty data structure
   data_ret = {
@@ -242,12 +242,75 @@ def getEnergeticParticleFlux():
     data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
   return data_ret
 
-def getSolarParticleFlux():
+def getGOESRangeParticleFlux():
   """
+    Similar to the getGOESDiscreteParticleFlux function, however this dataset returns
+    particle counts for only 6 proton ranges and 3 electron ranges. The ranges of
+    particle energies are low-barrier energies and greater.
+    For instance the first set of data is of protons >1MeV, while the second is
+    of protons >5MeV.
   """
-  pass
+  URL = 'http://services.swpc.noaa.gov/text/goes-particle-flux-primary.txt'
+  try:
+    fh = urllib.request.urlopen(URL)
+  except:
+    print("NoaaApi.getGOESRangeParticleFlux > Error opening File Handle, retrying...")
+    fh = urllib.request.urlopen(URL)
+  # Create the empty data structure
+  data_ret = {
+    "source":"",
+    "data":{
+      "P1"    :[],
+      "P5"    :[],
+      "P10"   :[],
+      "P30"   :[],
+      "P50"   :[],
+      "P100"  :[],
+      "E0.8"  :[],
+      "E2.0"  :[],
+      "E4.0"  :[]
+    },
+    "units":{
+      "P1"    : ">1 Mev",
+      "P5"    : ">5 Mev",
+      "P10"   : ">10 Mev",
+      "P30"   : ">30 Mev",
+      "P50"   : ">50 Mev",
+      "P100"  : ">100 Mev",
+      "E0.8"  : ">0.8 Mev",
+      "E2.0"  : ">2.0 Mev",
+      "E4.0"  : ">4.0 Mev"
+    },
+    "datestamp":[],
+    "rawlines":[]
+  }
+  # Loop through the remote data file
+  for read_line in fh.readlines():
+    read_line = read_line.decode('utf-8').split()
+    if(len(read_line) > 1):
+      # Get the data samples
+      if((read_line[0][0] != '#') and (read_line[0][0] != ':')):
+        data_ret["rawlines"].append(read_line)
+        data_ret["datestamp"].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
+          read_line[2],read_line[3]))
+        data_ret["data"]["P1"].append(read_line[6])
+        data_ret["data"]["P5"].append(read_line[7])
+        data_ret["data"]["P10"].append(read_line[8])
+        data_ret["data"]["P30"].append(read_line[9])
+        data_ret["data"]["P50"].append(read_line[10])
+        data_ret["data"]["P100"].append(read_line[11])
+        data_ret["data"]["E0.8"].append(read_line[12])
+        data_ret["data"]["E2.0"].append(read_line[13])
+        data_ret["data"]["E4.0"].append(read_line[14])
+      # Get some header info
+      elif(read_line[1] == 'Source:'):
+        data_ret["source"] = str(read_line[2])
+  # Convert the data points from strings to numbers
+  for key in data_ret["data"].keys():
+    data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
+  return data_ret
 
-def getXrayFlux():
+def getGOESXrayFlux():
   """
     Apparently the NOAA Data Site was restructured which could explain
     why I was having issues accessing data when I first started writing
@@ -257,7 +320,7 @@ def getXrayFlux():
   try:
     fh = urllib.request.urlopen(URL)
   except:
-    print("NoaaApi.getXrayFlux > Error opening File Handle, retrying...")
+    print("NoaaApi.getGOESXrayFlux > Error opening File Handle, retrying...")
     fh = urllib.request.urlopen(URL)
   # Create the empty data structure
   data_ret = {
@@ -284,8 +347,8 @@ def getXrayFlux():
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
   # Convert the data points from strings to numbers
-  data_ret["data"]["short"] = [float(i) for i in data_ret["data"]["short"]]
-  data_ret["data"]["long"] = [float(i) for i in data_ret["data"]["long"]]
+  for key in data_ret["data"].keys():
+    data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
   return data_ret
 
 #################################################
@@ -313,11 +376,11 @@ def getSolarPlasma():
 
 if __name__ == '__main__':
   # Get Proton Flux Data
-  alldata = getProtonFlux()
   print("")
   print("------------------------------------")
-  print("           Proton Flux")
+  print("           Range Proton Flux")
   print("------------------------------------")
+  alldata = getGOESRangeProtonFlux()
   print("data source is:")
   print(alldata["source"])
   for key,value in alldata["data"].items():
@@ -331,9 +394,9 @@ if __name__ == '__main__':
   # Get Geomagnetic Flux Data
   print("")
   print("------------------------------------")
-  print("         Geomagnetic Flux")
+  print("          Geomagnetic Flux")
   print("------------------------------------")
-  alldata = getGeomagField()
+  alldata = getGOESGoemagFieldFlux()
   print("data source is:")
   print(alldata["source"])
   for key,value in alldata["data"].items():
@@ -344,12 +407,29 @@ if __name__ == '__main__':
   print("timestamps are:")
   print(alldata["datestamp"])
 
-  # Get Energetic Particle Flux Data
+  # Get Discrete Energetic Particle Flux Data
   print("")
   print("------------------------------------")
-  print("        Energetic Particle Flux")
+  print("  Discrete Energetic Particle Flux")
   print("------------------------------------")
-  alldata = getEnergeticParticleFlux()
+  alldata = getGOESDiscreteParticleFlux()
+  print("data source is:")
+  print(alldata["source"])
+  for key,value in alldata["data"].items():
+    print("%s data is:" % (key))
+    print(value)
+  for key,value in alldata["units"].items():
+    print("%s unit is:" % (key))
+    print(value)
+  print("timestamps are:")
+  print(alldata["datestamp"])
+
+  # Get Range Energetic Particle Flux Data
+  print("")
+  print("------------------------------------")
+  print("   Range Energetic Particle Flux")
+  print("------------------------------------")
+  alldata = getGOESRangeParticleFlux()
   print("data source is:")
   print(alldata["source"])
   for key,value in alldata["data"].items():
@@ -366,7 +446,7 @@ if __name__ == '__main__':
   print("------------------------------------")
   print("           XRay Flux")
   print("------------------------------------")
-  alldata = getXrayFlux()
+  alldata = getGOESXrayFlux()
   print("data source is:")
   print(alldata["source"])
   print("data_short data is:")
