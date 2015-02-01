@@ -106,7 +106,8 @@ def getProtonFlux():
       # Get the data samples
       if((read_line[0][0] != '#') and (read_line[0][0] != ':')):
         data_ret["rawlines"   ].append(read_line)
-        data_ret["datestamp"  ].append("%s/%s/%s:%s"%(read_line[0],read_line[1],read_line[2],read_line[3]))
+        data_ret["datestamp"  ].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
+          read_line[2],read_line[3]))
         data_ret["data"]["P1" ].append(read_line[6])
         data_ret["data"]["P2" ].append(read_line[7])
         data_ret["data"]["P3" ].append(read_line[8])
@@ -156,7 +157,8 @@ def getGeomagField():
       # Get the data samples
       if((read_line[0][0] != '#') and (read_line[0][0] != ':')):
         data_ret["rawlines"].append(read_line)
-        data_ret["datestamp"].append("%s/%s/%s:%s"%(read_line[0],read_line[1],read_line[2],read_line[3]))
+        data_ret["datestamp"].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
+          read_line[2],read_line[3]))
         data_ret["data"]["Hp"].append(read_line[6])
         data_ret["data"]["He"].append(read_line[7])
         data_ret["data"]["Hn"].append(read_line[8])
@@ -173,8 +175,72 @@ def getGeomagField():
 
 def getEnergeticParticleFlux():
   """
+    This call will collect the data from the energetic Proton/Electron Flux. This
+    API returns a list of 10 data lists of as many distinct proton and electron
+    energies.
   """
-  pass
+  URL = 'http://services.swpc.noaa.gov/text/goes-magnetospheric-particle-flux-ts1-primary.txt'
+  try:
+    fh = urllib.request.urlopen(URL)
+  except:
+    print("NoaaApi.getEnergeticParticleFlux > Error opening File Handle, retrying...")
+    fh = urllib.request.urlopen(URL)
+  # Create the empty data structure
+  data_ret = {
+    "source":"",
+    "data":{
+      "P1"    :[],
+      "P2"    :[],
+      "P3"    :[],
+      "P4"    :[],
+      "P5"    :[],
+      "E1"    :[],
+      "E2"    :[],
+      "E3"    :[],
+      "E4"    :[],
+      "E5"    :[]
+    },
+    "units":{
+      "P1"    : "95 keV Protons",
+      "P2"    : "140 keV Protons",
+      "P3"    : "210 keV Protons",
+      "P4"    : "300 keV Protons",
+      "P5"    : "475 keV Protons",
+      "E1"    : "40 keV Electrons",
+      "E2"    : "75 keV Electrons",
+      "E3"    : "150 keV Electrons",
+      "E4"    : "275 keV Electrons",
+      "E5"    : "475 keV Electrons"
+    },
+    "datestamp":[],
+    "rawlines":[]
+  }
+  # Loop through the remote data file
+  for read_line in fh.readlines():
+    read_line = read_line.decode('utf-8').split()
+    if(len(read_line) > 1):
+      # Get the data samples
+      if((read_line[0][0] != '#') and (read_line[0][0] != ':')):
+        data_ret["rawlines"].append(read_line)
+        data_ret["datestamp"].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
+          read_line[2],read_line[3]))
+        data_ret["data"]["P1"].append(read_line[6])
+        data_ret["data"]["P2"].append(read_line[7])
+        data_ret["data"]["P3"].append(read_line[8])
+        data_ret["data"]["P4"].append(read_line[9])
+        data_ret["data"]["P5"].append(read_line[10])
+        data_ret["data"]["E1"].append(read_line[11])
+        data_ret["data"]["E2"].append(read_line[12])
+        data_ret["data"]["E3"].append(read_line[13])
+        data_ret["data"]["E4"].append(read_line[14])
+        data_ret["data"]["E5"].append(read_line[15])
+      # Get some header info
+      elif(read_line[1] == 'Source:'):
+        data_ret["source"] = str(read_line[2])
+  # Convert the data points from strings to numbers
+  for key in data_ret["data"].keys():
+    data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
+  return data_ret
 
 def getSolarParticleFlux():
   """
@@ -246,23 +312,6 @@ def getSolarPlasma():
   pass
 
 if __name__ == '__main__':
-  # Get XRay Flux Data
-  alldata = getXrayFlux()
-  print("")
-  print("------------------------------------")
-  print("           XRay Flux")
-  print("------------------------------------")
-  print("data source is:")
-  print(alldata["source"])
-  print("data_short data is:")
-  print(alldata["data"]["short"])
-  print("data_long data is:")
-  print(alldata["data"]["long"])
-  print("data units are:")
-  print(alldata["units"])
-  print("timestamps are:")
-  print(alldata["datestamp"])
-
   # Get Proton Flux Data
   alldata = getProtonFlux()
   print("")
@@ -290,6 +339,40 @@ if __name__ == '__main__':
   for key,value in alldata["data"].items():
     print("%s data is:" % (key))
     print(value)
+  print("data units are:")
+  print(alldata["units"])
+  print("timestamps are:")
+  print(alldata["datestamp"])
+
+  # Get Energetic Particle Flux Data
+  print("")
+  print("------------------------------------")
+  print("        Energetic Particle Flux")
+  print("------------------------------------")
+  alldata = getEnergeticParticleFlux()
+  print("data source is:")
+  print(alldata["source"])
+  for key,value in alldata["data"].items():
+    print("%s data is:" % (key))
+    print(value)
+  for key,value in alldata["units"].items():
+    print("%s unit is:" % (key))
+    print(value)
+  print("timestamps are:")
+  print(alldata["datestamp"])
+
+  # Get XRay Flux Data
+  print("")
+  print("------------------------------------")
+  print("           XRay Flux")
+  print("------------------------------------")
+  alldata = getXrayFlux()
+  print("data source is:")
+  print(alldata["source"])
+  print("data_short data is:")
+  print(alldata["data"]["short"])
+  print("data_long data is:")
+  print(alldata["data"]["long"])
   print("data units are:")
   print(alldata["units"])
   print("timestamps are:")
