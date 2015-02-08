@@ -176,29 +176,18 @@ def getGOESDiscreteParticleFlux():
   data_ret = {
     "source":"",
     "data":{
-      "P1"    :[],
-      "P2"    :[],
-      "P3"    :[],
-      "P4"    :[],
-      "P5"    :[],
-      "E1"    :[],
-      "E2"    :[],
-      "E3"    :[],
-      "E4"    :[],
-      "E5"    :[]
+      "Protons 95 keV"    :[],
+      "Protons 140 keV"   :[],
+      "Protons 210 keV"   :[],
+      "Protons 300 keV"   :[],
+      "Protons 475 keV"   :[],
+      "Electrons 40 keV"  :[],
+      "Electrons 75 keV"  :[],
+      "Electrons 150 keV" :[],
+      "Electrons 275 keV" :[],
+      "Electrons 475 keV" :[]
     },
-    "units":{
-      "P1"    : "95 keV Protons",
-      "P2"    : "140 keV Protons",
-      "P3"    : "210 keV Protons",
-      "P4"    : "300 keV Protons",
-      "P5"    : "475 keV Protons",
-      "E1"    : "40 keV Electrons",
-      "E2"    : "75 keV Electrons",
-      "E3"    : "150 keV Electrons",
-      "E4"    : "275 keV Electrons",
-      "E5"    : "475 keV Electrons"
-    },
+    "units":"p/cm2 * s * sr * MeV",
     "datestamp":[],
     "rawlines":[]
   }
@@ -211,16 +200,16 @@ def getGOESDiscreteParticleFlux():
         data_ret["rawlines"].append(read_line)
         data_ret["datestamp"].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
           read_line[2],read_line[3]))
-        data_ret["data"]["P1"].append(read_line[6])
-        data_ret["data"]["P2"].append(read_line[7])
-        data_ret["data"]["P3"].append(read_line[8])
-        data_ret["data"]["P4"].append(read_line[9])
-        data_ret["data"]["P5"].append(read_line[10])
-        data_ret["data"]["E1"].append(read_line[11])
-        data_ret["data"]["E2"].append(read_line[12])
-        data_ret["data"]["E3"].append(read_line[13])
-        data_ret["data"]["E4"].append(read_line[14])
-        data_ret["data"]["E5"].append(read_line[15])
+        data_ret["data"]["Protons 95 keV"   ].append(read_line[6])
+        data_ret["data"]["Protons 140 keV"  ].append(read_line[7])
+        data_ret["data"]["Protons 210 keV"  ].append(read_line[8])
+        data_ret["data"]["Protons 300 keV"  ].append(read_line[9])
+        data_ret["data"]["Protons 475 keV"  ].append(read_line[10])
+        data_ret["data"]["Electrons 40 keV" ].append(read_line[11])
+        data_ret["data"]["Electrons 75 keV" ].append(read_line[12])
+        data_ret["data"]["Electrons 150 keV"].append(read_line[13])
+        data_ret["data"]["Electrons 275 keV"].append(read_line[14])
+        data_ret["data"]["Electrons 475 keV"].append(read_line[15])
       # Get some header info
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
