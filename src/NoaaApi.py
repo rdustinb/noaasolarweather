@@ -8,31 +8,40 @@ import urllib.error
   is provided from the GOES and ACE satellites.
 
   = GOES =
-  Energetic Proton Flux
+  Energetic Proton Flux - getGOESRangeProtonFlux()
     http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt
     http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-secondary.txt
-  Geomagnetic Components and Total Field
+
+  Geomagnetic Components and Total Field - getGOESGoemagFieldFlux()
     http://services.swpc.noaa.gov/text/goes-magnetometer-primary.txt
     http://services.swpc.noaa.gov/text/goes-magnetometer-secondary.txt
-  Energetic Particle Flux
+
+  Energetic Particle Flux - getGOESDiscreteParticleFlux()
     http://services.swpc.noaa.gov/text/goes-magnetospheric-particle-flux-ts1-primary.txt
     http://services.swpc.noaa.gov/text/goes-magnetospheric-particle-flux-ts1-secondary.txt
-  Solar Particle and Electron Flux
+
+  Solar Particle and Electron Flux - getGOESRangeParticleFlux()
     http://services.swpc.noaa.gov/text/goes-particle-flux-primary.txt
     http://services.swpc.noaa.gov/text/goes-particle-flux-secondary.txt
-  xRay Flux
+
+  xRay Flux - getGOESXrayFlux()
     http://services.swpc.noaa.gov/text/goes-xray-flux-primary.txt
     http://services.swpc.noaa.gov/text/goes-xray-flux-secondary.txt
 
+
   = ACE =
-  Differential Electron / Proton Flux
+  Differential Electron / Proton Flux - getDiffElecProtFlux()
     http://services.swpc.noaa.gov/text/ace-epam.txt
-  Solar Isotope Spectrometer
+
+  Solar Isotope Spectrometer - getSolarIsotopeSpectrometer()
     http://services.swpc.noaa.gov/text/ace-sis.txt
-  Interplanetary Magnetic Field
+
+  Interplanetary Magnetic Field - getInterplanetMagField()
     http://services.swpc.noaa.gov/text/ace-magnetometer.txt
-  Solar Wind Plasma
+
+  Solar Wind Plasma - getSolarPlasma()
     http://services.swpc.noaa.gov/text/ace-swepam.txt
+
 
   xRay Imager:
     http://sxi.ngdc.noaa.gov
@@ -70,17 +79,17 @@ def getGOESRangeProtonFlux():
   data_ret = {
     "source":"",
     "data":{
-      "Protons 0.7 - 4 MeV"   :[],
-      "Protons 4 - 9 MeV"     :[],
-      "Protons 9 - 15 MeV"    :[],
-      "Protons 15 - 40 MeV"   :[],
-      "Protons 38 - 82 MeV"   :[],
-      "Protons 84 - 200 MeV"  :[],
-      "Protons 110 - 900 MeV" :[],
-      "Protons 350 - 420 MeV" :[],
-      "Protons 420 - 510 MeV" :[],
-      "Protons 510 - 700 MeV" :[],
-      "Protons >700 MeV"      :[]
+      "0.7-4 MeV Protons"  :[],
+      "4-9 MeV Protons"    :[],
+      "9-15 MeV Protons"   :[],
+      "15-40 MeV Protons"  :[],
+      "38-82 MeV Protons"  :[],
+      "84-200 MeV Protons" :[],
+      "110-900 MeV Protons":[],
+      "350-420 MeV Protons":[],
+      "420-510 MeV Protons":[],
+      "510-700 MeV Protons":[],
+      ">700 MeV Protons"   :[]
     },
     "units":"p/cm2 * s * sr * MeV",
     "datestamp":[],
@@ -95,17 +104,17 @@ def getGOESRangeProtonFlux():
         data_ret["rawlines"   ].append(read_line)
         data_ret["datestamp"  ].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
           read_line[2],read_line[3]))
-        data_ret["data"]["Protons 0.7 - 4 MeV"  ].append(read_line[6])
-        data_ret["data"]["Protons 4 - 9 MeV"    ].append(read_line[7])
-        data_ret["data"]["Protons 9 - 15 MeV"   ].append(read_line[8])
-        data_ret["data"]["Protons 15 - 40 MeV"  ].append(read_line[9])
-        data_ret["data"]["Protons 38 - 82 MeV"  ].append(read_line[10])
-        data_ret["data"]["Protons 84 - 200 MeV" ].append(read_line[11])
-        data_ret["data"]["Protons 110 - 900 MeV"].append(read_line[12])
-        data_ret["data"]["Protons 350 - 420 MeV"].append(read_line[13])
-        data_ret["data"]["Protons 420 - 510 MeV"].append(read_line[14])
-        data_ret["data"]["Protons 510 - 700 MeV"].append(read_line[15])
-        data_ret["data"]["Protons >700 MeV"     ].append(read_line[16])
+        data_ret["data"]["0.7-4 MeV Protons"  ].append(read_line[6])
+        data_ret["data"]["4-9 MeV Protons"    ].append(read_line[7])
+        data_ret["data"]["9-15 MeV Protons"   ].append(read_line[8])
+        data_ret["data"]["15-40 MeV Protons"  ].append(read_line[9])
+        data_ret["data"]["38-82 MeV Protons"  ].append(read_line[10])
+        data_ret["data"]["84-200 MeV Protons" ].append(read_line[11])
+        data_ret["data"]["110-900 MeV Protons"].append(read_line[12])
+        data_ret["data"]["350-420 MeV Protons"].append(read_line[13])
+        data_ret["data"]["420-510 MeV Protons"].append(read_line[14])
+        data_ret["data"]["510-700 MeV Protons"].append(read_line[15])
+        data_ret["data"][">700 MeV Protons"   ].append(read_line[16])
       # Get some header info
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
@@ -130,10 +139,10 @@ def getGOESGoemagFieldFlux():
   data_ret = {
     "source":"",
     "data":{
-      "Hp"    :[],
-      "He"    :[],
-      "Hn"    :[],
-      "Total" :[]
+      "Hp"   :[],
+      "He"   :[],
+      "Hn"   :[],
+      "Total":[]
     },
     "units":"nT",
     "datestamp":[],
@@ -176,16 +185,16 @@ def getGOESDiscreteParticleFlux():
   data_ret = {
     "source":"",
     "data":{
-      "Protons 95 keV"    :[],
-      "Protons 140 keV"   :[],
-      "Protons 210 keV"   :[],
-      "Protons 300 keV"   :[],
-      "Protons 475 keV"   :[],
-      "Electrons 40 keV"  :[],
-      "Electrons 75 keV"  :[],
-      "Electrons 150 keV" :[],
-      "Electrons 275 keV" :[],
-      "Electrons 475 keV" :[]
+      "95 keV Protons"   :[],
+      "140 keV Protons"  :[],
+      "210 keV Protons"  :[],
+      "300 keV Protons"  :[],
+      "475 keV Protons"  :[],
+      "40 keV Electrons" :[],
+      "75 keV Electrons" :[],
+      "150 keV Electrons":[],
+      "275 keV Electrons":[],
+      "475 keV Electrons":[]
     },
     "units":"p/cm2 * s * sr * MeV",
     "datestamp":[],
@@ -200,16 +209,16 @@ def getGOESDiscreteParticleFlux():
         data_ret["rawlines"].append(read_line)
         data_ret["datestamp"].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
           read_line[2],read_line[3]))
-        data_ret["data"]["Protons 95 keV"   ].append(read_line[6])
-        data_ret["data"]["Protons 140 keV"  ].append(read_line[7])
-        data_ret["data"]["Protons 210 keV"  ].append(read_line[8])
-        data_ret["data"]["Protons 300 keV"  ].append(read_line[9])
-        data_ret["data"]["Protons 475 keV"  ].append(read_line[10])
-        data_ret["data"]["Electrons 40 keV" ].append(read_line[11])
-        data_ret["data"]["Electrons 75 keV" ].append(read_line[12])
-        data_ret["data"]["Electrons 150 keV"].append(read_line[13])
-        data_ret["data"]["Electrons 275 keV"].append(read_line[14])
-        data_ret["data"]["Electrons 475 keV"].append(read_line[15])
+        data_ret["data"]["95 keV Protons"   ].append(read_line[6])
+        data_ret["data"]["140 keV Protons"  ].append(read_line[7])
+        data_ret["data"]["210 keV Protons"  ].append(read_line[8])
+        data_ret["data"]["300 keV Protons"  ].append(read_line[9])
+        data_ret["data"]["475 keV Protons"  ].append(read_line[10])
+        data_ret["data"]["40 keV Electrons" ].append(read_line[11])
+        data_ret["data"]["75 keV Electrons" ].append(read_line[12])
+        data_ret["data"]["150 keV Electrons"].append(read_line[13])
+        data_ret["data"]["275 keV Electrons"].append(read_line[14])
+        data_ret["data"]["475 keV Electrons"].append(read_line[15])
       # Get some header info
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
@@ -236,15 +245,15 @@ def getGOESRangeParticleFlux():
   data_ret = {
     "source":"",
     "data":{
-      "Protons >1 Mev"     :[],
-      "Protons >5 Mev"     :[],
-      "Protons >10 Mev"    :[],
-      "Protons >30 Mev"    :[],
-      "Protons >50 Mev"    :[],
-      "Protons >100 Mev"   :[],
-      "Electrons >0.8 Mev" :[],
-      "Electrons >2.0 Mev" :[],
-      "Electrons >4.0 Mev" :[]
+      ">1 Mev Protons"    :[],
+      ">5 Mev Protons"    :[],
+      ">10 Mev Protons"   :[],
+      ">30 Mev Protons"   :[],
+      ">50 Mev Protons"   :[],
+      ">100 Mev Protons"  :[],
+      ">0.8 Mev Electrons":[],
+      ">2.0 Mev Electrons":[],
+      ">4.0 Mev Electrons":[]
     },
     "units":"p/cm2 * s * sr * MeV",
     "datestamp":[],
@@ -259,15 +268,15 @@ def getGOESRangeParticleFlux():
         data_ret["rawlines"].append(read_line)
         data_ret["datestamp"].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
           read_line[2],read_line[3]))
-        data_ret["data"]["Protons >1 Mev"    ].append(read_line[6])
-        data_ret["data"]["Protons >5 Mev"    ].append(read_line[7])
-        data_ret["data"]["Protons >10 Mev"   ].append(read_line[8])
-        data_ret["data"]["Protons >30 Mev"   ].append(read_line[9])
-        data_ret["data"]["Protons >50 Mev"   ].append(read_line[10])
-        data_ret["data"]["Protons >100 Mev"  ].append(read_line[11])
-        data_ret["data"]["Electrons >0.8 Mev"].append(read_line[12])
-        data_ret["data"]["Electrons >2.0 Mev"].append(read_line[13])
-        data_ret["data"]["Electrons >4.0 Mev"].append(read_line[14])
+        data_ret["data"][">1 Mev Protons"    ].append(read_line[6])
+        data_ret["data"][">5 Mev Protons"    ].append(read_line[7])
+        data_ret["data"][">10 Mev Protons"   ].append(read_line[8])
+        data_ret["data"][">30 Mev Protons"   ].append(read_line[9])
+        data_ret["data"][">50 Mev Protons"   ].append(read_line[10])
+        data_ret["data"][">100 Mev Protons"  ].append(read_line[11])
+        data_ret["data"][">0.8 Mev Electrons"].append(read_line[12])
+        data_ret["data"][">2.0 Mev Electrons"].append(read_line[13])
+        data_ret["data"][">4.0 Mev Electrons"].append(read_line[14])
       # Get some header info
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
@@ -292,8 +301,8 @@ def getGOESXrayFlux():
   data_ret = {
     "source":"",
     "data":{
-      "long" :[],
-      "short":[],
+      "0.05-0.4 nm":[],
+      "0.1-0.8 nm" :[]
     },
     "units":"W/m2",
     "datestamp":[],
@@ -307,8 +316,8 @@ def getGOESXrayFlux():
       if((read_line[0][0] != '#') and (read_line[0][0] != ':')):
         data_ret["rawlines"].append(read_line)
         data_ret["datestamp"].append("%s/%s/%s:%s"%(read_line[0],read_line[1],read_line[2],read_line[3]))
-        data_ret["data"]["long"].append(read_line[7])
-        data_ret["data"]["short"].append(read_line[6])
+        data_ret["data"]["0.05-0.4 nm"].append(read_line[6])
+        data_ret["data"]["0.1-0.8 nm"].append(read_line[7])
       # Get some header info
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
