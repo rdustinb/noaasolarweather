@@ -331,8 +331,71 @@ def getGOESXrayFlux():
 #################################################
 def getDiffElecProtFlux():
   """
+    This API call will pull data from the ACE Satellite for real-time averaged
+    electron and proton flux. The units of measure are for differential flux
+    particles.
+
+    Differential Flux as defined by JEDEC:
+      'The particle flux density per unit energy incident on a surface; i.e.,
+      the number of radiant-energy particles incident on a surface during a given
+      period of time divided by the product of the area of that surface, the
+      characteristic energy of the incident particles, and the given period of
+      time.'
+
+    The units provided by NOAA are 'particles/cm2-s-ster-MeV' where:
+      cm2 - area, centimeters squared
+      s - unit of time, seconds
+      ster - measurement of incidental angle, steradians
+      MeV - unit of energy, Mega Electrov-Volt
   """
-  pass
+  URL = 'http://services.swpc.noaa.gov/text/ace-epam.txt'
+  try:
+    fh = urllib.request.urlopen(URL)
+  except:
+    print("NoaaApi.getGOESRangeProtonFlux > Error opening File Handle, retrying...")
+    fh = ""
+    fh = urllib.request.urlopen(URL)
+  # Create the empty data structure
+  data_ret = {
+    "source":"",
+    "data":{
+      "38-53 eV Electron"   :[],
+      "175-315 eV Electron" :[],
+      "47-68 keV Proton"    :[],
+      "115-195 keV Proton"  :[],
+      "310-580 keV Proton"  :[],
+      "795-1193 keV Proton" :[],
+      "1060-1900 keV Proton":[]
+    },
+    "units":"p/cm2 * s * sr * MeV",
+    "datestamp":[],
+    "rawlines":[]
+  }
+  # Loop through the remote data file
+  for read_line in fh.readlines():
+    read_line = read_line.decode('utf-8').split()
+    if(len(read_line) > 1):
+      # Get the data samples
+      if((read_line[0][0] != '#') and (read_line[0][0] != ':')):
+        data_ret["rawlines"   ].append(read_line)
+        data_ret["datestamp"  ].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
+          read_line[2],read_line[3]))
+        # Electron Flux
+        data_ret["data"]["38-53 eV Electron"   ].append(read_line[7])
+        data_ret["data"]["175-315 eV Electron" ].append(read_line[8])
+        # Proton Flux
+        data_ret["data"]["47-68 keV Proton"    ].append(read_line[10])
+        data_ret["data"]["115-195 keV Proton"  ].append(read_line[11])
+        data_ret["data"]["310-580 keV Proton"  ].append(read_line[12])
+        data_ret["data"]["795-1193 keV Proton" ].append(read_line[13])
+        data_ret["data"]["1060-1900 keV Proton"].append(read_line[14])
+      # Get some header info
+      elif(read_line[1] == 'Source:'):
+        data_ret["source"] = str(read_line[2])
+  # Convert the data points from strings to numbers
+  for key in data_ret["data"].keys():
+    data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
+  return data_ret
 
 def getSolarIsotopeSpectrometer():
   """
@@ -393,9 +456,8 @@ if __name__ == '__main__':
   for key,value in alldata["data"].items():
     print("%s data is:" % (key))
     print(value)
-  for key,value in alldata["units"].items():
-    print("%s unit is:" % (key))
-    print(value)
+  print("data units are:")
+  print(alldata["units"])
   print("timestamps are:")
   print(alldata["datestamp"])
 
@@ -410,9 +472,8 @@ if __name__ == '__main__':
   for key,value in alldata["data"].items():
     print("%s data is:" % (key))
     print(value)
-  for key,value in alldata["units"].items():
-    print("%s unit is:" % (key))
-    print(value)
+  print("data units are:")
+  print(alldata["units"])
   print("timestamps are:")
   print(alldata["datestamp"])
 
@@ -424,10 +485,25 @@ if __name__ == '__main__':
   alldata = getGOESXrayFlux()
   print("data source is:")
   print(alldata["source"])
-  print("data_short data is:")
-  print(alldata["data"]["short"])
-  print("data_long data is:")
-  print(alldata["data"]["long"])
+  for key,value in alldata["data"].items():
+    print("%s data is:" % (key))
+    print(value)
+  print("data units are:")
+  print(alldata["units"])
+  print("timestamps are:")
+  print(alldata["datestamp"])
+
+  # Get Differential Flux Data
+  print("")
+  print("------------------------------------")
+  print("          Differential Flux")
+  print("------------------------------------")
+  alldata = getDiffElecProtFlux()
+  print("data source is:")
+  print(alldata["source"])
+  for key,value in alldata["data"].items():
+    print("%s data is:" % (key))
+    print(value)
   print("data units are:")
   print(alldata["units"])
   print("timestamps are:")
