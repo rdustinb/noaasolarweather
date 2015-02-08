@@ -236,27 +236,17 @@ def getGOESRangeParticleFlux():
   data_ret = {
     "source":"",
     "data":{
-      "P1"    :[],
-      "P5"    :[],
-      "P10"   :[],
-      "P30"   :[],
-      "P50"   :[],
-      "P100"  :[],
-      "E0.8"  :[],
-      "E2.0"  :[],
-      "E4.0"  :[]
+      "Protons >1 Mev"     :[],
+      "Protons >5 Mev"     :[],
+      "Protons >10 Mev"    :[],
+      "Protons >30 Mev"    :[],
+      "Protons >50 Mev"    :[],
+      "Protons >100 Mev"   :[],
+      "Electrons >0.8 Mev" :[],
+      "Electrons >2.0 Mev" :[],
+      "Electrons >4.0 Mev" :[]
     },
-    "units":{
-      "P1"    : ">1 Mev",
-      "P5"    : ">5 Mev",
-      "P10"   : ">10 Mev",
-      "P30"   : ">30 Mev",
-      "P50"   : ">50 Mev",
-      "P100"  : ">100 Mev",
-      "E0.8"  : ">0.8 Mev",
-      "E2.0"  : ">2.0 Mev",
-      "E4.0"  : ">4.0 Mev"
-    },
+    "units":"p/cm2 * s * sr * MeV",
     "datestamp":[],
     "rawlines":[]
   }
@@ -269,15 +259,15 @@ def getGOESRangeParticleFlux():
         data_ret["rawlines"].append(read_line)
         data_ret["datestamp"].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
           read_line[2],read_line[3]))
-        data_ret["data"]["P1"].append(read_line[6])
-        data_ret["data"]["P5"].append(read_line[7])
-        data_ret["data"]["P10"].append(read_line[8])
-        data_ret["data"]["P30"].append(read_line[9])
-        data_ret["data"]["P50"].append(read_line[10])
-        data_ret["data"]["P100"].append(read_line[11])
-        data_ret["data"]["E0.8"].append(read_line[12])
-        data_ret["data"]["E2.0"].append(read_line[13])
-        data_ret["data"]["E4.0"].append(read_line[14])
+        data_ret["data"]["Protons >1 Mev"    ].append(read_line[6])
+        data_ret["data"]["Protons >5 Mev"    ].append(read_line[7])
+        data_ret["data"]["Protons >10 Mev"   ].append(read_line[8])
+        data_ret["data"]["Protons >30 Mev"   ].append(read_line[9])
+        data_ret["data"]["Protons >50 Mev"   ].append(read_line[10])
+        data_ret["data"]["Protons >100 Mev"  ].append(read_line[11])
+        data_ret["data"]["Electrons >0.8 Mev"].append(read_line[12])
+        data_ret["data"]["Electrons >2.0 Mev"].append(read_line[13])
+        data_ret["data"]["Electrons >4.0 Mev"].append(read_line[14])
       # Get some header info
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
