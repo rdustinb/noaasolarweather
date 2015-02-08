@@ -60,7 +60,6 @@ def getGOESRangeProtonFlux():
     a secondary source.
   """
   URL = 'http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt'
-  URLs = 'http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-secondary.txt'
   try:
     fh = urllib.request.urlopen(URL)
   except:
@@ -71,31 +70,19 @@ def getGOESRangeProtonFlux():
   data_ret = {
     "source":"",
     "data":{
-      "P1" :[],
-      "P2" :[],
-      "P3" :[],
-      "P4" :[],
-      "P5" :[],
-      "P6" :[],
-      "P7" :[],
-      "P8" :[],
-      "P9" :[],
-      "P10":[],
-      "P11":[]
+      "Protons 0.7 - 4 MeV"   :[],
+      "Protons 4 - 9 MeV"     :[],
+      "Protons 9 - 15 MeV"    :[],
+      "Protons 15 - 40 MeV"   :[],
+      "Protons 38 - 82 MeV"   :[],
+      "Protons 84 - 200 MeV"  :[],
+      "Protons 110 - 900 MeV" :[],
+      "Protons 350 - 420 MeV" :[],
+      "Protons 420 - 510 MeV" :[],
+      "Protons 510 - 700 MeV" :[],
+      "Protons >700 MeV"      :[]
     },
-    "units":{
-      "P1" : "0.7-4 MeV",
-      "P2" : "4-9 MeV",
-      "P3" : "9-15 MeV",
-      "P4" : "15-40 MeV",
-      "P5" : "38-82 MeV",
-      "P6" : "84-200 MeV",
-      "P7" : "110-900 MeV",
-      "P8" : "350-420 MeV",
-      "P9" : "420-510 MeV",
-      "P10": "510-700 MeV",
-      "P11": ">700 MeV"
-    },
+    "units":"p/cm2 * s * sr * MeV",
     "datestamp":[],
     "rawlines":[]
   }
@@ -108,17 +95,17 @@ def getGOESRangeProtonFlux():
         data_ret["rawlines"   ].append(read_line)
         data_ret["datestamp"  ].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
           read_line[2],read_line[3]))
-        data_ret["data"]["P1" ].append(read_line[6])
-        data_ret["data"]["P2" ].append(read_line[7])
-        data_ret["data"]["P3" ].append(read_line[8])
-        data_ret["data"]["P4" ].append(read_line[9])
-        data_ret["data"]["P5" ].append(read_line[10])
-        data_ret["data"]["P6" ].append(read_line[11])
-        data_ret["data"]["P7" ].append(read_line[12])
-        data_ret["data"]["P8" ].append(read_line[13])
-        data_ret["data"]["P9" ].append(read_line[14])
-        data_ret["data"]["P10"].append(read_line[15])
-        data_ret["data"]["P11"].append(read_line[16])
+        data_ret["data"]["Protons 0.7 - 4 MeV"  ].append(read_line[6])
+        data_ret["data"]["Protons 4 - 9 MeV"    ].append(read_line[7])
+        data_ret["data"]["Protons 9 - 15 MeV"   ].append(read_line[8])
+        data_ret["data"]["Protons 15 - 40 MeV"  ].append(read_line[9])
+        data_ret["data"]["Protons 38 - 82 MeV"  ].append(read_line[10])
+        data_ret["data"]["Protons 84 - 200 MeV" ].append(read_line[11])
+        data_ret["data"]["Protons 110 - 900 MeV"].append(read_line[12])
+        data_ret["data"]["Protons 350 - 420 MeV"].append(read_line[13])
+        data_ret["data"]["Protons 420 - 510 MeV"].append(read_line[14])
+        data_ret["data"]["Protons 510 - 700 MeV"].append(read_line[15])
+        data_ret["data"]["Protons >700 MeV"     ].append(read_line[16])
       # Get some header info
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
