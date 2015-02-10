@@ -401,6 +401,8 @@ def getSolarIsotopeSpectrometer():
   """
     This API call only measures the integral of high energy protons above two
     specific energy levels: 10MeV and 30MeV.
+
+    Measurements are taken every 5 minutes.
   """
   URL = 'http://services.swpc.noaa.gov/text/ace-sis.txt'
   try:
@@ -442,8 +444,60 @@ def getSolarIsotopeSpectrometer():
 
 def getInterplanetMagField():
   """
+    This API returns an interesting set of data, it provides a measurement of
+    three dimensional axis of magnetic flux in nano-tesla, and a total 3D vector
+    magnetic flux also in nano-tesla. Each measurement is taken by the satellite
+    at a specific latitude and longitude which is also recorded which each
+    measurement.
+
+    Measurements are taken every minute.
   """
-  pass
+  # Open the file handle
+  URL = 'http://services.swpc.noaa.gov/text/ace-magnetometer.txt'
+  try:
+    fh = urllib.request.urlopen(URL)
+  except:
+    print("NoaaApi.getInterplanetMagField > Error opening File Handle, retrying...")
+    fh = ""
+    fh = urllib.request.urlopen(URL)
+  # Create the empty data structure
+  data_ret = {
+    "source":"",
+    "data":{
+      "Bx"       :[],
+      "By"       :[],
+      "Bz"       :[],
+      "Bt"       :[],
+      "Latitude" :[],
+      "Longitude":[]
+    },
+    "units":"nT",
+    "datestamp":[],
+    "rawlines":[]
+  }
+  # Loop through the remote data file
+  for read_line in fh.readlines():
+    read_line = read_line.decode('utf-8').split()
+    if(len(read_line) > 1):
+      # Get the data samples
+      if((read_line[0][0] != '#') and (read_line[0][0] != ':')):
+        data_ret["rawlines"   ].append(read_line)
+        data_ret["datestamp"  ].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
+          read_line[2],read_line[3]))
+        # High Energy Solar Proton Flux
+        data_ret["data"]["Bx"       ].append(read_line[7])
+        data_ret["data"]["By"       ].append(read_line[8])
+        data_ret["data"]["Bz"       ].append(read_line[9])
+        data_ret["data"]["Bt"       ].append(read_line[10])
+        data_ret["data"]["Latitude" ].append(read_line[11])
+        data_ret["data"]["Longitude"].append(read_line[12])
+      # Get some header info
+      elif(read_line[1] == 'Source:'):
+        data_ret["source"] = str(read_line[2])
+  # Convert the data points from strings to numbers
+  for key in data_ret["data"].keys():
+    data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
+  return data_ret
 
 def getSolarPlasma():
   """
@@ -553,6 +607,22 @@ if __name__ == '__main__':
   print("  Integral High Energy Proton Flux")
   print("------------------------------------")
   alldata = getSolarIsotopeSpectrometer()
+  print("data source is:")
+  print(alldata["source"])
+  for key,value in alldata["data"].items():
+    print("%s data is:" % (key))
+    print(value)
+  print("data units are:")
+  print(alldata["units"])
+  print("timestamps are:")
+  print(alldata["datestamp"])
+
+    # Get Interplanetary Magnetic Field Flux
+  print("")
+  print("------------------------------------")
+  print("   Interplanetary Magnetic Field")
+  print("------------------------------------")
+  alldata = getInterplanetMagField()
   print("data source is:")
   print(alldata["source"])
   for key,value in alldata["data"].items():
