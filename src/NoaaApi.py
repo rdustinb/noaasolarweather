@@ -484,7 +484,7 @@ def getInterplanetMagField():
         data_ret["rawlines"   ].append(read_line)
         data_ret["datestamp"  ].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
           read_line[2],read_line[3]))
-        # High Energy Solar Proton Flux
+        # Interplanetary Magnetic Field
         data_ret["data"]["Bx"       ].append(read_line[7])
         data_ret["data"]["By"       ].append(read_line[8])
         data_ret["data"]["Bz"       ].append(read_line[9])
@@ -501,8 +501,59 @@ def getInterplanetMagField():
 
 def getSolarPlasma():
   """
+    This API returns the real time averaged data of the solar wind plasma as
+    measured by one of the ACE satellites. It measures proton density, bulk
+    particle speed and ION Temperatures.
+    This is the only API call here thus far that has three data sets with three
+    completely different units. Thus instead of the units key only having one
+    value, it also has an embedded dictionary.
+
+    Measurements are updated once a minute.
   """
-  pass
+  # Open the file handle
+  URL = 'http://services.swpc.noaa.gov/text/ace-swepam.txt'
+  try:
+    fh = urllib.request.urlopen(URL)
+  except:
+    print("NoaaApi.getSolarPlasma > Error opening File Handle, retrying...")
+    fh = ""
+    fh = urllib.request.urlopen(URL)
+  # Create the empty data structure
+  data_ret = {
+    "source":"",
+    "data":{
+      "Density"    :[],
+      "Speed"      :[],
+      "Temperature":[]
+    },
+    "units":{
+      "Density"    :"p/cc",
+      "Speed"      :"km/s",
+      "Temperature":"Kelvin"
+    },
+    "datestamp":[],
+    "rawlines":[]
+  }
+  # Loop through the remote data file
+  for read_line in fh.readlines():
+    read_line = read_line.decode('utf-8').split()
+    if(len(read_line) > 1):
+      # Get the data samples
+      if((read_line[0][0] != '#') and (read_line[0][0] != ':')):
+        data_ret["rawlines"   ].append(read_line)
+        data_ret["datestamp"  ].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
+          read_line[2],read_line[3]))
+        # Solar Wind Plasma
+        data_ret["data"]["Density"    ].append(read_line[7])
+        data_ret["data"]["Speed"      ].append(read_line[8])
+        data_ret["data"]["Temperature"].append(read_line[9])
+      # Get some header info
+      elif(read_line[1] == 'Source:'):
+        data_ret["source"] = str(read_line[2])
+  # Convert the data points from strings to numbers
+  for key in data_ret["data"].keys():
+    data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
+  return data_ret
 
 if __name__ == '__main__':
   # Get Proton Flux Data
@@ -617,7 +668,7 @@ if __name__ == '__main__':
   print("timestamps are:")
   print(alldata["datestamp"])
 
-    # Get Interplanetary Magnetic Field Flux
+  # Get Interplanetary Magnetic Field Flux
   print("")
   print("------------------------------------")
   print("   Interplanetary Magnetic Field")
@@ -630,5 +681,22 @@ if __name__ == '__main__':
     print(value)
   print("data units are:")
   print(alldata["units"])
+  print("timestamps are:")
+  print(alldata["datestamp"])
+
+  # Get Solar Wind Plasma
+  print("")
+  print("------------------------------------")
+  print("         Solar Wind Plasma")
+  print("------------------------------------")
+  alldata = getSolarPlasma()
+  print("data source is:")
+  print(alldata["source"])
+  for key,value in alldata["data"].items():
+    print("%s data is:" % (key))
+    print(value)
+  for key,value in alldata["units"].items():
+    print("%s units are:" % (key))
+    print(value)
   print("timestamps are:")
   print(alldata["datestamp"])
