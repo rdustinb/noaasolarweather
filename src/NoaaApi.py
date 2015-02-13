@@ -92,6 +92,7 @@ def getGOESRangeProtonFlux():
       ">700 MeV Protons"   :[]
     },
     "units":"p/cm2 * s * sr * MeV",
+    "update":"",
     "datestamp":[],
     "rawlines":[]
   }
@@ -115,9 +116,17 @@ def getGOESRangeProtonFlux():
         data_ret["data"]["420-510 MeV Protons"].append(read_line[14])
         data_ret["data"]["510-700 MeV Protons"].append(read_line[15])
         data_ret["data"][">700 MeV Protons"   ].append(read_line[16])
-      # Get some header info
+      # Get data source
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
+      else:
+        # Capture the update period
+        try:
+          check_val = read_line[1].split(sep="-")
+          if(check_val[1] == "minute"):
+            data_ret["update"] = int(check_val[0])*60*1000
+        except IndexError:
+          pass
   # Convert the data points from strings to numbers
   for key in data_ret["data"].keys():
     data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
@@ -145,6 +154,7 @@ def getGOESGoemagFieldFlux():
       "Total":[]
     },
     "units":"nT",
+    "update":"",
     "datestamp":[],
     "rawlines":[]
   }
@@ -161,9 +171,17 @@ def getGOESGoemagFieldFlux():
         data_ret["data"]["He"].append(read_line[7])
         data_ret["data"]["Hn"].append(read_line[8])
         data_ret["data"]["Total"].append(read_line[9])
-      # Get some header info
+      # Get data source
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
+      else:
+        # Capture the update period
+        try:
+          check_val = read_line[1].split(sep="-")
+          if(check_val[1] == "minute"):
+            data_ret["update"] = int(check_val[0])*60*1000
+        except IndexError:
+          pass
   # Convert the data points from strings to numbers
   for key in data_ret["data"].keys():
     data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
@@ -197,6 +215,7 @@ def getGOESDiscreteParticleFlux():
       "475 keV Electrons":[]
     },
     "units":"p/cm2 * s * sr * MeV",
+    "update":"",
     "datestamp":[],
     "rawlines":[]
   }
@@ -219,9 +238,17 @@ def getGOESDiscreteParticleFlux():
         data_ret["data"]["150 keV Electrons"].append(read_line[13])
         data_ret["data"]["275 keV Electrons"].append(read_line[14])
         data_ret["data"]["475 keV Electrons"].append(read_line[15])
-      # Get some header info
+      # Get data source
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
+      else:
+        # Capture the update period
+        try:
+          check_val = read_line[1].split(sep="-")
+          if(check_val[1] == "minute"):
+            data_ret["update"] = int(check_val[0])*60*1000
+        except IndexError:
+          pass
   # Convert the data points from strings to numbers
   for key in data_ret["data"].keys():
     data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
@@ -256,6 +283,7 @@ def getGOESRangeParticleFlux():
       ">4.0 Mev Electrons":[]
     },
     "units":"p/cm2 * s * sr * MeV",
+    "update":"",
     "datestamp":[],
     "rawlines":[]
   }
@@ -277,9 +305,17 @@ def getGOESRangeParticleFlux():
         data_ret["data"][">0.8 Mev Electrons"].append(read_line[12])
         data_ret["data"][">2.0 Mev Electrons"].append(read_line[13])
         data_ret["data"][">4.0 Mev Electrons"].append(read_line[14])
-      # Get some header info
+      # Get data source
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
+      else:
+        # Capture the update period
+        try:
+          check_val = read_line[1].split(sep="-")
+          if(check_val[1] == "minute"):
+            data_ret["update"] = int(check_val[0])*60*1000
+        except IndexError:
+          pass
   # Convert the data points from strings to numbers
   for key in data_ret["data"].keys():
     data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
@@ -305,6 +341,7 @@ def getGOESXrayFlux():
       "0.1-0.8 nm" :[]
     },
     "units":"W/m2",
+    "update":"",
     "datestamp":[],
     "rawlines":[]
   }
@@ -318,9 +355,17 @@ def getGOESXrayFlux():
         data_ret["datestamp"].append("%s/%s/%s:%s"%(read_line[0],read_line[1],read_line[2],read_line[3]))
         data_ret["data"]["0.05-0.4 nm"].append(read_line[6])
         data_ret["data"]["0.1-0.8 nm"].append(read_line[7])
-      # Get some header info
+      # Get data source
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
+      else:
+        # Capture the update period
+        try:
+          check_val = read_line[1].split(sep="-")
+          if(check_val[1] == "minute"):
+            data_ret["update"] = int(check_val[0])*60*1000
+        except IndexError:
+          pass
   # Convert the data points from strings to numbers
   for key in data_ret["data"].keys():
     data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
@@ -368,6 +413,7 @@ def getDiffElecProtFlux():
       "1060-1900 keV Proton":[]
     },
     "units":"p/cm2 * s * sr * MeV",
+    "update":"",
     "datestamp":[],
     "rawlines":[]
   }
@@ -389,9 +435,17 @@ def getDiffElecProtFlux():
         data_ret["data"]["310-580 keV Proton"  ].append(read_line[12])
         data_ret["data"]["795-1193 keV Proton" ].append(read_line[13])
         data_ret["data"]["1060-1900 keV Proton"].append(read_line[14])
-      # Get some header info
+      # Get data source
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
+      else:
+        # Capture the update period
+        try:
+          check_val = read_line[1].split(sep="-")
+          if(check_val[1] == "minute"):
+            data_ret["update"] = int(check_val[0])*60*1000
+        except IndexError:
+          pass
   # Convert the data points from strings to numbers
   for key in data_ret["data"].keys():
     data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
@@ -419,6 +473,7 @@ def getSolarIsotopeSpectrometer():
       ">30 MeV Proton":[]
     },
     "units":"p/cm2 * s * sr",
+    "update":"",
     "datestamp":[],
     "rawlines":[]
   }
@@ -434,9 +489,17 @@ def getSolarIsotopeSpectrometer():
         # High Energy Solar Proton Flux
         data_ret["data"][">10 MeV Proton"].append(read_line[7])
         data_ret["data"][">30 MeV Proton"].append(read_line[9])
-      # Get some header info
+      # Get data source
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
+      else:
+        # Capture the update period
+        try:
+          check_val = read_line[1].split(sep="-")
+          if(check_val[1] == "minute"):
+            data_ret["update"] = int(check_val[0])*60*1000
+        except IndexError:
+          pass
   # Convert the data points from strings to numbers
   for key in data_ret["data"].keys():
     data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
@@ -472,6 +535,7 @@ def getInterplanetMagField():
       "Longitude":[]
     },
     "units":"nT",
+    "update":"",
     "datestamp":[],
     "rawlines":[]
   }
@@ -491,9 +555,17 @@ def getInterplanetMagField():
         data_ret["data"]["Bt"       ].append(read_line[10])
         data_ret["data"]["Latitude" ].append(read_line[11])
         data_ret["data"]["Longitude"].append(read_line[12])
-      # Get some header info
+      # Get data source
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
+      else:
+        # Capture the update period
+        try:
+          check_val = read_line[1].split(sep="-")
+          if(check_val[1] == "minute"):
+            data_ret["update"] = int(check_val[0])*60*1000
+        except IndexError:
+          pass
   # Convert the data points from strings to numbers
   for key in data_ret["data"].keys():
     data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
@@ -531,6 +603,7 @@ def getSolarPlasma():
       "Speed"      :"km/s",
       "Temperature":"Kelvin"
     },
+    "update":"",
     "datestamp":[],
     "rawlines":[]
   }
@@ -547,9 +620,17 @@ def getSolarPlasma():
         data_ret["data"]["Density"    ].append(read_line[7])
         data_ret["data"]["Speed"      ].append(read_line[8])
         data_ret["data"]["Temperature"].append(read_line[9])
-      # Get some header info
+      # Get data source
       elif(read_line[1] == 'Source:'):
         data_ret["source"] = str(read_line[2])
+      else:
+        # Capture the update period
+        try:
+          check_val = read_line[1].split(sep="-")
+          if(check_val[1] == "minute"):
+            data_ret["update"] = int(check_val[0])*60*1000
+        except IndexError:
+          pass
   # Convert the data points from strings to numbers
   for key in data_ret["data"].keys():
     data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
@@ -571,6 +652,8 @@ if __name__ == '__main__':
   print(alldata["units"])
   print("timestamps are:")
   print(alldata["datestamp"])
+  print("update period in (ms) is:")
+  print(alldata["update"])
 
   # Get Geomagnetic Flux Data
   print("")
@@ -587,6 +670,8 @@ if __name__ == '__main__':
   print(alldata["units"])
   print("timestamps are:")
   print(alldata["datestamp"])
+  print("update period in (ms) is:")
+  print(alldata["update"])
 
   # Get Discrete Energetic Particle Flux Data
   print("")
@@ -603,6 +688,8 @@ if __name__ == '__main__':
   print(alldata["units"])
   print("timestamps are:")
   print(alldata["datestamp"])
+  print("update period in (ms) is:")
+  print(alldata["update"])
 
   # Get Range Energetic Particle Flux Data
   print("")
@@ -619,6 +706,8 @@ if __name__ == '__main__':
   print(alldata["units"])
   print("timestamps are:")
   print(alldata["datestamp"])
+  print("update period in (ms) is:")
+  print(alldata["update"])
 
   # Get XRay Flux Data
   print("")
@@ -635,6 +724,8 @@ if __name__ == '__main__':
   print(alldata["units"])
   print("timestamps are:")
   print(alldata["datestamp"])
+  print("update period in (ms) is:")
+  print(alldata["update"])
 
   # Get Differential Flux Data
   print("")
@@ -651,6 +742,8 @@ if __name__ == '__main__':
   print(alldata["units"])
   print("timestamps are:")
   print(alldata["datestamp"])
+  print("update period in (ms) is:")
+  print(alldata["update"])
 
   # Get Differential Flux Data
   print("")
@@ -667,6 +760,8 @@ if __name__ == '__main__':
   print(alldata["units"])
   print("timestamps are:")
   print(alldata["datestamp"])
+  print("update period in (ms) is:")
+  print(alldata["update"])
 
   # Get Interplanetary Magnetic Field Flux
   print("")
@@ -683,6 +778,8 @@ if __name__ == '__main__':
   print(alldata["units"])
   print("timestamps are:")
   print(alldata["datestamp"])
+  print("update period in (ms) is:")
+  print(alldata["update"])
 
   # Get Solar Wind Plasma
   print("")
@@ -700,3 +797,5 @@ if __name__ == '__main__':
     print(value)
   print("timestamps are:")
   print(alldata["datestamp"])
+  print("update period in (ms) is:")
+  print(alldata["update"])
