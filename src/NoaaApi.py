@@ -1,7 +1,21 @@
 #!/Library/Frameworks/Python.framework/Versions/3.4/bin/python3
+import sys
 
-import urllib.request
-import urllib.error
+if int(sys.version[0]) == 3:
+  print("Version 3.x!")
+  import urllib.request
+  import urllib.error
+
+  def openUrl(URL):
+    fh = urllib.request.urlopen(URL)
+    return fh
+if int(sys.version[0]) == 2:
+  print("Version 2.x!")
+  import urllib
+
+  def openUrl(URL):
+    fh = urllib.urlopen(URL)
+    return fh
 
 """
   Locations of data that I want to capture and eventually graph. This data
@@ -70,11 +84,11 @@ def getGOESRangeProtonFlux():
   """
   URL = 'http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt'
   try:
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   except:
     print("NoaaApi.getGOESRangeProtonFlux > Error opening File Handle, retrying...")
     fh = ""
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   # Create the empty data structure
   data_ret = {
     "source":"",
@@ -122,7 +136,10 @@ def getGOESRangeProtonFlux():
       else:
         # Capture the update period
         try:
-          check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 3:
+            check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 2:
+            check_val = read_line[1].split("-")
           if(check_val[1] == "minute"):
             data_ret["update"] = int(check_val[0])*60*1000
         except IndexError:
@@ -140,10 +157,10 @@ def getGOESGoemagFieldFlux():
   """
   URL = 'http://services.swpc.noaa.gov/text/goes-magnetometer-primary.txt'
   try:
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   except:
     print("NoaaApi.getGOESGoemagFieldFlux > Error opening File Handle, retrying...")
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   # Create the empty data structure
   data_ret = {
     "source":"",
@@ -177,7 +194,10 @@ def getGOESGoemagFieldFlux():
       else:
         # Capture the update period
         try:
-          check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 3:
+            check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 2:
+            check_val = read_line[1].split("-")
           if(check_val[1] == "minute"):
             data_ret["update"] = int(check_val[0])*60*1000
         except IndexError:
@@ -195,10 +215,10 @@ def getGOESDiscreteParticleFlux():
   """
   URL = 'http://services.swpc.noaa.gov/text/goes-magnetospheric-particle-flux-ts1-primary.txt'
   try:
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   except:
     print("NoaaApi.getGOESDiscreteParticleFlux > Error opening File Handle, retrying...")
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   # Create the empty data structure
   data_ret = {
     "source":"",
@@ -244,7 +264,10 @@ def getGOESDiscreteParticleFlux():
       else:
         # Capture the update period
         try:
-          check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 3:
+            check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 2:
+            check_val = read_line[1].split("-")
           if(check_val[1] == "minute"):
             data_ret["update"] = int(check_val[0])*60*1000
         except IndexError:
@@ -264,10 +287,10 @@ def getGOESRangeParticleFlux():
   """
   URL = 'http://services.swpc.noaa.gov/text/goes-particle-flux-primary.txt'
   try:
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   except:
     print("NoaaApi.getGOESRangeParticleFlux > Error opening File Handle, retrying...")
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   # Create the empty data structure
   data_ret = {
     "source":"",
@@ -311,7 +334,10 @@ def getGOESRangeParticleFlux():
       else:
         # Capture the update period
         try:
-          check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 3:
+            check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 2:
+            check_val = read_line[1].split("-")
           if(check_val[1] == "minute"):
             data_ret["update"] = int(check_val[0])*60*1000
         except IndexError:
@@ -329,10 +355,10 @@ def getGOESXrayFlux():
   """
   URL = 'http://services.swpc.noaa.gov/text/goes-xray-flux-primary.txt'
   try:
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   except:
     print("NoaaApi.getGOESXrayFlux > Error opening File Handle, retrying...")
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   # Create the empty data structure
   data_ret = {
     "source":"",
@@ -361,7 +387,10 @@ def getGOESXrayFlux():
       else:
         # Capture the update period
         try:
-          check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 3:
+            check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 2:
+            check_val = read_line[1].split("-")
           if(check_val[1] == "minute"):
             data_ret["update"] = int(check_val[0])*60*1000
         except IndexError:
@@ -395,11 +424,11 @@ def getDiffElecProtFlux():
   """
   URL = 'http://services.swpc.noaa.gov/text/ace-epam.txt'
   try:
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   except:
     print("NoaaApi.getDiffElecProtFlux > Error opening File Handle, retrying...")
     fh = ""
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   # Create the empty data structure
   data_ret = {
     "source":"",
@@ -441,7 +470,10 @@ def getDiffElecProtFlux():
       else:
         # Capture the update period
         try:
-          check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 3:
+            check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 2:
+            check_val = read_line[1].split("-")
           if(check_val[1] == "minute"):
             data_ret["update"] = int(check_val[0])*60*1000
         except IndexError:
@@ -460,11 +492,11 @@ def getSolarIsotopeSpectrometer():
   """
   URL = 'http://services.swpc.noaa.gov/text/ace-sis.txt'
   try:
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   except:
     print("NoaaApi.getSolarIsotopeSpectrometer > Error opening File Handle, retrying...")
     fh = ""
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   # Create the empty data structure
   data_ret = {
     "source":"",
@@ -495,7 +527,10 @@ def getSolarIsotopeSpectrometer():
       else:
         # Capture the update period
         try:
-          check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 3:
+            check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 2:
+            check_val = read_line[1].split("-")
           if(check_val[1] == "minute"):
             data_ret["update"] = int(check_val[0])*60*1000
         except IndexError:
@@ -518,11 +553,11 @@ def getInterplanetMagField():
   # Open the file handle
   URL = 'http://services.swpc.noaa.gov/text/ace-magnetometer.txt'
   try:
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   except:
     print("NoaaApi.getInterplanetMagField > Error opening File Handle, retrying...")
     fh = ""
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   # Create the empty data structure
   data_ret = {
     "source":"",
@@ -561,7 +596,10 @@ def getInterplanetMagField():
       else:
         # Capture the update period
         try:
-          check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 3:
+            check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 2:
+            check_val = read_line[1].split("-")
           if(check_val[1] == "minute"):
             data_ret["update"] = int(check_val[0])*60*1000
         except IndexError:
@@ -585,11 +623,11 @@ def getSolarPlasma():
   # Open the file handle
   URL = 'http://services.swpc.noaa.gov/text/ace-swepam.txt'
   try:
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   except:
     print("NoaaApi.getSolarPlasma > Error opening File Handle, retrying...")
     fh = ""
-    fh = urllib.request.urlopen(URL)
+    fh = openUrl(URL)
   # Create the empty data structure
   data_ret = {
     "source":"",
@@ -626,7 +664,10 @@ def getSolarPlasma():
       else:
         # Capture the update period
         try:
-          check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 3:
+            check_val = read_line[1].split(sep="-")
+          if int(sys.version[0]) == 2:
+            check_val = read_line[1].split("-")
           if(check_val[1] == "minute"):
             data_ret["update"] = int(check_val[0])*60*1000
         except IndexError:
