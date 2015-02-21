@@ -9,12 +9,16 @@
 
   http://matplotlib.org/examples/index.html
 """
-
+###########################################################################
 # Version of the application
+###########################################################################
 progversion = "0.1"
-progbuild = "2"
+progbuild = "3"
 progdate = "20150221"
 
+###########################################################################
+# Imports
+###########################################################################
 # Custom backend Libraries
 import NoaaApi
 # Plotting Libraries
@@ -41,21 +45,20 @@ else:
 ###########################################################################
 class ApplicationWindow(QtGui.QMainWindow):
   def __init__(self):
+    # Create the Main Window
     QtGui.QMainWindow.__init__(self)
     self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
     self.setWindowTitle("application main window")
 
+    # Create the Menu Bar
     self.file_menu = QtGui.QMenu('&File', self)
     self.file_menu.addAction('&Quit', self.fileQuit,
                  QtCore.Qt.CTRL + QtCore.Qt.Key_Q)
+    self.file_menu.addAction('&Close', self.fileQuit,
+                 QtCore.Qt.CTRL + QtCore.Qt.Key_Q)
+    self.file_menu.addAction('&About', self.about)
+    self.file_menu.addAction('&Version', self.version)
     self.menuBar().addMenu(self.file_menu)
-
-    self.help_menu = QtGui.QMenu('&Help', self)
-    self.menuBar().addSeparator()
-    self.menuBar().addMenu(self.help_menu)
-
-    self.help_menu.addAction('&About', self.about)
-    self.help_menu.addAction('&Version', self.version)
 
     self.main_widget = QtGui.QWidget(self)
 
@@ -68,7 +71,8 @@ class ApplicationWindow(QtGui.QMainWindow):
     self.main_widget.setFocus()
     self.setCentralWidget(self.main_widget)
 
-    self.statusBar().showMessage("All hail matplotlib!", 2000)
+    # Print initial plot data status message
+    self.statusBar().showMessage("Fetching initial plot data...", 5000)
 
   def fileQuit(self):
     self.close()
@@ -91,7 +95,9 @@ Build: %s
 Date: %s"""%(progversion,progbuild,progdate))
     )
 
-# Create the Application window
+###########################################################################
+# Run the Application
+###########################################################################
 qApp = QtGui.QApplication(sys.argv)
 aw = ApplicationWindow()
 aw.setWindowTitle("Space Weather Grapher")
