@@ -2,7 +2,7 @@
 import sys
 
 if int(sys.version[0]) == 3:
-  print("Version 3.x!")
+  # print("Version 3.x!")
   import urllib.request
   import urllib.error
 
@@ -10,7 +10,7 @@ if int(sys.version[0]) == 3:
     fh = urllib.request.urlopen(URL)
     return fh
 if int(sys.version[0]) == 2:
-  print("Version 2.x!")
+  # print("Version 2.x!")
   import urllib
 
   def openUrl(URL):
