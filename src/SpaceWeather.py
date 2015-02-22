@@ -13,13 +13,13 @@
 # Version of the application
 ###########################################################################
 progversion = "0.1"
-progbuild = "3"
-progdate = "20150221"
+progbuild = "6"
+progdate = "20150222"
 
 ###########################################################################
 # Fonts, Default Font Size
 ###########################################################################
-font = {'size'   : 8}
+font = {'size'   : 7}
 
 ###########################################################################
 # Imports
@@ -69,6 +69,8 @@ class ApplicationWindow(QtGui.QMainWindow):
     # Embed All Plotting Objects Here, giving them each a unique variable name
     GOESRangeProtonFlux = MyGOESRangeProtonFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
     l.addWidget(GOESRangeProtonFlux)
+    GOESGoemagFieldFlux = MyGOESGoemagFieldFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
+    l.addWidget(GOESGoemagFieldFlux)
 
     self.main_widget.setFocus()
     self.setCentralWidget(self.main_widget)
@@ -101,6 +103,7 @@ Date: %s"""%(progversion,progbuild,progdate))
 # Plotting Objects, Calls the Backend API
 ###########################################################################
 from DifferentialEnergeticProtonFlux import MyGOESRangeProtonFluxCanvas
+from GeomagneticField import MyGOESGoemagFieldFluxCanvas
 
 ###########################################################################
 # Run the Application
