@@ -51,6 +51,10 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     self.data = NoaaApi.getGOESRangeProtonFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
+    # Get the start date
+    start_date = self.data["datestamp"][0].split(sep=":")[0]
+    # Get the start date
+    end_date = self.data["datestamp"][-1].split(sep=":")[0]
     # Strip only the timestamp out of the array of date/time stamps
     loop = 0
     for stamp in self.data["datestamp"]:
@@ -88,7 +92,10 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     # Show Units of y-axis
     self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=7)
     # Show Units of x-axis
-    self.axes.set_xlabel("UTC Time", fontsize=7)
+    if(start_date != end_date):
+      self.axes.set_xlabel(("UTC Time (%s - %s)"%(start_date,end_date)), fontsize=7)
+    else:
+      self.axes.set_xlabel(("UTC Time (%s)"%(end_date)), fontsize=7)
     # Set the Plot Title
     self.axes.set_title("Differential Energetic Proton Flux", fontsize=10)
     # Create the Legend
@@ -104,6 +111,10 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     self.data = NoaaApi.getGOESRangeProtonFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
+    # Get the start date
+    start_date = self.data["datestamp"][0].split(sep=":")[0]
+    # Get the start date
+    end_date = self.data["datestamp"][-1].split(sep=":")[0]
     # Strip only the timestamp out of the array of date/time stamps
     loop = 0
     for stamp in self.data["datestamp"]:
@@ -141,7 +152,10 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     # Show Units of y-axis
     self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=7)
     # Show Units of x-axis
-    self.axes.set_xlabel("UTC Time", fontsize=7)
+    if(start_date != end_date):
+      self.axes.set_xlabel(("UTC Time (%s - %s)"%(start_date,end_date)), fontsize=7)
+    else:
+      self.axes.set_xlabel(("UTC Time (%s)"%(end_date)), fontsize=7)
     # Set the Plot Title
     self.axes.set_title("Differential Energetic Proton Flux", fontsize=10)
     # Create the Legend
