@@ -15,13 +15,18 @@ else:
   from PyQt4 import QtGui, QtCore
 
 ###########################################################################
-# Colors
+# Globals
 ###########################################################################
-# Need 11
+# Plot Colors
 GOESRangeProtonFluxColors = ['#5789b0', '#366e9a', '#175e95',
   '#ffdc75', '#efc549', '#e8b316',
   '#ff9c75', '#ef7849', '#e85216',
   '#0f4773', '#b2890c']
+
+grid_color = '#999999'
+
+# Plot x-axis Angle
+plot_angle = "-45"
 
 # Specific Plot Canvas Objects
 class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
@@ -39,13 +44,18 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     # to reduce the number of API calls required to initialize the plot
     timer.start(self.data["update"])
 
-  """
-    Initial data plot.
-  """
   def compute_initial_figure(self):
+    """
+      Initial data plot.
+    """
     self.data = NoaaApi.getGOESRangeProtonFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
+    # Strip only the timestamp out of the array of date/time stamps
+    loop = 0
+    for stamp in self.data["datestamp"]:
+      self.data["datestamp"][loop] = stamp.split(sep=":")[1]
+      loop += 1
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
@@ -65,14 +75,20 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Change the plot tick labels
-    self.axes.set_xticklabels(self.data["datestamp"], rotation=-45, rotation_mode='anchor',
-      horizontalalignment='left', fontsize=7)
+    if(plot_angle[0] == "-"):
+      self.axes.set_xticklabels(self.data["datestamp"], rotation=plot_angle, rotation_mode='anchor',
+        horizontalalignment='left', fontsize=7)
+    else:
+      self.axes.set_xticklabels(self.data["datestamp"], rotation=plot_angle, rotation_mode='anchor',
+        horizontalalignment='right', fontsize=7)
     # Change Plot to logarithmic
     self.axes.set_yscale("log")
     # Show all plot grids
-    self.axes.grid(True, which="both")
+    self.axes.grid(True, which="both", color=grid_color)
+    # Show Units of y-axis
+    self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=7)
     # Show Units of x-axis
-    self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=8)
+    self.axes.set_xlabel("UTC Time", fontsize=7)
     # Set the Plot Title
     self.axes.set_title("Differential Energetic Proton Flux", fontsize=10)
     # Create the Legend
@@ -81,13 +97,18 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
         '110-900','350-420','420-510','510-700','>700'),
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='MeV')
 
-  """
-    This is the actual timer updating method.
-  """
   def update_figure(self):
+    """
+      This is the actual timer updating method.
+    """
     self.data = NoaaApi.getGOESRangeProtonFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
+    # Strip only the timestamp out of the array of date/time stamps
+    loop = 0
+    for stamp in self.data["datestamp"]:
+      self.data["datestamp"][loop] = stamp.split(sep=":")[1]
+      loop += 1
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
@@ -107,14 +128,20 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Change the plot tick labels
-    self.axes.set_xticklabels(self.data["datestamp"], rotation=-45, rotation_mode='anchor',
-      horizontalalignment='left', fontsize=7)
+    if(plot_angle[0] == "-"):
+      self.axes.set_xticklabels(self.data["datestamp"], rotation=plot_angle, rotation_mode='anchor',
+        horizontalalignment='left', fontsize=7)
+    else:
+      self.axes.set_xticklabels(self.data["datestamp"], rotation=plot_angle, rotation_mode='anchor',
+        horizontalalignment='right', fontsize=7)
     # Change Plot to logarithmic
     self.axes.set_yscale("log")
     # Show all plot grids
-    self.axes.grid(True, which="both")
+    self.axes.grid(True, which="both", color=grid_color)
+    # Show Units of y-axis
+    self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=7)
     # Show Units of x-axis
-    self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=8)
+    self.axes.set_xlabel("UTC Time", fontsize=7)
     # Set the Plot Title
     self.axes.set_title("Differential Energetic Proton Flux", fontsize=10)
     # Create the Legend
