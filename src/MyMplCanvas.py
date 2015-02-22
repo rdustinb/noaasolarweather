@@ -23,7 +23,7 @@ class MyMplCanvas(FigureCanvas):
     """
     fig = Figure(figsize=(width, height), dpi=dpi)
     # Adjust the layout
-    fig.subplots_adjust(left=0.11,right=0.85,top=0.92,bottom=0.20)
+    fig.subplots_adjust(left=0.11,right=0.85,top=0.92,bottom=0.18)
     # This may need to be parameterized to control layout
     self.axes = fig.add_subplot(111)
     self.compute_initial_figure()
