@@ -18,10 +18,10 @@ else:
 # Globals
 ###########################################################################
 # Plot Colors
-GOESDiscreteParticleFluxColors = ['#5789b0', '#366e9a', '#175e95',
-  '#ffdc75', '#efc549', '#e8b316',
-  '#ff9c75', '#ef7849', '#e85216',
-  '#0f4773', '#b2890c']
+GOESDiscreteParticleFluxColors = [
+  '#5d76b1', '#3c599b', '#214391', '#143173', '#082159',
+  '#57ba85', '#34a468', '#159952', '#0a793e', '#005e2b'
+  ]
 
 grid_color = '#999999'
 
@@ -66,18 +66,18 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    Protons_95_keV    = self.axes.plot(data_points, self.data["data"]["95 keV Protons"]   , GOESDiscreteParticleFluxColors[0])
+    Protons_95_keV,     = self.axes.plot(data_points, self.data["data"]["95 keV Protons"]   , GOESDiscreteParticleFluxColors[0], label="95 keV")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    Protons_140_keV   = self.axes.plot(data_points, self.data["data"]["140 keV Protons"]  , GOESDiscreteParticleFluxColors[1])
-    Protons_210_keV   = self.axes.plot(data_points, self.data["data"]["210 keV Protons"]  , GOESDiscreteParticleFluxColors[2])
-    Protons_300_keV   = self.axes.plot(data_points, self.data["data"]["300 keV Protons"]  , GOESDiscreteParticleFluxColors[3])
-    Protons_475_keV   = self.axes.plot(data_points, self.data["data"]["475 keV Protons"]  , GOESDiscreteParticleFluxColors[4])
-    Electrons_40_keV  = self.axes.plot(data_points, self.data["data"]["40 keV Electrons"] , GOESDiscreteParticleFluxColors[5])
-    Electrons_75_keV  = self.axes.plot(data_points, self.data["data"]["75 keV Electrons"] , GOESDiscreteParticleFluxColors[6])
-    Electrons_150_keV = self.axes.plot(data_points, self.data["data"]["150 keV Electrons"], GOESDiscreteParticleFluxColors[7])
-    Electrons_275_keV = self.axes.plot(data_points, self.data["data"]["275 keV Electrons"], GOESDiscreteParticleFluxColors[8])
-    Electrons_475_keV = self.axes.plot(data_points, self.data["data"]["475 keV Electrons"], GOESDiscreteParticleFluxColors[9])
+    Protons_140_keV,    = self.axes.plot(data_points, self.data["data"]["140 keV Protons"]  , GOESDiscreteParticleFluxColors[1], label="140 keV")
+    Protons_210_keV,    = self.axes.plot(data_points, self.data["data"]["210 keV Protons"]  , GOESDiscreteParticleFluxColors[2], label="210 keV")
+    Protons_300_keV,    = self.axes.plot(data_points, self.data["data"]["300 keV Protons"]  , GOESDiscreteParticleFluxColors[3], label="300 keV")
+    Protons_475_keV,    = self.axes.plot(data_points, self.data["data"]["475 keV Protons"]  , GOESDiscreteParticleFluxColors[4], label="475 keV")
+    Electrons_40_keV,   = self.axes.plot(data_points, self.data["data"]["40 keV Electrons"] , GOESDiscreteParticleFluxColors[5], label="40 keV")
+    Electrons_75_keV,   = self.axes.plot(data_points, self.data["data"]["75 keV Electrons"] , GOESDiscreteParticleFluxColors[6], label="75 keV")
+    Electrons_150_keV,  = self.axes.plot(data_points, self.data["data"]["150 keV Electrons"], GOESDiscreteParticleFluxColors[7], label="150 keV")
+    Electrons_275_keV,  = self.axes.plot(data_points, self.data["data"]["275 keV Electrons"], GOESDiscreteParticleFluxColors[8], label="275 keV")
+    Electrons_475_keV,  = self.axes.plot(data_points, self.data["data"]["475 keV Electrons"], GOESDiscreteParticleFluxColors[9], label="475 keV")
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Change the plot tick labels
@@ -101,12 +101,15 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     # Set the Plot Title
     self.axes.set_title("Discrete Particle Flux", fontsize=10)
     # Create the Legend
-    self.axes.legend(
-      ('95 keV', '140 keV', '210 keV', '300 keV', '475 keV'),
+    proton_legend = self.axes.legend(
+      handles=[Protons_95_keV,Protons_140_keV,Protons_210_keV,Protons_300_keV,Protons_475_keV],
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='Protons')
-    self.axes.legend(
-      ('40 keV', '75 keV', '150 keV', '275 keV', '475 keV'),
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 0.81), title='Electrons')
+    electron_legend = self.axes.legend(
+      handles=[Electrons_40_keV,Electrons_75_keV,Electrons_150_keV,Electrons_275_keV,Electrons_475_keV],
+      loc=1, fontsize=6, bbox_to_anchor=(1.2, 0.61), title='Electrons')
+    # Add Legends to plot
+    self.axes.add_artist(proton_legend)
+    self.axes.add_artist(electron_legend)
 
   def update_figure(self):
     """
@@ -130,18 +133,18 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    Protons_95_keV    = self.axes.plot(data_points, self.data["data"]["95 keV Protons"]   , GOESDiscreteParticleFluxColors[0])
+    Protons_95_keV,     = self.axes.plot(data_points, self.data["data"]["95 keV Protons"]   , GOESDiscreteParticleFluxColors[0], label="95 keV")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    Protons_140_keV   = self.axes.plot(data_points, self.data["data"]["140 keV Protons"]  , GOESDiscreteParticleFluxColors[1])
-    Protons_210_keV   = self.axes.plot(data_points, self.data["data"]["210 keV Protons"]  , GOESDiscreteParticleFluxColors[2])
-    Protons_300_keV   = self.axes.plot(data_points, self.data["data"]["300 keV Protons"]  , GOESDiscreteParticleFluxColors[3])
-    Protons_475_keV   = self.axes.plot(data_points, self.data["data"]["475 keV Protons"]  , GOESDiscreteParticleFluxColors[4])
-    Electrons_40_keV  = self.axes.plot(data_points, self.data["data"]["40 keV Electrons"] , GOESDiscreteParticleFluxColors[5])
-    Electrons_75_keV  = self.axes.plot(data_points, self.data["data"]["75 keV Electrons"] , GOESDiscreteParticleFluxColors[6])
-    Electrons_150_keV = self.axes.plot(data_points, self.data["data"]["150 keV Electrons"], GOESDiscreteParticleFluxColors[7])
-    Electrons_275_keV = self.axes.plot(data_points, self.data["data"]["275 keV Electrons"], GOESDiscreteParticleFluxColors[8])
-    Electrons_475_keV = self.axes.plot(data_points, self.data["data"]["475 keV Electrons"], GOESDiscreteParticleFluxColors[9])
+    Protons_140_keV,    = self.axes.plot(data_points, self.data["data"]["140 keV Protons"]  , GOESDiscreteParticleFluxColors[1], label="140 keV")
+    Protons_210_keV,    = self.axes.plot(data_points, self.data["data"]["210 keV Protons"]  , GOESDiscreteParticleFluxColors[2], label="210 keV")
+    Protons_300_keV,    = self.axes.plot(data_points, self.data["data"]["300 keV Protons"]  , GOESDiscreteParticleFluxColors[3], label="300 keV")
+    Protons_475_keV,    = self.axes.plot(data_points, self.data["data"]["475 keV Protons"]  , GOESDiscreteParticleFluxColors[4], label="475 keV")
+    Electrons_40_keV,   = self.axes.plot(data_points, self.data["data"]["40 keV Electrons"] , GOESDiscreteParticleFluxColors[5], label="40 keV")
+    Electrons_75_keV,   = self.axes.plot(data_points, self.data["data"]["75 keV Electrons"] , GOESDiscreteParticleFluxColors[6], label="75 keV")
+    Electrons_150_keV,  = self.axes.plot(data_points, self.data["data"]["150 keV Electrons"], GOESDiscreteParticleFluxColors[7], label="150 keV")
+    Electrons_275_keV,  = self.axes.plot(data_points, self.data["data"]["275 keV Electrons"], GOESDiscreteParticleFluxColors[8], label="275 keV")
+    Electrons_475_keV,  = self.axes.plot(data_points, self.data["data"]["475 keV Electrons"], GOESDiscreteParticleFluxColors[9], label="475 keV")
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Change the plot tick labels
@@ -165,11 +168,14 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     # Set the Plot Title
     self.axes.set_title("Three Dimensions of Geomagnetic Field Flux", fontsize=10)
     # Create the Legend
-    self.axes.legend(
-      ('95 keV', '140 keV', '210 keV', '300 keV', '475 keV'),
+    proton_legend = self.axes.legend(
+      handles=[Protons_95_keV,Protons_140_keV,Protons_210_keV,Protons_300_keV,Protons_475_keV],
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='Protons')
-    self.axes.legend(
-      ('40 keV', '75 keV', '150 keV', '275 keV', '475 keV'),
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 0.81), title='Electrons')
+    electron_legend = self.axes.legend(
+      handles=[Electrons_40_keV,Electrons_75_keV,Electrons_150_keV,Electrons_275_keV,Electrons_475_keV],
+      loc=1, fontsize=6, bbox_to_anchor=(1.2, 0.61), title='Electrons')
+    # Add Legends to plot
+    self.axes.add_artist(proton_legend)
+    self.axes.add_artist(electron_legend)
     # Redraw plots
     self.draw()
