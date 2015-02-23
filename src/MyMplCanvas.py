@@ -15,7 +15,7 @@ else:
 
 # Generic Canvas Object
 class MyMplCanvas(FigureCanvas):
-  def __init__(self, parent=None, width=5, height=4, dpi=100):
+  def __init__(self, parent=None, width=5, height=4, dpi=100, subplot=111):
     """
       class matplotlib.figure.Figure(figsize=None, dpi=None, facecolor=None,
         edgecolor=None, linewidth=0.0, frameon=None, subplotpars=None,
@@ -25,7 +25,7 @@ class MyMplCanvas(FigureCanvas):
     # Adjust the layout
     fig.subplots_adjust(left=0.11,right=0.85,top=0.92,bottom=0.18)
     # This may need to be parameterized to control layout
-    self.axes = fig.add_subplot(111)
+    self.axes = fig.add_subplot(subplot)
     self.compute_initial_figure()
     # Call Parent canvas init
     FigureCanvas.__init__(self, fig)
