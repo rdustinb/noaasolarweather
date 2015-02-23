@@ -13,8 +13,8 @@
 # Version of the application
 ###########################################################################
 progversion = "0.1"
-progbuild = "6"
-progdate = "20150222"
+progbuild = "7"
+progdate = "20150223"
 
 ###########################################################################
 # Fonts, Default Font Size
@@ -65,12 +65,24 @@ class ApplicationWindow(QtGui.QMainWindow):
     self.menuBar().addMenu(self.file_menu)
 
     self.main_widget = QtGui.QWidget(self)
+    # Single Vertical Layout object
     l = QtGui.QVBoxLayout(self.main_widget)
-    # Embed All Plotting Objects Here, giving them each a unique variable name
+    # Three Horizontal Layout objects
+    h1 = QtGui.QHBoxLayout()
+    h2 = QtGui.QHBoxLayout()
+    h3 = QtGui.QHBoxLayout()
+    # Added as sublayouts to the top level vertical layout
+    l.addLayout(h1)
+    l.addLayout(h2)
+    l.addLayout(h3)
+    # Add each individual Plot Widget to the horizontal layout objects in a
+    # circular fashion will result in a nicely laid out set of plots
     GOESRangeProtonFlux = MyGOESRangeProtonFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
-    l.addWidget(GOESRangeProtonFlux)
+    h1.addWidget(GOESRangeProtonFlux)
     GOESGoemagFieldFlux = MyGOESGoemagFieldFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
-    l.addWidget(GOESGoemagFieldFlux)
+    h2.addWidget(GOESGoemagFieldFlux)
+    GOESDiscreteParticleFlux = MyGOESDiscreteParticleFlux(self.main_widget, width=5, height=4, dpi=100)
+    h3.addWidget(GOESDiscreteParticleFlux)
 
     self.main_widget.setFocus()
     self.setCentralWidget(self.main_widget)
@@ -104,6 +116,7 @@ Date: %s"""%(progversion,progbuild,progdate))
 ###########################################################################
 from DifferentialEnergeticProtonFlux import MyGOESRangeProtonFluxCanvas
 from GeomagneticField import MyGOESGoemagFieldFluxCanvas
+from DiscreteParticleFlux import MyGOESDiscreteParticleFlux
 
 ###########################################################################
 # Run the Application
