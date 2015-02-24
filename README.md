@@ -1,2 +1,34 @@
-# noaasolarweather
-Python graphing script that pulls real time NOAA satellite data and displays it in a graph.
+This Python application pulls data from the NOAA Satellite near real-time server files located here:
+
+The application parses the data from the NOAA servers and initializes a timer for each plot,
+
+which is embedded within a Qt Widget and thus updated individually.
+
+![Graph Image](screenshots/image.png "Three data graphs in the single application window.")
+
+Data
+===
+GOESS Satellites
+---
+ * Differential Proton Flux
+ * Geomagnetic Components and Total Field
+ * Discrete Energetic Particle Flux
+ * Solar Particle and Electron Flux
+ * xRay Flux
+
+ACE Satellites
+---
+ * Differential Electron / Proton Flux
+ * Solar Isotope Spectrometer
+ * Interplanetary Magnetic Field
+ * Solar Wind Plasma
+
+Required Packages
+===
+The required packages to be installed to run this application are:
+ * matplotlib
+ * pyside or pyqt4
+ * numpy
+
+Most of the data sets are updated by the NOAA Satellites once every 60 seconds though there
+are a few data sets that only update once every 5 minutes.
