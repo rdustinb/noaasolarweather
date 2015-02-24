@@ -12,7 +12,7 @@ which is embedded within a Qt Widget and thus updated individually.
 
 Data
 ===
-GOESS Satellites
+GOES Satellites
 ---
  * Differential Proton Flux
  * Geomagnetic Components and Total Field
