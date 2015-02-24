@@ -1,5 +1,9 @@
 This Python application pulls data from the NOAA Satellite near real-time server files located here:
 
+**http://services.swpc.noaa.gov/text/**
+
+
+
 The application parses the data from the NOAA servers and initializes a timer for each plot,
 
 which is embedded within a Qt Widget and thus updated individually.
