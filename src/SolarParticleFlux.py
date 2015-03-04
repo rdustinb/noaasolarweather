@@ -113,7 +113,7 @@ class MyGOESRangeParticleFlux(MyMplCanvas):
     # Strip only the timestamp out of the array of date/time stamps, keep only a few
     loop = 0
     for stamp in self.data["datestamp"]:
-      if(loop % label_thinner == 0):
+      if(loop % colors_and_globals.label_thinner_1 == 0):
         self.data["datestamp"][loop] = stamp.split(sep=":")[1]
       else:
         self.data["datestamp"][loop] = ""
