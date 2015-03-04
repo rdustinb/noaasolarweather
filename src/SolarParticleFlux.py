@@ -166,7 +166,7 @@ class MyGOESRangeParticleFlux(MyMplCanvas):
     else:
       self.axes.set_xlabel(("UTC Time (%s)"%(end_date)), fontsize=7)
     # Set the Plot Title
-    self.axes.set_title("Three Dimensions of Geomagnetic Field Flux", fontsize=10)
+    self.axes.set_title("Integral Particle Flux", fontsize=10)
     # Create the Legend
     proton_legend = self.axes.legend(
       handles=[Protons_gt1_MeV,Protons_gt5_MeV,Protons_gt10_MeV,Protons_gt30_MeV,Protons_gt50_MeV,Protons_gt100_MeV],
