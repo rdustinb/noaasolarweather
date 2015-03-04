@@ -1,6 +1,7 @@
 from MyMplCanvas import MyMplCanvas
 import NoaaApi
 import numpy
+import colors_and_globals
 """
   As of MatPlotLib 1.5 qt4_compat will be deprecated for the more general
   qt_compat. Pulling that in instead.
@@ -15,23 +16,14 @@ else:
   from PyQt4 import QtGui, QtCore
 
 ###########################################################################
-# Globals
-###########################################################################
-# Plot Colors
-GOESGoemagFieldFluxColors = ['#5789b0', '#366e9a', '#175e95', '#e85216']
-
-grid_color = '#aaaaaa'
-
-# Plot x-axis Angle
-plot_angle = "-45"
-
 # Specific Plot Canvas Objects
+###########################################################################
 class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
   data = ""
-  """
-    Initialize the updating object.
-  """
   def __init__(self, *args, **kwargs):
+    """
+      Initialize the updating object.
+    """
     MyMplCanvas.__init__(self, *args, **kwargs)
     timer = QtCore.QTimer(self)
     # Tie the "update_figure" function to the timer
@@ -55,7 +47,7 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     # Strip only the timestamp out of the array of date/time stamps, keep only a few
     loop = 0
     for stamp in self.data["datestamp"]:
-      if(loop % 7 == 0):
+      if(loop % colors_and_globals.label_thinner_2 == 0):
         self.data["datestamp"][loop] = stamp.split(sep=":")[1]
       else:
         self.data["datestamp"][loop] = ""
@@ -63,25 +55,25 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    hp    = self.axes.plot(data_points, self.data["data"]["Hp"]   , GOESGoemagFieldFluxColors[0])
+    hp,     = self.axes.plot(data_points, self.data["data"]["Hp"]   , colors_and_globals.GOESGoemagFieldFluxColors[0], label="East")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    he    = self.axes.plot(data_points, self.data["data"]["He"]   , GOESGoemagFieldFluxColors[1])
-    hn    = self.axes.plot(data_points, self.data["data"]["Hn"]   , GOESGoemagFieldFluxColors[2])
-    total = self.axes.plot(data_points, self.data["data"]["Total"], GOESGoemagFieldFluxColors[3])
+    he,     = self.axes.plot(data_points, self.data["data"]["He"]   , colors_and_globals.GOESGoemagFieldFluxColors[1], label="Down")
+    hn,     = self.axes.plot(data_points, self.data["data"]["Hn"]   , colors_and_globals.GOESGoemagFieldFluxColors[2], label="Axis")
+    total,  = self.axes.plot(data_points, self.data["data"]["Total"], colors_and_globals.GOESGoemagFieldFluxColors[3], label="Total")
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Change the plot tick labels
-    if(plot_angle[0] == "-"):
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=plot_angle, rotation_mode='anchor',
+    if(colors_and_globals.plot_angle[0] == "-"):
+      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
         horizontalalignment='left', fontsize=7)
     else:
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=plot_angle, rotation_mode='anchor',
+      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
         horizontalalignment='right', fontsize=7)
     # Change Plot to logarithmic
     self.axes.set_yscale("log")
     # Show all plot grids
-    self.axes.grid(True, which="both", color=grid_color)
+    self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
     # Show Units of y-axis
     self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=8)
     # Show Units of x-axis
@@ -93,7 +85,7 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     self.axes.set_title("Three Dimensions of Geomagnetic Field Flux", fontsize=10)
     # Create the Legend
     self.axes.legend(
-      ('East','Down','Axis', 'Total'),
+      handles=[hp, he, hn, total],
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='nT')
 
   def update_figure(self):
@@ -110,7 +102,7 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     # Strip only the timestamp out of the array of date/time stamps, keep only a few
     loop = 0
     for stamp in self.data["datestamp"]:
-      if(loop % 7 == 0):
+      if(loop % colors_and_globals.label_thinner_2 == 0):
         self.data["datestamp"][loop] = stamp.split(sep=":")[1]
       else:
         self.data["datestamp"][loop] = ""
@@ -118,27 +110,27 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    hp    = self.axes.plot(data_points, self.data["data"]["Hp"]   , GOESGoemagFieldFluxColors[0])
+    hp,     = self.axes.plot(data_points, self.data["data"]["Hp"]   , colors_and_globals.GOESGoemagFieldFluxColors[0], label="East")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    he    = self.axes.plot(data_points, self.data["data"]["He"]   , GOESGoemagFieldFluxColors[1])
-    hn    = self.axes.plot(data_points, self.data["data"]["Hn"]   , GOESGoemagFieldFluxColors[2])
-    total = self.axes.plot(data_points, self.data["data"]["Total"], GOESGoemagFieldFluxColors[3])
+    he,     = self.axes.plot(data_points, self.data["data"]["He"]   , colors_and_globals.GOESGoemagFieldFluxColors[1], label="Down")
+    hn,     = self.axes.plot(data_points, self.data["data"]["Hn"]   , colors_and_globals.GOESGoemagFieldFluxColors[2], label="Axis")
+    total,  = self.axes.plot(data_points, self.data["data"]["Total"], colors_and_globals.GOESGoemagFieldFluxColors[3], label="Total")
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Change the plot tick labels
-    if(plot_angle[0] == "-"):
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=plot_angle, rotation_mode='anchor',
+    if(colors_and_globals.plot_angle[0] == "-"):
+      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
         horizontalalignment='left', fontsize=7)
     else:
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=plot_angle, rotation_mode='anchor',
+      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
         horizontalalignment='right', fontsize=7)
     # Change Plot to logarithmic
     self.axes.set_yscale("log")
     # Show all plot grids
-    self.axes.grid(True, which="both", color=grid_color)
+    self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
     # Show Units of y-axis
-    self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=7)
+    self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=8)
     # Show Units of x-axis
     if(start_date != end_date):
       self.axes.set_xlabel(("UTC Time (%s - %s)"%(start_date,end_date)), fontsize=7)
@@ -148,7 +140,7 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     self.axes.set_title("Three Dimensions of Geomagnetic Field Flux", fontsize=10)
     # Create the Legend
     self.axes.legend(
-      ('East','Down','Axis', 'Total'),
+      handles=[hp, he, hn, total],
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='nT')
     # Redraw plots
     self.draw()

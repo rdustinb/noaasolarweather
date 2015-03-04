@@ -1,6 +1,7 @@
 from MyMplCanvas import MyMplCanvas
 import NoaaApi
 import numpy
+import colors_and_globals
 """
   As of MatPlotLib 1.5 qt4_compat will be deprecated for the more general
   qt_compat. Pulling that in instead.
@@ -15,20 +16,8 @@ else:
   from PyQt4 import QtGui, QtCore
 
 ###########################################################################
-# Globals
-###########################################################################
-# Plot Colors
-GOESRangeProtonFluxColors = ['#5789b0', '#366e9a', '#175e95',
-  '#ffdc75', '#efc549', '#e8b316',
-  '#ff9c75', '#ef7849', '#e85216',
-  '#0f4773', '#b2890c']
-
-grid_color = '#999999'
-
-# Plot x-axis Angle
-plot_angle = "-45"
-
 # Specific Plot Canvas Objects
+###########################################################################
 class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
   data = ""
   """
@@ -55,40 +44,43 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     start_date = self.data["datestamp"][0].split(sep=":")[0]
     # Get the start date
     end_date = self.data["datestamp"][-1].split(sep=":")[0]
-    # Strip only the timestamp out of the array of date/time stamps
+    # Strip only the timestamp out of the array of date/time stamps, keep only a few
     loop = 0
     for stamp in self.data["datestamp"]:
-      self.data["datestamp"][loop] = stamp.split(sep=":")[1]
+      if(loop % colors_and_globals.label_thinner_1 == 0):
+        self.data["datestamp"][loop] = stamp.split(sep=":")[1]
+      else:
+        self.data["datestamp"][loop] = ""
       loop += 1
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    p1 = self.axes.plot(data_points, self.data["data"]["0.7-4 MeV Protons"]  , GOESRangeProtonFluxColors[0])
+    p1, = self.axes.plot(data_points, self.data["data"]["0.7-4 MeV Protons"]    , colors_and_globals.GOESRangeProtonFluxColors[0] , label="0.7-4 MeV")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    p2 = self.axes.plot(data_points, self.data["data"]["4-9 MeV Protons"]    , GOESRangeProtonFluxColors[1])
-    p3 = self.axes.plot(data_points, self.data["data"]["9-15 MeV Protons"]   , GOESRangeProtonFluxColors[2])
-    p4 = self.axes.plot(data_points, self.data["data"]["15-40 MeV Protons"]  , GOESRangeProtonFluxColors[3])
-    p5 = self.axes.plot(data_points, self.data["data"]["38-82 MeV Protons"]  , GOESRangeProtonFluxColors[4])
-    p6 = self.axes.plot(data_points, self.data["data"]["84-200 MeV Protons"] , GOESRangeProtonFluxColors[5])
-    p7 = self.axes.plot(data_points, self.data["data"]["110-900 MeV Protons"], GOESRangeProtonFluxColors[6])
-    p8 = self.axes.plot(data_points, self.data["data"]["350-420 MeV Protons"], GOESRangeProtonFluxColors[7])
-    p9 = self.axes.plot(data_points, self.data["data"]["420-510 MeV Protons"], GOESRangeProtonFluxColors[8])
-    p10 = self.axes.plot(data_points, self.data["data"]["510-700 MeV Protons"], GOESRangeProtonFluxColors[9])
-    p11 = self.axes.plot(data_points, self.data["data"][">700 MeV Protons"]   , GOESRangeProtonFluxColors[10])
+    p2, = self.axes.plot(data_points, self.data["data"]["4-9 MeV Protons"]      , colors_and_globals.GOESRangeProtonFluxColors[1] , label="4-9 MeV")
+    p3, = self.axes.plot(data_points, self.data["data"]["9-15 MeV Protons"]     , colors_and_globals.GOESRangeProtonFluxColors[2] , label="9-15 MeV")
+    p4, = self.axes.plot(data_points, self.data["data"]["15-40 MeV Protons"]    , colors_and_globals.GOESRangeProtonFluxColors[3] , label="15-40 MeV")
+    p5, = self.axes.plot(data_points, self.data["data"]["38-82 MeV Protons"]    , colors_and_globals.GOESRangeProtonFluxColors[4] , label="38-82 MeV")
+    p6, = self.axes.plot(data_points, self.data["data"]["84-200 MeV Protons"]   , colors_and_globals.GOESRangeProtonFluxColors[5] , label="84-200 MeV")
+    p7, = self.axes.plot(data_points, self.data["data"]["110-900 MeV Protons"]  , colors_and_globals.GOESRangeProtonFluxColors[6] , label="110-900 MeV")
+    p8, = self.axes.plot(data_points, self.data["data"]["350-420 MeV Protons"]  , colors_and_globals.GOESRangeProtonFluxColors[7] , label="350-420 MeV")
+    p9, = self.axes.plot(data_points, self.data["data"]["420-510 MeV Protons"]  , colors_and_globals.GOESRangeProtonFluxColors[8] , label="420-510 MeV")
+    p10, = self.axes.plot(data_points, self.data["data"]["510-700 MeV Protons"] , colors_and_globals.GOESRangeProtonFluxColors[9] , label="510-700 MeV")
+    p11, = self.axes.plot(data_points, self.data["data"][">700 MeV Protons"]    , colors_and_globals.GOESRangeProtonFluxColors[10], label=">700 MeV")
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Change the plot tick labels
-    if(plot_angle[0] == "-"):
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=plot_angle, rotation_mode='anchor',
+    if(colors_and_globals.plot_angle[0] == "-"):
+      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
         horizontalalignment='left', fontsize=7)
     else:
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=plot_angle, rotation_mode='anchor',
+      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
         horizontalalignment='right', fontsize=7)
     # Change Plot to logarithmic
     self.axes.set_yscale("log")
     # Show all plot grids
-    self.axes.grid(True, which="both", color=grid_color)
+    self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
     # Show Units of y-axis
     self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=7)
     # Show Units of x-axis
@@ -100,9 +92,8 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     self.axes.set_title("Differential Energetic Proton Flux", fontsize=10)
     # Create the Legend
     self.axes.legend(
-      ('0.7-4','4-9','9-15','15-40','38-82','84-200',
-        '110-900','350-420','420-510','510-700','>700'),
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='MeV')
+      handles=[p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11],
+      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='Protons')
 
   def update_figure(self):
     """
@@ -115,40 +106,43 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     start_date = self.data["datestamp"][0].split(sep=":")[0]
     # Get the start date
     end_date = self.data["datestamp"][-1].split(sep=":")[0]
-    # Strip only the timestamp out of the array of date/time stamps
+    # Strip only the timestamp out of the array of date/time stamps, keep only a few
     loop = 0
     for stamp in self.data["datestamp"]:
-      self.data["datestamp"][loop] = stamp.split(sep=":")[1]
+      if(loop % colors_and_globals.label_thinner_1 == 0):
+        self.data["datestamp"][loop] = stamp.split(sep=":")[1]
+      else:
+        self.data["datestamp"][loop] = ""
       loop += 1
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    self.axes.plot(data_points, self.data["data"]["0.7-4 MeV Protons"]  , GOESRangeProtonFluxColors[0])
+    p1, = self.axes.plot(data_points, self.data["data"]["0.7-4 MeV Protons"]    , colors_and_globals.GOESRangeProtonFluxColors[0] , label="0.7-4 MeV")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    self.axes.plot(data_points, self.data["data"]["4-9 MeV Protons"]    , GOESRangeProtonFluxColors[1])
-    self.axes.plot(data_points, self.data["data"]["9-15 MeV Protons"]   , GOESRangeProtonFluxColors[2])
-    self.axes.plot(data_points, self.data["data"]["15-40 MeV Protons"]  , GOESRangeProtonFluxColors[3])
-    self.axes.plot(data_points, self.data["data"]["38-82 MeV Protons"]  , GOESRangeProtonFluxColors[4])
-    self.axes.plot(data_points, self.data["data"]["84-200 MeV Protons"] , GOESRangeProtonFluxColors[5])
-    self.axes.plot(data_points, self.data["data"]["110-900 MeV Protons"], GOESRangeProtonFluxColors[6])
-    self.axes.plot(data_points, self.data["data"]["350-420 MeV Protons"], GOESRangeProtonFluxColors[7])
-    self.axes.plot(data_points, self.data["data"]["420-510 MeV Protons"], GOESRangeProtonFluxColors[8])
-    self.axes.plot(data_points, self.data["data"]["510-700 MeV Protons"], GOESRangeProtonFluxColors[9])
-    self.axes.plot(data_points, self.data["data"][">700 MeV Protons"]   , GOESRangeProtonFluxColors[10])
+    p2, = self.axes.plot(data_points, self.data["data"]["4-9 MeV Protons"]      , colors_and_globals.GOESRangeProtonFluxColors[1] , label="4-9 MeV")
+    p3, = self.axes.plot(data_points, self.data["data"]["9-15 MeV Protons"]     , colors_and_globals.GOESRangeProtonFluxColors[2] , label="9-15 MeV")
+    p4, = self.axes.plot(data_points, self.data["data"]["15-40 MeV Protons"]    , colors_and_globals.GOESRangeProtonFluxColors[3] , label="15-40 MeV")
+    p5, = self.axes.plot(data_points, self.data["data"]["38-82 MeV Protons"]    , colors_and_globals.GOESRangeProtonFluxColors[4] , label="38-82 MeV")
+    p6, = self.axes.plot(data_points, self.data["data"]["84-200 MeV Protons"]   , colors_and_globals.GOESRangeProtonFluxColors[5] , label="84-200 MeV")
+    p7, = self.axes.plot(data_points, self.data["data"]["110-900 MeV Protons"]  , colors_and_globals.GOESRangeProtonFluxColors[6] , label="110-900 MeV")
+    p8, = self.axes.plot(data_points, self.data["data"]["350-420 MeV Protons"]  , colors_and_globals.GOESRangeProtonFluxColors[7] , label="350-420 MeV")
+    p9, = self.axes.plot(data_points, self.data["data"]["420-510 MeV Protons"]  , colors_and_globals.GOESRangeProtonFluxColors[8] , label="420-510 MeV")
+    p10, = self.axes.plot(data_points, self.data["data"]["510-700 MeV Protons"] , colors_and_globals.GOESRangeProtonFluxColors[9] , label="510-700 MeV")
+    p11, = self.axes.plot(data_points, self.data["data"][">700 MeV Protons"]    , colors_and_globals.GOESRangeProtonFluxColors[10], label=">700 MeV")
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Change the plot tick labels
-    if(plot_angle[0] == "-"):
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=plot_angle, rotation_mode='anchor',
+    if(colors_and_globals.plot_angle[0] == "-"):
+      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
         horizontalalignment='left', fontsize=7)
     else:
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=plot_angle, rotation_mode='anchor',
+      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
         horizontalalignment='right', fontsize=7)
     # Change Plot to logarithmic
     self.axes.set_yscale("log")
     # Show all plot grids
-    self.axes.grid(True, which="both", color=grid_color)
+    self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
     # Show Units of y-axis
     self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=7)
     # Show Units of x-axis
@@ -160,8 +154,7 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     self.axes.set_title("Differential Energetic Proton Flux", fontsize=10)
     # Create the Legend
     self.axes.legend(
-      ('0.7-4','4-9','9-15','15-40','38-82','84-200',
-        '110-900','350-420','420-510','510-700','>700'),
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='MeV')
+      handles=[p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11],
+      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='Protons')
     # Redraw plots
     self.draw()

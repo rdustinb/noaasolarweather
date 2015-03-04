@@ -1,6 +1,7 @@
 from MyMplCanvas import MyMplCanvas
 import NoaaApi
 import numpy
+import colors_and_globals
 """
   As of MatPlotLib 1.5 qt4_compat will be deprecated for the more general
   qt_compat. Pulling that in instead.
@@ -15,26 +16,14 @@ else:
   from PyQt4 import QtGui, QtCore
 
 ###########################################################################
-# Globals
-###########################################################################
-# Plot Colors
-GOESDiscreteParticleFluxColors = [
-  '#ffbb84', '#faa15a', '#e68232', '#c36113', '#9b4602',
-  '#57ba85', '#34a468', '#159952', '#0a793e', '#005e2b'
-  ]
-
-grid_color = '#999999'
-
-# Plot x-axis Angle
-plot_angle = "-45"
-
 # Specific Plot Canvas Objects
+###########################################################################
 class MyGOESDiscreteParticleFlux(MyMplCanvas):
   data = ""
-  """
-    Initialize the updating object.
-  """
   def __init__(self, *args, **kwargs):
+    """
+      Initialize the updating object.
+    """
     MyMplCanvas.__init__(self, *args, **kwargs)
     timer = QtCore.QTimer(self)
     # Tie the "update_figure" function to the timer
@@ -58,7 +47,7 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     # Strip only the timestamp out of the array of date/time stamps, keep only a few
     loop = 0
     for stamp in self.data["datestamp"]:
-      if(loop % 7 == 0):
+      if(loop % colors_and_globals.label_thinner_2 == 0):
         self.data["datestamp"][loop] = stamp.split(sep=":")[1]
       else:
         self.data["datestamp"][loop] = ""
@@ -66,31 +55,31 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    Protons_95_keV,     = self.axes.plot(data_points, self.data["data"]["95 keV Protons"]   , GOESDiscreteParticleFluxColors[0], label="95 keV")
+    Protons_95_keV,     = self.axes.plot(data_points, self.data["data"]["95 keV Protons"]   , colors_and_globals.GOESDiscreteParticleFluxColors[0], label="95 keV")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    Protons_140_keV,    = self.axes.plot(data_points, self.data["data"]["140 keV Protons"]  , GOESDiscreteParticleFluxColors[1], label="140 keV")
-    Protons_210_keV,    = self.axes.plot(data_points, self.data["data"]["210 keV Protons"]  , GOESDiscreteParticleFluxColors[2], label="210 keV")
-    Protons_300_keV,    = self.axes.plot(data_points, self.data["data"]["300 keV Protons"]  , GOESDiscreteParticleFluxColors[3], label="300 keV")
-    Protons_475_keV,    = self.axes.plot(data_points, self.data["data"]["475 keV Protons"]  , GOESDiscreteParticleFluxColors[4], label="475 keV")
-    Electrons_40_keV,   = self.axes.plot(data_points, self.data["data"]["40 keV Electrons"] , GOESDiscreteParticleFluxColors[5], label="40 keV")
-    Electrons_75_keV,   = self.axes.plot(data_points, self.data["data"]["75 keV Electrons"] , GOESDiscreteParticleFluxColors[6], label="75 keV")
-    Electrons_150_keV,  = self.axes.plot(data_points, self.data["data"]["150 keV Electrons"], GOESDiscreteParticleFluxColors[7], label="150 keV")
-    Electrons_275_keV,  = self.axes.plot(data_points, self.data["data"]["275 keV Electrons"], GOESDiscreteParticleFluxColors[8], label="275 keV")
-    Electrons_475_keV,  = self.axes.plot(data_points, self.data["data"]["475 keV Electrons"], GOESDiscreteParticleFluxColors[9], label="475 keV")
+    Protons_140_keV,    = self.axes.plot(data_points, self.data["data"]["140 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[1], label="140 keV")
+    Protons_210_keV,    = self.axes.plot(data_points, self.data["data"]["210 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[2], label="210 keV")
+    Protons_300_keV,    = self.axes.plot(data_points, self.data["data"]["300 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[3], label="300 keV")
+    Protons_475_keV,    = self.axes.plot(data_points, self.data["data"]["475 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[4], label="475 keV")
+    Electrons_40_keV,   = self.axes.plot(data_points, self.data["data"]["40 keV Electrons"] , colors_and_globals.GOESDiscreteParticleFluxColors[5], label="40 keV")
+    Electrons_75_keV,   = self.axes.plot(data_points, self.data["data"]["75 keV Electrons"] , colors_and_globals.GOESDiscreteParticleFluxColors[6], label="75 keV")
+    Electrons_150_keV,  = self.axes.plot(data_points, self.data["data"]["150 keV Electrons"], colors_and_globals.GOESDiscreteParticleFluxColors[7], label="150 keV")
+    Electrons_275_keV,  = self.axes.plot(data_points, self.data["data"]["275 keV Electrons"], colors_and_globals.GOESDiscreteParticleFluxColors[8], label="275 keV")
+    Electrons_475_keV,  = self.axes.plot(data_points, self.data["data"]["475 keV Electrons"], colors_and_globals.GOESDiscreteParticleFluxColors[9], label="475 keV")
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Change the plot tick labels
-    if(plot_angle[0] == "-"):
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=plot_angle, rotation_mode='anchor',
+    if(colors_and_globals.plot_angle[0] == "-"):
+      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
         horizontalalignment='left', fontsize=7)
     else:
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=plot_angle, rotation_mode='anchor',
+      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
         horizontalalignment='right', fontsize=7)
     # Change Plot to logarithmic
     self.axes.set_yscale("log")
     # Show all plot grids
-    self.axes.grid(True, which="both", color=grid_color)
+    self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
     # Show Units of y-axis
     self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=8)
     # Show Units of x-axis
@@ -125,7 +114,7 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     # Strip only the timestamp out of the array of date/time stamps, keep only a few
     loop = 0
     for stamp in self.data["datestamp"]:
-      if(loop % 7 == 0):
+      if(loop % colors_and_globals.label_thinner_2 == 0):
         self.data["datestamp"][loop] = stamp.split(sep=":")[1]
       else:
         self.data["datestamp"][loop] = ""
@@ -133,31 +122,31 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    Protons_95_keV,     = self.axes.plot(data_points, self.data["data"]["95 keV Protons"]   , GOESDiscreteParticleFluxColors[0], label="95 keV")
+    Protons_95_keV,     = self.axes.plot(data_points, self.data["data"]["95 keV Protons"]   , colors_and_globals.GOESDiscreteParticleFluxColors[0], label="95 keV")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    Protons_140_keV,    = self.axes.plot(data_points, self.data["data"]["140 keV Protons"]  , GOESDiscreteParticleFluxColors[1], label="140 keV")
-    Protons_210_keV,    = self.axes.plot(data_points, self.data["data"]["210 keV Protons"]  , GOESDiscreteParticleFluxColors[2], label="210 keV")
-    Protons_300_keV,    = self.axes.plot(data_points, self.data["data"]["300 keV Protons"]  , GOESDiscreteParticleFluxColors[3], label="300 keV")
-    Protons_475_keV,    = self.axes.plot(data_points, self.data["data"]["475 keV Protons"]  , GOESDiscreteParticleFluxColors[4], label="475 keV")
-    Electrons_40_keV,   = self.axes.plot(data_points, self.data["data"]["40 keV Electrons"] , GOESDiscreteParticleFluxColors[5], label="40 keV")
-    Electrons_75_keV,   = self.axes.plot(data_points, self.data["data"]["75 keV Electrons"] , GOESDiscreteParticleFluxColors[6], label="75 keV")
-    Electrons_150_keV,  = self.axes.plot(data_points, self.data["data"]["150 keV Electrons"], GOESDiscreteParticleFluxColors[7], label="150 keV")
-    Electrons_275_keV,  = self.axes.plot(data_points, self.data["data"]["275 keV Electrons"], GOESDiscreteParticleFluxColors[8], label="275 keV")
-    Electrons_475_keV,  = self.axes.plot(data_points, self.data["data"]["475 keV Electrons"], GOESDiscreteParticleFluxColors[9], label="475 keV")
+    Protons_140_keV,    = self.axes.plot(data_points, self.data["data"]["140 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[1], label="140 keV")
+    Protons_210_keV,    = self.axes.plot(data_points, self.data["data"]["210 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[2], label="210 keV")
+    Protons_300_keV,    = self.axes.plot(data_points, self.data["data"]["300 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[3], label="300 keV")
+    Protons_475_keV,    = self.axes.plot(data_points, self.data["data"]["475 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[4], label="475 keV")
+    Electrons_40_keV,   = self.axes.plot(data_points, self.data["data"]["40 keV Electrons"] , colors_and_globals.GOESDiscreteParticleFluxColors[5], label="40 keV")
+    Electrons_75_keV,   = self.axes.plot(data_points, self.data["data"]["75 keV Electrons"] , colors_and_globals.GOESDiscreteParticleFluxColors[6], label="75 keV")
+    Electrons_150_keV,  = self.axes.plot(data_points, self.data["data"]["150 keV Electrons"], colors_and_globals.GOESDiscreteParticleFluxColors[7], label="150 keV")
+    Electrons_275_keV,  = self.axes.plot(data_points, self.data["data"]["275 keV Electrons"], colors_and_globals.GOESDiscreteParticleFluxColors[8], label="275 keV")
+    Electrons_475_keV,  = self.axes.plot(data_points, self.data["data"]["475 keV Electrons"], colors_and_globals.GOESDiscreteParticleFluxColors[9], label="475 keV")
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Change the plot tick labels
-    if(plot_angle[0] == "-"):
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=plot_angle, rotation_mode='anchor',
+    if(colors_and_globals.plot_angle[0] == "-"):
+      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
         horizontalalignment='left', fontsize=7)
     else:
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=plot_angle, rotation_mode='anchor',
+      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
         horizontalalignment='right', fontsize=7)
     # Change Plot to logarithmic
     self.axes.set_yscale("log")
     # Show all plot grids
-    self.axes.grid(True, which="both", color=grid_color)
+    self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
     # Show Units of y-axis
     self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=7)
     # Show Units of x-axis
