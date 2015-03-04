@@ -12,9 +12,9 @@
 ###########################################################################
 # Version of the application
 ###########################################################################
-progversion = "0.1"
-progbuild = "7"
-progdate = "20150223"
+progversion = "0.2"
+progbuild = "1"
+progdate = "20150303"
 
 ###########################################################################
 # Fonts, Default Font Size
@@ -83,6 +83,8 @@ class ApplicationWindow(QtGui.QMainWindow):
     h2.addWidget(GOESGoemagFieldFlux)
     GOESDiscreteParticleFlux = MyGOESDiscreteParticleFlux(self.main_widget, width=5, height=4, dpi=100)
     h3.addWidget(GOESDiscreteParticleFlux)
+    GOESRangeParticleFlux = MyGOESRangeParticleFlux(self.main_widget, width=5, height=4, dpi=100)
+    h1.addWidget(GOESRangeParticleFlux)
 
     self.main_widget.setFocus()
     self.setCentralWidget(self.main_widget)
@@ -117,6 +119,7 @@ Date: %s"""%(progversion,progbuild,progdate))
 from DifferentialEnergeticProtonFlux import MyGOESRangeProtonFluxCanvas
 from GeomagneticField import MyGOESGoemagFieldFluxCanvas
 from DiscreteParticleFlux import MyGOESDiscreteParticleFlux
+from SolarParticleFlux import MyGOESRangeParticleFlux
 
 ###########################################################################
 # Run the Application
