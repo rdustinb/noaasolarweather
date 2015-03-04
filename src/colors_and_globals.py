@@ -6,19 +6,48 @@ label_thinner_1 = 1
 
 label_thinner_2 = 7
 
-GOESRangeProtonFluxColors = ['#5789b0', '#366e9a', '#175e95',
-  '#ffdc75', '#efc549', '#e8b316',
-  '#ff9c75', '#ef7849', '#e85216',
-  '#0f4773', '#b2890c']
+GOESRangeProtonFluxColors = [
+  '#ffd3aa',
+  '#aa7039',
+  '#552900',
+  '#cfd369',
+  '#a4a938',
+  '#515400',
+  '#6a959d',
+  '#255e69',
+  '#012c34',
+  '#9974aa',
+  '#5b2971']
 
-GOESGoemagFieldFluxColors = ['#5789b0', '#366e9a', '#175e95', '#e85216']
+GOESGoemagFieldFluxColors = [
+  '#aa7039',
+  '#a4a938',
+  '#255e69',
+  '#5b2971']
 
 GOESDiscreteParticleFluxColors = [
-  '#ffbb84', '#faa15a', '#e68232', '#c36113', '#9b4602',
-  '#57ba85', '#34a468', '#159952', '#0a793e', '#005e2b'
-  ]
+  '#ffd3aa',
+  '#aa7039',
+  '#552900',
+  '#cfd369',
+  '#a4a938',
+  '#515400',
+  '#6a959d',
+  '#255e69',
+  '#012c34',
+  '#9974aa']
 
 GOESRangeParticleFluxColors = [
-  '#6a86ba', '#44649f', '#343499', '#2b4f92', '#193a78', '#0a285f',
-  '#57ba85', '#34a468', '#159952'
-  ]
+  '#ffd3aa',
+  '#aa7039',
+  '#552900',
+  '#cfd369',
+  '#a4a938',
+  '#515400',
+  '#6a959d',
+  '#255e69',
+  '#012c34']
+
+GOESXrayFluxColors = [
+  '#aa7039',
+  '#255e69']

@@ -82,11 +82,11 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     else:
       self.axes.set_xlabel(("UTC Time (%s)"%(end_date)), fontsize=7)
     # Set the Plot Title
-    self.axes.set_title("Three Dimensions of Geomagnetic Field Flux", fontsize=10)
+    self.axes.set_title("Geomagnetic Vector Field Flux", fontsize=10)
     # Create the Legend
     self.axes.legend(
       handles=[hp, he, hn, total],
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='nT')
+      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='H Vector')
 
   def update_figure(self):
     """
@@ -137,10 +137,10 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     else:
       self.axes.set_xlabel(("UTC Time (%s)"%(end_date)), fontsize=7)
     # Set the Plot Title
-    self.axes.set_title("Three Dimensions of Geomagnetic Field Flux", fontsize=10)
+    self.axes.set_title("Geomagnetic Vector Field Flux", fontsize=10)
     # Create the Legend
     self.axes.legend(
       handles=[hp, he, hn, total],
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='nT')
+      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='H Vector')
     # Redraw plots
     self.draw()

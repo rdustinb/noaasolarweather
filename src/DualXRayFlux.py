@@ -18,12 +18,12 @@ else:
 ###########################################################################
 # Specific Plot Canvas Objects
 ###########################################################################
-class MyGOESDiscreteParticleFlux(MyMplCanvas):
+class MyGOESXrayFlux(MyMplCanvas):
   data = ""
+  """
+    Initialize the updating object.
+  """
   def __init__(self, *args, **kwargs):
-    """
-      Initialize the updating object.
-    """
     MyMplCanvas.__init__(self, *args, **kwargs)
     timer = QtCore.QTimer(self)
     # Tie the "update_figure" function to the timer
@@ -37,7 +37,7 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     """
       Initial data plot.
     """
-    self.data = NoaaApi.getGOESDiscreteParticleFlux()
+    self.data = NoaaApi.getGOESXrayFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
     # Get the start date
@@ -55,18 +55,10 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    Protons_95_keV,     = self.axes.plot(data_points, self.data["data"]["95 keV Protons"]   , colors_and_globals.GOESDiscreteParticleFluxColors[0], label="95 keV")
+    short_xray, = self.axes.plot(data_points, self.data["data"]["0.05-0.4 nm"], colors_and_globals.GOESXrayFluxColors[0], label="0.05-0.4 nm")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    Protons_140_keV,    = self.axes.plot(data_points, self.data["data"]["140 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[1], label="140 keV")
-    Protons_210_keV,    = self.axes.plot(data_points, self.data["data"]["210 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[2], label="210 keV")
-    Protons_300_keV,    = self.axes.plot(data_points, self.data["data"]["300 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[3], label="300 keV")
-    Protons_475_keV,    = self.axes.plot(data_points, self.data["data"]["475 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[4], label="475 keV")
-    Electrons_40_keV,   = self.axes.plot(data_points, self.data["data"]["40 keV Electrons"] , colors_and_globals.GOESDiscreteParticleFluxColors[5], label="40 keV")
-    Electrons_75_keV,   = self.axes.plot(data_points, self.data["data"]["75 keV Electrons"] , colors_and_globals.GOESDiscreteParticleFluxColors[6], label="75 keV")
-    Electrons_150_keV,  = self.axes.plot(data_points, self.data["data"]["150 keV Electrons"], colors_and_globals.GOESDiscreteParticleFluxColors[7], label="150 keV")
-    Electrons_275_keV,  = self.axes.plot(data_points, self.data["data"]["275 keV Electrons"], colors_and_globals.GOESDiscreteParticleFluxColors[8], label="275 keV")
-    Electrons_475_keV,  = self.axes.plot(data_points, self.data["data"]["475 keV Electrons"], colors_and_globals.GOESDiscreteParticleFluxColors[9], label="475 keV")
+    long_xray,  = self.axes.plot(data_points, self.data["data"]["0.1-0.8 nm"] , colors_and_globals.GOESXrayFluxColors[1], label="0.1-0.8 nm")
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Change the plot tick labels
@@ -88,23 +80,17 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     else:
       self.axes.set_xlabel(("UTC Time (%s)"%(end_date)), fontsize=7)
     # Set the Plot Title
-    self.axes.set_title("Discrete Particle Flux", fontsize=10)
+    self.axes.set_title("Differential xRay Flux", fontsize=10)
     # Create the Legend
     proton_legend = self.axes.legend(
-      handles=[Protons_95_keV,Protons_140_keV,Protons_210_keV,Protons_300_keV,Protons_475_keV],
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='Protons')
-    electron_legend = self.axes.legend(
-      handles=[Electrons_40_keV,Electrons_75_keV,Electrons_150_keV,Electrons_275_keV,Electrons_475_keV],
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 0.61), title='Electrons')
-    # Add Legends to plot
-    self.axes.add_artist(proton_legend)
-    self.axes.add_artist(electron_legend)
+      handles=[short_xray,long_xray],
+      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='xRay')
 
   def update_figure(self):
     """
       This is the actual timer updating method.
     """
-    self.data = NoaaApi.getGOESDiscreteParticleFlux()
+    self.data = NoaaApi.getGOESXrayFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
     # Get the start date
@@ -122,18 +108,10 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    Protons_95_keV,     = self.axes.plot(data_points, self.data["data"]["95 keV Protons"]   , colors_and_globals.GOESDiscreteParticleFluxColors[0], label="95 keV")
+    short_xray, = self.axes.plot(data_points, self.data["data"]["0.05-0.4 nm"], colors_and_globals.GOESXrayFluxColors[0], label="0.05-0.4 nm")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    Protons_140_keV,    = self.axes.plot(data_points, self.data["data"]["140 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[1], label="140 keV")
-    Protons_210_keV,    = self.axes.plot(data_points, self.data["data"]["210 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[2], label="210 keV")
-    Protons_300_keV,    = self.axes.plot(data_points, self.data["data"]["300 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[3], label="300 keV")
-    Protons_475_keV,    = self.axes.plot(data_points, self.data["data"]["475 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[4], label="475 keV")
-    Electrons_40_keV,   = self.axes.plot(data_points, self.data["data"]["40 keV Electrons"] , colors_and_globals.GOESDiscreteParticleFluxColors[5], label="40 keV")
-    Electrons_75_keV,   = self.axes.plot(data_points, self.data["data"]["75 keV Electrons"] , colors_and_globals.GOESDiscreteParticleFluxColors[6], label="75 keV")
-    Electrons_150_keV,  = self.axes.plot(data_points, self.data["data"]["150 keV Electrons"], colors_and_globals.GOESDiscreteParticleFluxColors[7], label="150 keV")
-    Electrons_275_keV,  = self.axes.plot(data_points, self.data["data"]["275 keV Electrons"], colors_and_globals.GOESDiscreteParticleFluxColors[8], label="275 keV")
-    Electrons_475_keV,  = self.axes.plot(data_points, self.data["data"]["475 keV Electrons"], colors_and_globals.GOESDiscreteParticleFluxColors[9], label="475 keV")
+    long_xray,  = self.axes.plot(data_points, self.data["data"]["0.1-0.8 nm"] , colors_and_globals.GOESXrayFluxColors[1], label="0.1-0.8 nm")
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Change the plot tick labels
@@ -148,23 +126,17 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     # Show all plot grids
     self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
     # Show Units of y-axis
-    self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=7)
+    self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=8)
     # Show Units of x-axis
     if(start_date != end_date):
       self.axes.set_xlabel(("UTC Time (%s - %s)"%(start_date,end_date)), fontsize=7)
     else:
       self.axes.set_xlabel(("UTC Time (%s)"%(end_date)), fontsize=7)
     # Set the Plot Title
-    self.axes.set_title("Discrete Particle Flux", fontsize=10)
+    self.axes.set_title("Differential xRay Flux", fontsize=10)
     # Create the Legend
     proton_legend = self.axes.legend(
-      handles=[Protons_95_keV,Protons_140_keV,Protons_210_keV,Protons_300_keV,Protons_475_keV],
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='Protons')
-    electron_legend = self.axes.legend(
-      handles=[Electrons_40_keV,Electrons_75_keV,Electrons_150_keV,Electrons_275_keV,Electrons_475_keV],
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 0.61), title='Electrons')
-    # Add Legends to plot
-    self.axes.add_artist(proton_legend)
-    self.axes.add_artist(electron_legend)
+      handles=[short_xray,long_xray],
+      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='xRay')
     # Redraw plots
     self.draw()

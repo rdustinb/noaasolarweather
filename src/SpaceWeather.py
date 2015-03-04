@@ -85,6 +85,8 @@ class ApplicationWindow(QtGui.QMainWindow):
     h3.addWidget(GOESDiscreteParticleFlux)
     GOESRangeParticleFlux = MyGOESRangeParticleFlux(self.main_widget, width=5, height=4, dpi=100)
     h1.addWidget(GOESRangeParticleFlux)
+    GOESXrayFlux = MyGOESXrayFlux(self.main_widget, width=5, height=4, dpi=100)
+    h2.addWidget(GOESXrayFlux)
 
     self.main_widget.setFocus()
     self.setCentralWidget(self.main_widget)
@@ -120,6 +122,7 @@ from DifferentialEnergeticProtonFlux import MyGOESRangeProtonFluxCanvas
 from GeomagneticField import MyGOESGoemagFieldFluxCanvas
 from DiscreteParticleFlux import MyGOESDiscreteParticleFlux
 from SolarParticleFlux import MyGOESRangeParticleFlux
+from DualXRayFlux import MyGOESXrayFlux
 
 ###########################################################################
 # Run the Application
