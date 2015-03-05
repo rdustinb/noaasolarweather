@@ -86,7 +86,7 @@ def getGOESRangeProtonFlux():
   try:
     fh = openUrl(URL)
   except:
-    print("NoaaApi.getGOESRangeProtonFlux > Error opening File Handle, retrying...")
+    print("NoaaApi.getGOESRangeProtonFlux > Timeout while pulling NOAA Data...")
     fh = ""
     fh = openUrl(URL)
   # Create the empty data structure
@@ -159,7 +159,8 @@ def getGOESGoemagFieldFlux():
   try:
     fh = openUrl(URL)
   except:
-    print("NoaaApi.getGOESGoemagFieldFlux > Error opening File Handle, retrying...")
+    print("NoaaApi.getGOESGoemagFieldFlux > Timeout while pulling NOAA Data...")
+    fh = ""
     fh = openUrl(URL)
   # Create the empty data structure
   data_ret = {
@@ -217,7 +218,8 @@ def getGOESDiscreteParticleFlux():
   try:
     fh = openUrl(URL)
   except:
-    print("NoaaApi.getGOESDiscreteParticleFlux > Error opening File Handle, retrying...")
+    print("NoaaApi.getGOESDiscreteParticleFlux > Timeout while pulling NOAA Data...")
+    fh = ""
     fh = openUrl(URL)
   # Create the empty data structure
   data_ret = {
@@ -289,7 +291,8 @@ def getGOESRangeParticleFlux():
   try:
     fh = openUrl(URL)
   except:
-    print("NoaaApi.getGOESRangeParticleFlux > Error opening File Handle, retrying...")
+    print("NoaaApi.getGOESRangeParticleFlux > Timeout while pulling NOAA Data...")
+    fh = ""
     fh = openUrl(URL)
   # Create the empty data structure
   data_ret = {
@@ -357,7 +360,8 @@ def getGOESXrayFlux():
   try:
     fh = openUrl(URL)
   except:
-    print("NoaaApi.getGOESXrayFlux > Error opening File Handle, retrying...")
+    print("NoaaApi.getGOESXrayFlux > Timeout while pulling NOAA Data...")
+    fh = ""
     fh = openUrl(URL)
   # Create the empty data structure
   data_ret = {
@@ -426,7 +430,7 @@ def getDiffElecProtFlux():
   try:
     fh = openUrl(URL)
   except:
-    print("NoaaApi.getDiffElecProtFlux > Error opening File Handle, retrying...")
+    print("NoaaApi.getDiffElecProtFlux > Timeout while pulling NOAA Data...")
     fh = ""
     fh = openUrl(URL)
   # Create the empty data structure
@@ -494,7 +498,7 @@ def getSolarIsotopeSpectrometer():
   try:
     fh = openUrl(URL)
   except:
-    print("NoaaApi.getSolarIsotopeSpectrometer > Error opening File Handle, retrying...")
+    print("NoaaApi.getSolarIsotopeSpectrometer > Timeout while pulling NOAA Data...")
     fh = ""
     fh = openUrl(URL)
   # Create the empty data structure
@@ -555,7 +559,7 @@ def getInterplanetMagField():
   try:
     fh = openUrl(URL)
   except:
-    print("NoaaApi.getInterplanetMagField > Error opening File Handle, retrying...")
+    print("NoaaApi.getInterplanetMagField > Timeout while pulling NOAA Data...")
     fh = ""
     fh = openUrl(URL)
   # Create the empty data structure
@@ -625,7 +629,7 @@ def getSolarPlasma():
   try:
     fh = openUrl(URL)
   except:
-    print("NoaaApi.getSolarPlasma > Error opening File Handle, retrying...")
+    print("NoaaApi.getSolarPlasma > Timeout while pulling NOAA Data...")
     fh = ""
     fh = openUrl(URL)
   # Create the empty data structure
