@@ -124,14 +124,14 @@ class MyGOESRangeParticleFlux(MyMplCanvas):
     Protons_gt1_MeV,      = self.axes.plot(data_points, self.data["data"][">1 Mev Protons"]     , colors_and_globals.GOESRangeParticleFluxColors[0], label=">1 Mev")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    Protons_gt5_MeV,      = self.axes.plot(data_points, self.data["data"][">5 Mev Protons"]     , colors_and_globals.OESRangeParticleFluxColors[1], label=">5 Mev")
-    Protons_gt10_MeV,     = self.axes.plot(data_points, self.data["data"][">10 Mev Protons"]    , colors_and_globals.OESRangeParticleFluxColors[2], label=">10 Mev")
-    Protons_gt30_MeV,     = self.axes.plot(data_points, self.data["data"][">30 Mev Protons"]    , colors_and_globals.OESRangeParticleFluxColors[3], label=">30 Mev")
-    Protons_gt50_MeV,     = self.axes.plot(data_points, self.data["data"][">50 Mev Protons"]    , colors_and_globals.OESRangeParticleFluxColors[4], label=">50 Mev")
-    Protons_gt100_MeV,    = self.axes.plot(data_points, self.data["data"][">100 Mev Protons"]   , colors_and_globals.OESRangeParticleFluxColors[5], label=">100 Mev")
-    Electrons_gt0_8_MeV,  = self.axes.plot(data_points, self.data["data"][">0.8 Mev Electrons"] , colors_and_globals.OESRangeParticleFluxColors[6], label=">0.8 Mev")
-    Electrons_gt2_0_MeV,  = self.axes.plot(data_points, self.data["data"][">2.0 Mev Electrons"] , colors_and_globals.OESRangeParticleFluxColors[7], label=">2.0 Mev")
-    Electrons_gt4_0_MeV,  = self.axes.plot(data_points, self.data["data"][">4.0 Mev Electrons"] , colors_and_globals.OESRangeParticleFluxColors[8], label=">4.0 Mev")
+    Protons_gt5_MeV,      = self.axes.plot(data_points, self.data["data"][">5 Mev Protons"]     , colors_and_globals.GOESRangeParticleFluxColors[1], label=">5 Mev")
+    Protons_gt10_MeV,     = self.axes.plot(data_points, self.data["data"][">10 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[2], label=">10 Mev")
+    Protons_gt30_MeV,     = self.axes.plot(data_points, self.data["data"][">30 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[3], label=">30 Mev")
+    Protons_gt50_MeV,     = self.axes.plot(data_points, self.data["data"][">50 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[4], label=">50 Mev")
+    Protons_gt100_MeV,    = self.axes.plot(data_points, self.data["data"][">100 Mev Protons"]   , colors_and_globals.GOESRangeParticleFluxColors[5], label=">100 Mev")
+    Electrons_gt0_8_MeV,  = self.axes.plot(data_points, self.data["data"][">0.8 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[6], label=">0.8 Mev")
+    Electrons_gt2_0_MeV,  = self.axes.plot(data_points, self.data["data"][">2.0 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[7], label=">2.0 Mev")
+    Electrons_gt4_0_MeV,  = self.axes.plot(data_points, self.data["data"][">4.0 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[8], label=">4.0 Mev")
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Change the plot tick labels
