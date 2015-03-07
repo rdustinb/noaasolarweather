@@ -51,3 +51,21 @@ GOESRangeParticleFluxColors = [
 GOESXrayFluxColors = [
   '#aa7039',
   '#255e69']
+
+ACEDiffElecProtFluxColors = [
+  '#ffd3aa',
+  '#aa7039',
+  '#552900',
+  '#cfd369',
+  '#a4a938',
+  '#515400',
+  '#6a959d']
+
+ACEIntegralProtonFluxColors = [
+  '#aa7039',
+  '#255e69']
+
+ACESolarWindPlasmaColors = [
+  '#aa7039',
+  '#a4a938',
+  '#255e69']
