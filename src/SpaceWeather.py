@@ -10,20 +10,10 @@
   http://matplotlib.org/examples/index.html
 """
 ###########################################################################
-# Version of the application
-###########################################################################
-progversion = "0.2"
-progbuild = "2"
-progdate = "20150303"
-
-###########################################################################
-# Fonts, Default Font Size
-###########################################################################
-font = {'size'   : 7}
-
-###########################################################################
 # Imports
 ###########################################################################
+# Pull in the global values
+import colors_and_globals
 # Custom backend Libraries
 import NoaaApi
 # Plotting Libraries
@@ -113,14 +103,14 @@ class ApplicationWindow(QtGui.QMainWindow):
       (
 """Space Weather Application
 ver %s
-2015 RDustinB"""%progversion)
+2015 RDustinB"""%colors_and_globals.progversion)
     )
   def version(self):
     QtGui.QMessageBox.about(self, "Version",
       (
 """Version: %s
 Build: %s
-Date: %s"""%(progversion,progbuild,progdate))
+Date: %s"""%(colors_and_globals.progversion,colors_and_globals.progbuild,colors_and_globals.progdate))
     )
 
 ###########################################################################
@@ -138,7 +128,7 @@ from ACESolarWindPlasma import MySolarWindPlasma
 ###########################################################################
 # Run the Application
 ###########################################################################
-matplotlib.rc('font', **font)
+matplotlib.rc('font', **colors_and_globals.font)
 qApp = QtGui.QApplication(sys.argv)
 aw = ApplicationWindow()
 aw.setWindowTitle("Space Weather Grapher")
