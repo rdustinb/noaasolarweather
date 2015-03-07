@@ -55,10 +55,10 @@ class MyGOESXrayFlux(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    short_xray, = self.axes.plot(data_points, self.data["data"]["0.05-0.4 nm"], colors_and_globals.GOESXrayFluxColors[0], label="0.05-0.4 nm")
+    short_xray, = self.axes.plot(data_points, self.data["data"]["0.05-0.4 nm"], colors_and_globals.GOESXrayFluxColors[0], label="0.05-0.4")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    long_xray,  = self.axes.plot(data_points, self.data["data"]["0.1-0.8 nm"] , colors_and_globals.GOESXrayFluxColors[1], label="0.1-0.8 nm")
+    long_xray,  = self.axes.plot(data_points, self.data["data"]["0.1-0.8 nm"] , colors_and_globals.GOESXrayFluxColors[1], label="0.1-0.8")
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Change the plot tick labels
@@ -84,7 +84,7 @@ class MyGOESXrayFlux(MyMplCanvas):
     # Create the Legend
     proton_legend = self.axes.legend(
       handles=[short_xray,long_xray],
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='xRay')
+      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='nm')
 
   def update_figure(self):
     """
@@ -108,10 +108,10 @@ class MyGOESXrayFlux(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    short_xray, = self.axes.plot(data_points, self.data["data"]["0.05-0.4 nm"], colors_and_globals.GOESXrayFluxColors[0], label="0.05-0.4 nm")
+    short_xray, = self.axes.plot(data_points, self.data["data"]["0.05-0.4 nm"], colors_and_globals.GOESXrayFluxColors[0], label="0.05-0.4")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    long_xray,  = self.axes.plot(data_points, self.data["data"]["0.1-0.8 nm"] , colors_and_globals.GOESXrayFluxColors[1], label="0.1-0.8 nm")
+    long_xray,  = self.axes.plot(data_points, self.data["data"]["0.1-0.8 nm"] , colors_and_globals.GOESXrayFluxColors[1], label="0.1-0.8")
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Change the plot tick labels
@@ -137,6 +137,6 @@ class MyGOESXrayFlux(MyMplCanvas):
     # Create the Legend
     proton_legend = self.axes.legend(
       handles=[short_xray,long_xray],
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='xRay')
+      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='nm')
     # Redraw plots
     self.draw()

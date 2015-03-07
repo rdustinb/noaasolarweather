@@ -55,17 +55,17 @@ class MyGOESRangeParticleFlux(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    Protons_gt1_MeV,      = self.axes.plot(data_points, self.data["data"][">1 Mev Protons"]     , colors_and_globals.GOESRangeParticleFluxColors[0], label=">1 Mev")
+    Protons_gt1_MeV,      = self.axes.plot(data_points, self.data["data"][">1 Mev Protons"]     , colors_and_globals.GOESRangeParticleFluxColors[0], label=">1")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    Protons_gt5_MeV,      = self.axes.plot(data_points, self.data["data"][">5 Mev Protons"]     , colors_and_globals.GOESRangeParticleFluxColors[1], label=">5 Mev")
-    Protons_gt10_MeV,     = self.axes.plot(data_points, self.data["data"][">10 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[2], label=">10 Mev")
-    Protons_gt30_MeV,     = self.axes.plot(data_points, self.data["data"][">30 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[3], label=">30 Mev")
-    Protons_gt50_MeV,     = self.axes.plot(data_points, self.data["data"][">50 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[4], label=">50 Mev")
-    Protons_gt100_MeV,    = self.axes.plot(data_points, self.data["data"][">100 Mev Protons"]   , colors_and_globals.GOESRangeParticleFluxColors[5], label=">100 Mev")
-    Electrons_gt0_8_MeV,  = self.axes.plot(data_points, self.data["data"][">0.8 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[6], label=">0.8 Mev")
-    Electrons_gt2_0_MeV,  = self.axes.plot(data_points, self.data["data"][">2.0 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[7], label=">2.0 Mev")
-    Electrons_gt4_0_MeV,  = self.axes.plot(data_points, self.data["data"][">4.0 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[8], label=">4.0 Mev")
+    Protons_gt5_MeV,      = self.axes.plot(data_points, self.data["data"][">5 Mev Protons"]     , colors_and_globals.GOESRangeParticleFluxColors[1], label=">5")
+    Protons_gt10_MeV,     = self.axes.plot(data_points, self.data["data"][">10 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[2], label=">10")
+    Protons_gt30_MeV,     = self.axes.plot(data_points, self.data["data"][">30 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[3], label=">30")
+    Protons_gt50_MeV,     = self.axes.plot(data_points, self.data["data"][">50 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[4], label=">50")
+    Protons_gt100_MeV,    = self.axes.plot(data_points, self.data["data"][">100 Mev Protons"]   , colors_and_globals.GOESRangeParticleFluxColors[5], label=">100")
+    Electrons_gt0_8_MeV,  = self.axes.plot(data_points, self.data["data"][">0.8 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[6], label=">0.8")
+    Electrons_gt2_0_MeV,  = self.axes.plot(data_points, self.data["data"][">2.0 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[7], label=">2.0")
+    Electrons_gt4_0_MeV,  = self.axes.plot(data_points, self.data["data"][">4.0 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[8], label=">4.0")
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Change the plot tick labels
@@ -91,10 +91,10 @@ class MyGOESRangeParticleFlux(MyMplCanvas):
     # Create the Legend
     proton_legend = self.axes.legend(
       handles=[Protons_gt1_MeV,Protons_gt5_MeV,Protons_gt10_MeV,Protons_gt30_MeV,Protons_gt50_MeV,Protons_gt100_MeV],
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='Protons')
+      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='p (MeV)')
     electron_legend = self.axes.legend(
       handles=[Electrons_gt0_8_MeV,Electrons_gt2_0_MeV,Electrons_gt4_0_MeV],
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 0.51), title='Electrons')
+      loc=1, fontsize=6, bbox_to_anchor=(1.2, 0.58), title='e (MeV)')
     # Add Legends to plot
     self.axes.add_artist(proton_legend)
     self.axes.add_artist(electron_legend)
@@ -121,17 +121,17 @@ class MyGOESRangeParticleFlux(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    Protons_gt1_MeV,      = self.axes.plot(data_points, self.data["data"][">1 Mev Protons"]     , colors_and_globals.GOESRangeParticleFluxColors[0], label=">1 Mev")
+    Protons_gt1_MeV,      = self.axes.plot(data_points, self.data["data"][">1 Mev Protons"]     , colors_and_globals.GOESRangeParticleFluxColors[0], label=">1")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    Protons_gt5_MeV,      = self.axes.plot(data_points, self.data["data"][">5 Mev Protons"]     , colors_and_globals.GOESRangeParticleFluxColors[1], label=">5 Mev")
-    Protons_gt10_MeV,     = self.axes.plot(data_points, self.data["data"][">10 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[2], label=">10 Mev")
-    Protons_gt30_MeV,     = self.axes.plot(data_points, self.data["data"][">30 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[3], label=">30 Mev")
-    Protons_gt50_MeV,     = self.axes.plot(data_points, self.data["data"][">50 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[4], label=">50 Mev")
-    Protons_gt100_MeV,    = self.axes.plot(data_points, self.data["data"][">100 Mev Protons"]   , colors_and_globals.GOESRangeParticleFluxColors[5], label=">100 Mev")
-    Electrons_gt0_8_MeV,  = self.axes.plot(data_points, self.data["data"][">0.8 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[6], label=">0.8 Mev")
-    Electrons_gt2_0_MeV,  = self.axes.plot(data_points, self.data["data"][">2.0 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[7], label=">2.0 Mev")
-    Electrons_gt4_0_MeV,  = self.axes.plot(data_points, self.data["data"][">4.0 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[8], label=">4.0 Mev")
+    Protons_gt5_MeV,      = self.axes.plot(data_points, self.data["data"][">5 Mev Protons"]     , colors_and_globals.GOESRangeParticleFluxColors[1], label=">5")
+    Protons_gt10_MeV,     = self.axes.plot(data_points, self.data["data"][">10 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[2], label=">10")
+    Protons_gt30_MeV,     = self.axes.plot(data_points, self.data["data"][">30 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[3], label=">30")
+    Protons_gt50_MeV,     = self.axes.plot(data_points, self.data["data"][">50 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[4], label=">50")
+    Protons_gt100_MeV,    = self.axes.plot(data_points, self.data["data"][">100 Mev Protons"]   , colors_and_globals.GOESRangeParticleFluxColors[5], label=">100")
+    Electrons_gt0_8_MeV,  = self.axes.plot(data_points, self.data["data"][">0.8 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[6], label=">0.8")
+    Electrons_gt2_0_MeV,  = self.axes.plot(data_points, self.data["data"][">2.0 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[7], label=">2.0")
+    Electrons_gt4_0_MeV,  = self.axes.plot(data_points, self.data["data"][">4.0 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[8], label=">4.0")
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Change the plot tick labels
@@ -157,10 +157,10 @@ class MyGOESRangeParticleFlux(MyMplCanvas):
     # Create the Legend
     proton_legend = self.axes.legend(
       handles=[Protons_gt1_MeV,Protons_gt5_MeV,Protons_gt10_MeV,Protons_gt30_MeV,Protons_gt50_MeV,Protons_gt100_MeV],
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='Protons')
+      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='p (MeV)')
     electron_legend = self.axes.legend(
       handles=[Electrons_gt0_8_MeV,Electrons_gt2_0_MeV,Electrons_gt4_0_MeV],
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 0.61), title='Electrons')
+      loc=1, fontsize=6, bbox_to_anchor=(1.2, 0.58), title='e (MeV)')
     # Add Legends to plot
     self.axes.add_artist(proton_legend)
     self.axes.add_artist(electron_legend)
