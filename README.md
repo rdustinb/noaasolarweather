@@ -1,12 +1,3 @@
-ALERT
-===
-SERVICE INTERRUPTION - March 7, 2015 1PM UTC - 10PM UTC
-
-NOAA has posted a notification on their website that the data sources server will be down on March 7, 2015 for facility power maintenance until 10PM UTC. More information here:
-
-**http://www.swpc.noaa.gov/news/today-service-interruption-saturday-march-7th**
----
-
 This Python application pulls data from the NOAA Satellite near real-time server files located here:
 
 **http://services.swpc.noaa.gov/text/**
