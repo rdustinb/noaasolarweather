@@ -1,5 +1,6 @@
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+import colors_and_globals
 """
   As of MatPlotLib 1.5 qt4_compat will be deprecated for the more general
   qt_compat. Pulling that in instead.
@@ -24,6 +25,8 @@ class MyMplCanvas(FigureCanvas):
     fig = Figure(figsize=(width, height), dpi=dpi)
     # Adjust the layout
     fig.subplots_adjust(left=0.11,right=0.85,top=0.92,bottom=0.18)
+    # Make Figure Canvas transparent
+    fig.patch.set_alpha(colors_and_globals.canvas_alpha)
     # This may need to be parameterized to control layout
     self.axes = fig.add_subplot(subplot)
     self.compute_initial_figure()

@@ -37,6 +37,9 @@ class MyGOESRangeParticleFlux(MyMplCanvas):
     """
       Initial data plot.
     """
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Get the new data
     self.data = NoaaApi.getGOESRangeParticleFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
@@ -91,9 +94,11 @@ class MyGOESRangeParticleFlux(MyMplCanvas):
     # Create the Legend
     proton_legend = self.axes.legend(
       handles=[Protons_gt1_MeV,Protons_gt5_MeV,Protons_gt10_MeV,Protons_gt30_MeV,Protons_gt50_MeV,Protons_gt100_MeV],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='p (MeV)')
     electron_legend = self.axes.legend(
       handles=[Electrons_gt0_8_MeV,Electrons_gt2_0_MeV,Electrons_gt4_0_MeV],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 0.58), title='e (MeV)')
     # Add Legends to plot
     self.axes.add_artist(proton_legend)
@@ -103,6 +108,9 @@ class MyGOESRangeParticleFlux(MyMplCanvas):
     """
       This is the actual timer updating method.
     """
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Get the new data
     self.data = NoaaApi.getGOESRangeParticleFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
@@ -157,9 +165,11 @@ class MyGOESRangeParticleFlux(MyMplCanvas):
     # Create the Legend
     proton_legend = self.axes.legend(
       handles=[Protons_gt1_MeV,Protons_gt5_MeV,Protons_gt10_MeV,Protons_gt30_MeV,Protons_gt50_MeV,Protons_gt100_MeV],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='p (MeV)')
     electron_legend = self.axes.legend(
       handles=[Electrons_gt0_8_MeV,Electrons_gt2_0_MeV,Electrons_gt4_0_MeV],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 0.58), title='e (MeV)')
     # Add Legends to plot
     self.axes.add_artist(proton_legend)

@@ -65,6 +65,25 @@ class ApplicationWindow(QtGui.QMainWindow):
     l.addLayout(h1)
     l.addLayout(h2)
     l.addLayout(h3)
+
+    self.main_widget.setFocus()
+    self.setCentralWidget(self.main_widget)
+
+    # Print initial plot data status message
+    self.statusBar().showMessage("Fetching initial plot data...")
+
+    self.setWindowTitle("Space Weather Grapher")
+    self.show()
+
+    # Set the Application BG Color
+    self.setStyleSheet(colors_and_globals.ColorModeDef)
+
+    # Position
+    self.move(colors_and_globals.init_posx,colors_and_globals.init_posy)
+
+    # Resize
+    self.resize(colors_and_globals.init_app_width,colors_and_globals.init_app_height)
+
     # Add each individual Plot Widget to the horizontal layout objects in a
     # circular fashion will result in a nicely laid out set of plots
     GOESRangeProtonFlux = MyGOESRangeProtonFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
@@ -85,12 +104,6 @@ class ApplicationWindow(QtGui.QMainWindow):
     h1.addWidget(ACEIntegralProtonFlux)
     ACESolarWindPlasma = MySolarWindPlasma(self.main_widget, width=5, height=4, dpi=100)
     h2.addWidget(ACESolarWindPlasma)
-
-    self.main_widget.setFocus()
-    self.setCentralWidget(self.main_widget)
-
-    # Print initial plot data status message
-    self.statusBar().showMessage("Fetching initial plot data...", 5000)
 
   def fileQuit(self):
     self.close()
@@ -131,7 +144,7 @@ from ACESolarWindPlasma import MySolarWindPlasma
 matplotlib.rc('font', **colors_and_globals.font)
 qApp = QtGui.QApplication(sys.argv)
 aw = ApplicationWindow()
-aw.setWindowTitle("Space Weather Grapher")
-aw.show()
+# Notify user that initial data has been populater
+aw.statusBar().showMessage("Initial data sets have been downloaded.", 15000)
 sys.exit(qApp.exec_())
 #qApp.exec_()

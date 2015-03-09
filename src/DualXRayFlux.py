@@ -37,6 +37,9 @@ class MyGOESXrayFlux(MyMplCanvas):
     """
       Initial data plot.
     """
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Get the new data
     self.data = NoaaApi.getGOESXrayFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
@@ -84,12 +87,16 @@ class MyGOESXrayFlux(MyMplCanvas):
     # Create the Legend
     proton_legend = self.axes.legend(
       handles=[short_xray,long_xray],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='nm')
 
   def update_figure(self):
     """
       This is the actual timer updating method.
     """
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Get the new data
     self.data = NoaaApi.getGOESXrayFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
@@ -137,6 +144,7 @@ class MyGOESXrayFlux(MyMplCanvas):
     # Create the Legend
     proton_legend = self.axes.legend(
       handles=[short_xray,long_xray],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='nm')
     # Redraw plots
     self.draw()

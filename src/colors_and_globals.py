@@ -1,3 +1,5 @@
+colorMode = "Dark"
+
 ###########################################################################
 # Version of the application
 ###########################################################################
@@ -6,15 +8,29 @@ progbuild = "3"
 progdate = "20150307"
 
 ###########################################################################
-# Fonts, Default Font Size
+# Application Globals
 ###########################################################################
-font = {'size'   : 7}
+font = {'size' : 7}
+init_posx = 0
+init_posy = 0
+init_app_width = 1440
+init_app_height = 900
+if(colorMode == "Dark"):
+  ColorModeDef = "background-color: #494949;"
+  ColorWidgetDef = "#494949"
+  canvas_alpha = 0.1
+  graph_bgcolor = "#797979"
+  grid_color = '#aaaaaa'
+else:
+  ColorModeDef = "background-color: #d9d9d9;"
+  ColorWidgetDef = "#d9d9d9"
+  canvas_alpha = 0.2
+  graph_bgcolor = "#b9b9b9"
+  grid_color = '#aaaaaa'
 
 ###########################################################################
 # Graphing Widget Values
 ###########################################################################
-grid_color = '#aaaaaa'
-
 plot_angle = "-45"
 
 label_thinner_1 = 1

@@ -37,6 +37,9 @@ class MySolarWindPlasma(MyMplCanvas):
     """
       Initial data plot.
     """
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Get the new data
     self.data = NoaaApi.getSolarPlasma()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
@@ -85,6 +88,7 @@ class MySolarWindPlasma(MyMplCanvas):
     # Create the Legend
     legend = self.axes.legend(
       handles=[density,speed,temperature],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='Params')
     # Add Legends to plot
     self.axes.add_artist(legend)
@@ -93,6 +97,9 @@ class MySolarWindPlasma(MyMplCanvas):
     """
       This is the actual timer updating method.
     """
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Get the new data
     self.data = NoaaApi.getSolarPlasma()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
@@ -141,6 +148,7 @@ class MySolarWindPlasma(MyMplCanvas):
     # Create the Legend
     legend = self.axes.legend(
       handles=[density,speed,temperature],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='Params')
     # Add Legends to plot
     self.axes.add_artist(legend)

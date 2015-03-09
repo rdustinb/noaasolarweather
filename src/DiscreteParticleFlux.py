@@ -37,6 +37,9 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     """
       Initial data plot.
     """
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Get the new data
     self.data = NoaaApi.getGOESDiscreteParticleFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
@@ -92,9 +95,11 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     # Create the Legend
     proton_legend = self.axes.legend(
       handles=[Protons_95_keV,Protons_140_keV,Protons_210_keV,Protons_300_keV,Protons_475_keV],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='p (keV)')
     electron_legend = self.axes.legend(
       handles=[Electrons_40_keV,Electrons_75_keV,Electrons_150_keV,Electrons_275_keV,Electrons_475_keV],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 0.65), title='e (keV)')
     # Add Legends to plot
     self.axes.add_artist(proton_legend)
@@ -104,6 +109,9 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     """
       This is the actual timer updating method.
     """
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Get the new data
     self.data = NoaaApi.getGOESDiscreteParticleFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
@@ -159,9 +167,11 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     # Create the Legend
     proton_legend = self.axes.legend(
       handles=[Protons_95_keV,Protons_140_keV,Protons_210_keV,Protons_300_keV,Protons_475_keV],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='p (keV)')
     electron_legend = self.axes.legend(
       handles=[Electrons_40_keV,Electrons_75_keV,Electrons_150_keV,Electrons_275_keV,Electrons_475_keV],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 0.65), title='e (keV)')
     # Add Legends to plot
     self.axes.add_artist(proton_legend)

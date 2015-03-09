@@ -37,6 +37,9 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     """
       Initial data plot.
     """
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Get the new data
     self.data = NoaaApi.getGOESRangeProtonFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
@@ -93,12 +96,16 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     # Create the Legend
     self.axes.legend(
       handles=[p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='MeV')
 
   def update_figure(self):
     """
       This is the actual timer updating method.
     """
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Get the new data
     self.data = NoaaApi.getGOESRangeProtonFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
@@ -155,6 +162,7 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     # Create the Legend
     self.axes.legend(
       handles=[p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='MeV')
     # Redraw plots
     self.draw()

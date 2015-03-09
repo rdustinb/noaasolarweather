@@ -37,6 +37,9 @@ class MyIntegralProtonFlux(MyMplCanvas):
     """
       Initial data plot.
     """
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Get the new data
     self.data = NoaaApi.getSolarIsotopeSpectrometer()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
@@ -84,6 +87,7 @@ class MyIntegralProtonFlux(MyMplCanvas):
     # Create the Legend
     proton_legend = self.axes.legend(
       handles=[proton_gt10mev,proton_gt30mev],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='p (MeV)')
     # Add Legends to plot
     self.axes.add_artist(proton_legend)
@@ -92,6 +96,9 @@ class MyIntegralProtonFlux(MyMplCanvas):
     """
       This is the actual timer updating method.
     """
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Get the new data
     self.data = NoaaApi.getSolarIsotopeSpectrometer()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
@@ -139,6 +146,7 @@ class MyIntegralProtonFlux(MyMplCanvas):
     # Create the Legend
     proton_legend = self.axes.legend(
       handles=[proton_gt10mev,proton_gt30mev],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='p (MeV)')
     # Add Legends to plot
     self.axes.add_artist(proton_legend)

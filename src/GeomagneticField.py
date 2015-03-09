@@ -37,6 +37,9 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     """
       Initial data plot.
     """
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Get the new data
     self.data = NoaaApi.getGOESGoemagFieldFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
@@ -86,12 +89,16 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     # Create the Legend
     self.axes.legend(
       handles=[hp, he, hn, total],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='H Vector')
 
   def update_figure(self):
     """
       This is the actual timer updating method.
     """
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Get the new data
     self.data = NoaaApi.getGOESGoemagFieldFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
@@ -141,6 +148,7 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     # Create the Legend
     self.axes.legend(
       handles=[hp, he, hn, total],
+      framealpha=0,
       loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='H Vector')
     # Redraw plots
     self.draw()
