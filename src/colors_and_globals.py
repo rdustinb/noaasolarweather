@@ -1,19 +1,19 @@
-colorMode = "Dark"
+colorMode = "Light"
 
 ###########################################################################
 # Version of the application
 ###########################################################################
 progversion = "0.2"
-progbuild = "3"
-progdate = "20150307"
+progbuild = "4"
+progdate = "20150309"
 
 ###########################################################################
 # Application Globals
 ###########################################################################
 font = {'size' : 7}
-init_posx = 0
+init_posx = 40
 init_posy = 0
-init_app_width = 1440
+init_app_width = 1350
 init_app_height = 900
 if(colorMode == "Dark"):
   ColorModeDef = "background-color: #494949;"
@@ -25,7 +25,7 @@ else:
   ColorModeDef = "background-color: #d9d9d9;"
   ColorWidgetDef = "#d9d9d9"
   canvas_alpha = 0.2
-  graph_bgcolor = "#b9b9b9"
+  graph_bgcolor = "#e9e9e9"
   grid_color = '#aaaaaa'
 
 ###########################################################################

@@ -70,9 +70,9 @@ class ApplicationWindow(QtGui.QMainWindow):
     self.setCentralWidget(self.main_widget)
 
     # Print initial plot data status message
-    self.statusBar().showMessage("Fetching initial plot data...")
+    # self.statusBar().showMessage("Fetching initial plot data...")
 
-    self.setWindowTitle("Space Weather Grapher")
+    self.setWindowTitle("Space Weather Grapher - Fetching initial plot data...")
     self.show()
 
     # Set the Application BG Color
@@ -82,6 +82,8 @@ class ApplicationWindow(QtGui.QMainWindow):
     self.move(colors_and_globals.init_posx,colors_and_globals.init_posy)
 
     # Resize
+    # self.main_widget.showMaximized()
+    for i in dir(self.main_widget): print(i)
     self.resize(colors_and_globals.init_app_width,colors_and_globals.init_app_height)
 
     # Add each individual Plot Widget to the horizontal layout objects in a
@@ -145,6 +147,7 @@ matplotlib.rc('font', **colors_and_globals.font)
 qApp = QtGui.QApplication(sys.argv)
 aw = ApplicationWindow()
 # Notify user that initial data has been populater
-aw.statusBar().showMessage("Initial data sets have been downloaded.", 15000)
+# aw.statusBar().showMessage("Initial data sets have been downloaded.", 15000)
+aw.setWindowTitle("Space Weather Grapher")
 sys.exit(qApp.exec_())
 #qApp.exec_()
