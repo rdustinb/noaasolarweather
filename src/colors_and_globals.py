@@ -4,8 +4,8 @@ colorMode = "Light"
 # Version of the application
 ###########################################################################
 progversion = "0.2"
-progbuild = "4"
-progdate = "20150309"
+progbuild = "5"
+progdate = "20150310"
 
 ###########################################################################
 # Application Globals
