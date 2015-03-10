@@ -14,7 +14,7 @@ font = {'size' : 7}
 init_posx = 150
 init_posy = 0
 init_app_width = 1024
-init_app_height = 900
+init_app_height = 850
 plotTitleSize = 8
 plotLabelSize = 6
 legendSize = 6
@@ -36,7 +36,7 @@ else:
 ###########################################################################
 plot_angle = "-45"
 
-DifferentialEnergeticProtonFluxLabelThinner = 1
+DifferentialEnergeticProtonFluxLabel = 1
 DiscreteParticleFluxLabelThinner = 5
 DualXrayFluxLabelThinner = 7
 GeomagneticFieldLabelThinner = 7
@@ -46,18 +46,32 @@ ACEIntegralProtonFluxLabelThinner = 2
 ACEInterplanetaryMagFieldLabelThinner = 1
 ACESolarWindPlasmaLabelThinner = 7
 
-GOESRangeProtonFluxColors = [
-  '#ffd3aa',
-  '#aa7039',
-  '#552900',
-  '#cfd369',
-  '#a4a938',
-  '#515400',
-  '#6a959d',
-  '#255e69',
-  '#012c34',
-  '#9974aa',
-  '#5b2971']
+DifferentialEnergeticProtonFluxColors = {
+  "Light": [
+    '#9f0000',
+    '#7f3f00',
+    '#5f5f00',
+    '#3f7f00',
+    '#009f00',
+    '#007f3f',
+    '#005f5f',
+    '#003f7f',
+    '#00009f',
+    '#3f009f',
+    '#6f009f'],
+  "Dark": [
+    '#ff0000',
+    '#bf4f00',
+    '#8f8f00',
+    '#4fbf00',
+    '#00ff00',
+    '#00bf4f',
+    '#008f8f',
+    '#00bf4f',
+    '#0000ff',
+    '#5f00ff',
+    '#af00ff'],
+  }
 
 GOESGoemagFieldFluxColors = [
   '#aa7039',

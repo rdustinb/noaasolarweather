@@ -44,19 +44,44 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    p1, = self.axes.plot(data_points, self.data["data"]["0.7-4 MeV Protons"]    , colors_and_globals.GOESRangeProtonFluxColors[0] , label="0.7-4")
+    p1, = self.axes.plot(data_points, self.data["data"]["0.7-4 MeV Protons"],
+      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][0],
+      label="0.7-4")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    p2, = self.axes.plot(data_points, self.data["data"]["4-9 MeV Protons"]      , colors_and_globals.GOESRangeProtonFluxColors[1] , label="4-9")
-    p3, = self.axes.plot(data_points, self.data["data"]["9-15 MeV Protons"]     , colors_and_globals.GOESRangeProtonFluxColors[2] , label="9-15")
-    p4, = self.axes.plot(data_points, self.data["data"]["15-40 MeV Protons"]    , colors_and_globals.GOESRangeProtonFluxColors[3] , label="15-40")
-    p5, = self.axes.plot(data_points, self.data["data"]["38-82 MeV Protons"]    , colors_and_globals.GOESRangeProtonFluxColors[4] , label="38-82")
-    p6, = self.axes.plot(data_points, self.data["data"]["84-200 MeV Protons"]   , colors_and_globals.GOESRangeProtonFluxColors[5] , label="84-200")
-    p7, = self.axes.plot(data_points, self.data["data"]["110-900 MeV Protons"]  , colors_and_globals.GOESRangeProtonFluxColors[6] , label="110-900")
-    p8, = self.axes.plot(data_points, self.data["data"]["350-420 MeV Protons"]  , colors_and_globals.GOESRangeProtonFluxColors[7] , label="350-420")
-    p9, = self.axes.plot(data_points, self.data["data"]["420-510 MeV Protons"]  , colors_and_globals.GOESRangeProtonFluxColors[8] , label="420-510")
-    p10, = self.axes.plot(data_points, self.data["data"]["510-700 MeV Protons"] , colors_and_globals.GOESRangeProtonFluxColors[9] , label="510-700")
-    p11, = self.axes.plot(data_points, self.data["data"][">700 MeV Protons"]    , colors_and_globals.GOESRangeProtonFluxColors[10], label=">700")
+    p2, = self.axes.plot(data_points, self.data["data"]["4-9 MeV Protons"],
+      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][1],
+      label="4-9")
+    p3, = self.axes.plot(data_points, self.data["data"]["9-15 MeV Protons"],
+      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][2],
+      label="9-15")
+    p4, = self.axes.plot(data_points, self.data["data"]["15-40 MeV Protons"],
+      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][3],
+      label="15-40")
+    p5, = self.axes.plot(data_points, self.data["data"]["38-82 MeV Protons"],
+      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][4],
+      label="38-82")
+    p6, = self.axes.plot(data_points, self.data["data"]["84-200 MeV Protons"],
+      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][5],
+      label="84-200")
+    p7, = self.axes.plot(data_points, self.data["data"]["110-900 MeV Protons"],
+      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][6],
+      label="110-900")
+    p8, = self.axes.plot(data_points, self.data["data"]["350-420 MeV Protons"],
+      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][7],
+      label="350-420")
+    p9, = self.axes.plot(data_points, self.data["data"]["420-510 MeV Protons"],
+      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][8],
+      label="420-510")
+    p10, = self.axes.plot(data_points, self.data["data"]["510-700 MeV Protons"],
+      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][9],
+      label="510-700")
+    p11, = self.axes.plot(data_points, self.data["data"][">700 MeV Protons"],
+      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][10],
+      label=">700")
     # Format the Graph
-    self.formatGraph(plotTitle="Differential Energetic Proton Flux", labelThinner=colors_and_globals.DifferentialEnergeticProtonFluxLabelThinner, dataDict=self.data,
-      legend1=[p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11], legend1title='MeV', legend1xoffset='1.22', legend1yoffset='1.13')
+    self.formatGraph(plotTitle="Differential Energetic Proton Flux",
+      labelThinner=colors_and_globals.DifferentialEnergeticProtonFluxLabel,
+      dataDict=self.data,
+      legend1=[p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11],
+      legend1title='MeV', legend1xoffset='1.22', legend1yoffset='1.13')
