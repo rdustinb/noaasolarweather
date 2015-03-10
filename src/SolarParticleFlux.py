@@ -37,24 +37,10 @@ class MyGOESRangeParticleFlux(MyMplCanvas):
     """
       Initial data plot.
     """
-    # Set the graph background color
-    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
     # Get the new data
     self.data = NoaaApi.getGOESRangeParticleFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
-    # Get the start date
-    start_date = self.data["datestamp"][0].split(sep=":")[0]
-    # Get the start date
-    end_date = self.data["datestamp"][-1].split(sep=":")[0]
-    # Strip only the timestamp out of the array of date/time stamps, keep only a few
-    loop = 0
-    for stamp in self.data["datestamp"]:
-      if(loop % colors_and_globals.label_thinner_1 == 0):
-        self.data["datestamp"][loop] = stamp.split(sep=":")[1]
-      else:
-        self.data["datestamp"][loop] = ""
-      loop += 1
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
@@ -69,110 +55,8 @@ class MyGOESRangeParticleFlux(MyMplCanvas):
     Electrons_gt0_8_MeV,  = self.axes.plot(data_points, self.data["data"][">0.8 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[6], label=">0.8")
     Electrons_gt2_0_MeV,  = self.axes.plot(data_points, self.data["data"][">2.0 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[7], label=">2.0")
     Electrons_gt4_0_MeV,  = self.axes.plot(data_points, self.data["data"][">4.0 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[8], label=">4.0")
-    # Set number of X-Axis ticks
-    self.axes.set_xticks(data_points)
-    # Change the plot tick labels
-    if(colors_and_globals.plot_angle[0] == "-"):
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
-        horizontalalignment='left', fontsize=7)
-    else:
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
-        horizontalalignment='right', fontsize=7)
-    # Change Plot to logarithmic
-    self.axes.set_yscale("log")
-    # Show all plot grids
-    self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
-    # Show Units of y-axis
-    self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=8)
-    # Show Units of x-axis
-    if(start_date != end_date):
-      self.axes.set_xlabel(("UTC Time (%s - %s)"%(start_date,end_date)), fontsize=7)
-    else:
-      self.axes.set_xlabel(("UTC Time (%s)"%(end_date)), fontsize=7)
-    # Set the Plot Title
-    self.axes.set_title("Integral Particle Flux", fontsize=10)
-    # Create the Legend
-    proton_legend = self.axes.legend(
-      handles=[Protons_gt1_MeV,Protons_gt5_MeV,Protons_gt10_MeV,Protons_gt30_MeV,Protons_gt50_MeV,Protons_gt100_MeV],
-      framealpha=0,
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='p (MeV)')
-    electron_legend = self.axes.legend(
-      handles=[Electrons_gt0_8_MeV,Electrons_gt2_0_MeV,Electrons_gt4_0_MeV],
-      framealpha=0,
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 0.58), title='e (MeV)')
-    # Add Legends to plot
-    self.axes.add_artist(proton_legend)
-    self.axes.add_artist(electron_legend)
+    # Format the Graph
+    self.formatGraph(plotTitle="Integral Particle Flux", labelThinner=colors_and_globals.SolarParticleFluxLabelThinner, dataDict=self.data,
+      legend1=[Protons_gt1_MeV,Protons_gt5_MeV,Protons_gt10_MeV,Protons_gt30_MeV,Protons_gt50_MeV,Protons_gt100_MeV], legend1title='p (MeV)', legend1xoffset='1.22', legend1yoffset='1.12',
+      legend2=[Electrons_gt0_8_MeV,Electrons_gt2_0_MeV,Electrons_gt4_0_MeV], legend2title='e (MeV)', legend2xoffset='1.215', legend2yoffset='0.35')
 
-  def update_figure(self):
-    """
-      This is the actual timer updating method.
-    """
-    # Set the graph background color
-    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
-    # Get the new data
-    self.data = NoaaApi.getGOESRangeParticleFlux()
-    # Get number of data points
-    data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
-    # Get the start date
-    start_date = self.data["datestamp"][0].split(sep=":")[0]
-    # Get the start date
-    end_date = self.data["datestamp"][-1].split(sep=":")[0]
-    # Strip only the timestamp out of the array of date/time stamps, keep only a few
-    loop = 0
-    for stamp in self.data["datestamp"]:
-      if(loop % colors_and_globals.label_thinner_1 == 0):
-        self.data["datestamp"][loop] = stamp.split(sep=":")[1]
-      else:
-        self.data["datestamp"][loop] = ""
-      loop += 1
-    # Next plot overwrites all previous plots
-    self.axes.hold(False)
-    # x-axis, y-axis, color
-    Protons_gt1_MeV,      = self.axes.plot(data_points, self.data["data"][">1 Mev Protons"]     , colors_and_globals.GOESRangeParticleFluxColors[0], label=">1")
-    # Now just overlay remaining datasets
-    self.axes.hold(True)
-    Protons_gt5_MeV,      = self.axes.plot(data_points, self.data["data"][">5 Mev Protons"]     , colors_and_globals.GOESRangeParticleFluxColors[1], label=">5")
-    Protons_gt10_MeV,     = self.axes.plot(data_points, self.data["data"][">10 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[2], label=">10")
-    Protons_gt30_MeV,     = self.axes.plot(data_points, self.data["data"][">30 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[3], label=">30")
-    Protons_gt50_MeV,     = self.axes.plot(data_points, self.data["data"][">50 Mev Protons"]    , colors_and_globals.GOESRangeParticleFluxColors[4], label=">50")
-    Protons_gt100_MeV,    = self.axes.plot(data_points, self.data["data"][">100 Mev Protons"]   , colors_and_globals.GOESRangeParticleFluxColors[5], label=">100")
-    Electrons_gt0_8_MeV,  = self.axes.plot(data_points, self.data["data"][">0.8 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[6], label=">0.8")
-    Electrons_gt2_0_MeV,  = self.axes.plot(data_points, self.data["data"][">2.0 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[7], label=">2.0")
-    Electrons_gt4_0_MeV,  = self.axes.plot(data_points, self.data["data"][">4.0 Mev Electrons"] , colors_and_globals.GOESRangeParticleFluxColors[8], label=">4.0")
-    # Set number of X-Axis ticks
-    self.axes.set_xticks(data_points)
-    # Change the plot tick labels
-    if(colors_and_globals.plot_angle[0] == "-"):
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
-        horizontalalignment='left', fontsize=7)
-    else:
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
-        horizontalalignment='right', fontsize=7)
-    # Change Plot to logarithmic
-    self.axes.set_yscale("log")
-    # Show all plot grids
-    self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
-    # Show Units of y-axis
-    self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=7)
-    # Show Units of x-axis
-    if(start_date != end_date):
-      self.axes.set_xlabel(("UTC Time (%s - %s)"%(start_date,end_date)), fontsize=7)
-    else:
-      self.axes.set_xlabel(("UTC Time (%s)"%(end_date)), fontsize=7)
-    # Set the Plot Title
-    self.axes.set_title("Integral Particle Flux", fontsize=10)
-    # Create the Legend
-    proton_legend = self.axes.legend(
-      handles=[Protons_gt1_MeV,Protons_gt5_MeV,Protons_gt10_MeV,Protons_gt30_MeV,Protons_gt50_MeV,Protons_gt100_MeV],
-      framealpha=0,
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='p (MeV)')
-    electron_legend = self.axes.legend(
-      handles=[Electrons_gt0_8_MeV,Electrons_gt2_0_MeV,Electrons_gt4_0_MeV],
-      framealpha=0,
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 0.58), title='e (MeV)')
-    # Add Legends to plot
-    self.axes.add_artist(proton_legend)
-    self.axes.add_artist(electron_legend)
-    # Redraw plots
-    self.draw()

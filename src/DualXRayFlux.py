@@ -37,24 +37,10 @@ class MyGOESXrayFlux(MyMplCanvas):
     """
       Initial data plot.
     """
-    # Set the graph background color
-    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
     # Get the new data
     self.data = NoaaApi.getGOESXrayFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
-    # Get the start date
-    start_date = self.data["datestamp"][0].split(sep=":")[0]
-    # Get the start date
-    end_date = self.data["datestamp"][-1].split(sep=":")[0]
-    # Strip only the timestamp out of the array of date/time stamps, keep only a few
-    loop = 0
-    for stamp in self.data["datestamp"]:
-      if(loop % colors_and_globals.label_thinner_2 == 0):
-        self.data["datestamp"][loop] = stamp.split(sep=":")[1]
-      else:
-        self.data["datestamp"][loop] = ""
-      loop += 1
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
@@ -62,89 +48,6 @@ class MyGOESXrayFlux(MyMplCanvas):
     # Now just overlay remaining datasets
     self.axes.hold(True)
     long_xray,  = self.axes.plot(data_points, self.data["data"]["0.1-0.8 nm"] , colors_and_globals.GOESXrayFluxColors[1], label="0.1-0.8")
-    # Set number of X-Axis ticks
-    self.axes.set_xticks(data_points)
-    # Change the plot tick labels
-    if(colors_and_globals.plot_angle[0] == "-"):
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
-        horizontalalignment='left', fontsize=7)
-    else:
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
-        horizontalalignment='right', fontsize=7)
-    # Change Plot to logarithmic
-    self.axes.set_yscale("log")
-    # Show all plot grids
-    self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
-    # Show Units of y-axis
-    self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=8)
-    # Show Units of x-axis
-    if(start_date != end_date):
-      self.axes.set_xlabel(("UTC Time (%s - %s)"%(start_date,end_date)), fontsize=7)
-    else:
-      self.axes.set_xlabel(("UTC Time (%s)"%(end_date)), fontsize=7)
-    # Set the Plot Title
-    self.axes.set_title("Differential xRay Flux", fontsize=10)
-    # Create the Legend
-    proton_legend = self.axes.legend(
-      handles=[short_xray,long_xray],
-      framealpha=0,
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='nm')
-
-  def update_figure(self):
-    """
-      This is the actual timer updating method.
-    """
-    # Set the graph background color
-    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
-    # Get the new data
-    self.data = NoaaApi.getGOESXrayFlux()
-    # Get number of data points
-    data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
-    # Get the start date
-    start_date = self.data["datestamp"][0].split(sep=":")[0]
-    # Get the start date
-    end_date = self.data["datestamp"][-1].split(sep=":")[0]
-    # Strip only the timestamp out of the array of date/time stamps, keep only a few
-    loop = 0
-    for stamp in self.data["datestamp"]:
-      if(loop % colors_and_globals.label_thinner_2 == 0):
-        self.data["datestamp"][loop] = stamp.split(sep=":")[1]
-      else:
-        self.data["datestamp"][loop] = ""
-      loop += 1
-    # Next plot overwrites all previous plots
-    self.axes.hold(False)
-    # x-axis, y-axis, color
-    short_xray, = self.axes.plot(data_points, self.data["data"]["0.05-0.4 nm"], colors_and_globals.GOESXrayFluxColors[0], label="0.05-0.4")
-    # Now just overlay remaining datasets
-    self.axes.hold(True)
-    long_xray,  = self.axes.plot(data_points, self.data["data"]["0.1-0.8 nm"] , colors_and_globals.GOESXrayFluxColors[1], label="0.1-0.8")
-    # Set number of X-Axis ticks
-    self.axes.set_xticks(data_points)
-    # Change the plot tick labels
-    if(colors_and_globals.plot_angle[0] == "-"):
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
-        horizontalalignment='left', fontsize=7)
-    else:
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
-        horizontalalignment='right', fontsize=7)
-    # Change Plot to logarithmic
-    self.axes.set_yscale("log")
-    # Show all plot grids
-    self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
-    # Show Units of y-axis
-    self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=8)
-    # Show Units of x-axis
-    if(start_date != end_date):
-      self.axes.set_xlabel(("UTC Time (%s - %s)"%(start_date,end_date)), fontsize=7)
-    else:
-      self.axes.set_xlabel(("UTC Time (%s)"%(end_date)), fontsize=7)
-    # Set the Plot Title
-    self.axes.set_title("Differential xRay Flux", fontsize=10)
-    # Create the Legend
-    proton_legend = self.axes.legend(
-      handles=[short_xray,long_xray],
-      framealpha=0,
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='nm')
-    # Redraw plots
-    self.draw()
+    # Format the Graph
+    self.formatGraph(plotTitle="Differential xRay Flux", labelThinner=colors_and_globals.DualXrayFluxLabelThinner, dataDict=self.data,
+      legend1=[short_xray,long_xray], legend1title='nm', legend1xoffset='1.22', legend1yoffset='1.12')

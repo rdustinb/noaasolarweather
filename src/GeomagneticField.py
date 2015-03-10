@@ -24,7 +24,7 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     """
       Initialize the updating object.
     """
-    MyMplCanvas.__init__(self, *args, **kwargs)
+    MyMplCanvas.__init__(self, left_edge=0.15, right_edge=0.82, top_edge=0.9, bottom_edge=0.22, *args, **kwargs)
     timer = QtCore.QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
@@ -37,24 +37,10 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     """
       Initial data plot.
     """
-    # Set the graph background color
-    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
     # Get the new data
     self.data = NoaaApi.getGOESGoemagFieldFlux()
     # Get number of data points
     data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
-    # Get the start date
-    start_date = self.data["datestamp"][0].split(sep=":")[0]
-    # Get the start date
-    end_date = self.data["datestamp"][-1].split(sep=":")[0]
-    # Strip only the timestamp out of the array of date/time stamps, keep only a few
-    loop = 0
-    for stamp in self.data["datestamp"]:
-      if(loop % colors_and_globals.label_thinner_2 == 0):
-        self.data["datestamp"][loop] = stamp.split(sep=":")[1]
-      else:
-        self.data["datestamp"][loop] = ""
-      loop += 1
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
@@ -64,91 +50,6 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     he,     = self.axes.plot(data_points, self.data["data"]["He"]   , colors_and_globals.GOESGoemagFieldFluxColors[1], label="Down")
     hn,     = self.axes.plot(data_points, self.data["data"]["Hn"]   , colors_and_globals.GOESGoemagFieldFluxColors[2], label="Axis")
     total,  = self.axes.plot(data_points, self.data["data"]["Total"], colors_and_globals.GOESGoemagFieldFluxColors[3], label="Total")
-    # Set number of X-Axis ticks
-    self.axes.set_xticks(data_points)
-    # Change the plot tick labels
-    if(colors_and_globals.plot_angle[0] == "-"):
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
-        horizontalalignment='left', fontsize=7)
-    else:
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
-        horizontalalignment='right', fontsize=7)
-    # Change Plot to logarithmic
-    self.axes.set_yscale("log")
-    # Show all plot grids
-    self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
-    # Show Units of y-axis
-    self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=8)
-    # Show Units of x-axis
-    if(start_date != end_date):
-      self.axes.set_xlabel(("UTC Time (%s - %s)"%(start_date,end_date)), fontsize=7)
-    else:
-      self.axes.set_xlabel(("UTC Time (%s)"%(end_date)), fontsize=7)
-    # Set the Plot Title
-    self.axes.set_title("Geomagnetic Vector Field Flux", fontsize=10)
-    # Create the Legend
-    self.axes.legend(
-      handles=[hp, he, hn, total],
-      framealpha=0,
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='H Vector')
-
-  def update_figure(self):
-    """
-      This is the actual timer updating method.
-    """
-    # Set the graph background color
-    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
-    # Get the new data
-    self.data = NoaaApi.getGOESGoemagFieldFlux()
-    # Get number of data points
-    data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
-    # Get the start date
-    start_date = self.data["datestamp"][0].split(sep=":")[0]
-    # Get the start date
-    end_date = self.data["datestamp"][-1].split(sep=":")[0]
-    # Strip only the timestamp out of the array of date/time stamps, keep only a few
-    loop = 0
-    for stamp in self.data["datestamp"]:
-      if(loop % colors_and_globals.label_thinner_2 == 0):
-        self.data["datestamp"][loop] = stamp.split(sep=":")[1]
-      else:
-        self.data["datestamp"][loop] = ""
-      loop += 1
-    # Next plot overwrites all previous plots
-    self.axes.hold(False)
-    # x-axis, y-axis, color
-    hp,     = self.axes.plot(data_points, self.data["data"]["Hp"]   , colors_and_globals.GOESGoemagFieldFluxColors[0], label="East")
-    # Now just overlay remaining datasets
-    self.axes.hold(True)
-    he,     = self.axes.plot(data_points, self.data["data"]["He"]   , colors_and_globals.GOESGoemagFieldFluxColors[1], label="Down")
-    hn,     = self.axes.plot(data_points, self.data["data"]["Hn"]   , colors_and_globals.GOESGoemagFieldFluxColors[2], label="Axis")
-    total,  = self.axes.plot(data_points, self.data["data"]["Total"], colors_and_globals.GOESGoemagFieldFluxColors[3], label="Total")
-    # Set number of X-Axis ticks
-    self.axes.set_xticks(data_points)
-    # Change the plot tick labels
-    if(colors_and_globals.plot_angle[0] == "-"):
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
-        horizontalalignment='left', fontsize=7)
-    else:
-      self.axes.set_xticklabels(self.data["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
-        horizontalalignment='right', fontsize=7)
-    # Change Plot to logarithmic
-    self.axes.set_yscale("log")
-    # Show all plot grids
-    self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
-    # Show Units of y-axis
-    self.axes.set_ylabel(self.data["units"], rotation='vertical', fontsize=8)
-    # Show Units of x-axis
-    if(start_date != end_date):
-      self.axes.set_xlabel(("UTC Time (%s - %s)"%(start_date,end_date)), fontsize=7)
-    else:
-      self.axes.set_xlabel(("UTC Time (%s)"%(end_date)), fontsize=7)
-    # Set the Plot Title
-    self.axes.set_title("Geomagnetic Vector Field Flux", fontsize=10)
-    # Create the Legend
-    self.axes.legend(
-      handles=[hp, he, hn, total],
-      framealpha=0,
-      loc=1, fontsize=6, bbox_to_anchor=(1.2, 1.1), title='H Vector')
-    # Redraw plots
-    self.draw()
+    # Format the Graph
+    self.formatGraph(plotTitle="Geomagnetic Vector Field Flux", labelThinner=colors_and_globals.GeomagneticFieldLabelThinner, dataDict=self.data,
+      legend1=[hp, he, hn, total], legend1title='H Vector', legend1xoffset='1.27', legend1yoffset='1.12')
