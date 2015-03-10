@@ -57,14 +57,16 @@ class ApplicationWindow(QtGui.QMainWindow):
     self.main_widget = QtGui.QWidget(self)
     # Single Vertical Layout object
     l = QtGui.QVBoxLayout(self.main_widget)
-    # Three Horizontal Layout objects
+    # Four Horizontal Layout objects
     h1 = QtGui.QHBoxLayout()
     h2 = QtGui.QHBoxLayout()
     h3 = QtGui.QHBoxLayout()
+    h4 = QtGui.QHBoxLayout()
     # Added as sublayouts to the top level vertical layout
     l.addLayout(h1)
     l.addLayout(h2)
     l.addLayout(h3)
+    l.addLayout(h4)
 
     self.main_widget.setFocus()
     self.setCentralWidget(self.main_widget)
@@ -82,30 +84,31 @@ class ApplicationWindow(QtGui.QMainWindow):
     self.move(colors_and_globals.init_posx,colors_and_globals.init_posy)
 
     # Resize
-    # self.main_widget.showMaximized()
-    for i in dir(self.main_widget): print(i)
     self.resize(colors_and_globals.init_app_width,colors_and_globals.init_app_height)
 
     # Add each individual Plot Widget to the horizontal layout objects in a
     # circular fashion will result in a nicely laid out set of plots
     GOESRangeProtonFlux = MyGOESRangeProtonFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
     h1.addWidget(GOESRangeProtonFlux)
+    GOESXrayFlux = MyGOESXrayFlux(self.main_widget, width=5, height=4, dpi=100)
+    h1.addWidget(GOESXrayFlux)
+
     GOESGoemagFieldFlux = MyGOESGoemagFieldFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
     h2.addWidget(GOESGoemagFieldFlux)
+    ACEIntegralProtonFlux = MyIntegralProtonFlux(self.main_widget, width=5, height=4, dpi=100)
+    h2.addWidget(ACEIntegralProtonFlux)
+    ACEInterplanetaryMagField = MyInterplanetaryMagField(self.main_widget, width=5, height=4, dpi=100)
+    h2.addWidget(ACEInterplanetaryMagField)
+
     GOESDiscreteParticleFlux = MyGOESDiscreteParticleFlux(self.main_widget, width=5, height=4, dpi=100)
     h3.addWidget(GOESDiscreteParticleFlux)
-
-    GOESRangeParticleFlux = MyGOESRangeParticleFlux(self.main_widget, width=5, height=4, dpi=100)
-    h1.addWidget(GOESRangeParticleFlux)
-    GOESXrayFlux = MyGOESXrayFlux(self.main_widget, width=5, height=4, dpi=100)
-    h2.addWidget(GOESXrayFlux)
     ACEDiffElecProtFlux = MyDiffElecProtFlux(self.main_widget, width=5, height=4, dpi=100)
     h3.addWidget(ACEDiffElecProtFlux)
 
-    ACEIntegralProtonFlux = MyIntegralProtonFlux(self.main_widget, width=5, height=4, dpi=100)
-    h1.addWidget(ACEIntegralProtonFlux)
+    GOESRangeParticleFlux = MyGOESRangeParticleFlux(self.main_widget, width=5, height=4, dpi=100)
+    h4.addWidget(GOESRangeParticleFlux)
     ACESolarWindPlasma = MySolarWindPlasma(self.main_widget, width=5, height=4, dpi=100)
-    h2.addWidget(ACESolarWindPlasma)
+    h4.addWidget(ACESolarWindPlasma)
 
   def fileQuit(self):
     self.close()
@@ -138,6 +141,7 @@ from SolarParticleFlux import MyGOESRangeParticleFlux
 from DualXRayFlux import MyGOESXrayFlux
 from ACEDiffElectronProtonFlux import MyDiffElecProtFlux
 from ACEIntegralProtonFlux import MyIntegralProtonFlux
+from ACEInterplanetaryMagField import MyInterplanetaryMagField
 from ACESolarWindPlasma import MySolarWindPlasma
 
 ###########################################################################

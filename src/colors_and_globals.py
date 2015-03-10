@@ -11,15 +11,18 @@ progdate = "20150309"
 # Application Globals
 ###########################################################################
 font = {'size' : 7}
-init_posx = 40
+init_posx = 150
 init_posy = 0
-init_app_width = 1350
+init_app_width = 1024
 init_app_height = 900
+plotTitleSize = 8
+plotLabelSize = 6
+legendSize = 6
 if(colorMode == "Dark"):
   ColorModeDef = "background-color: #494949;"
   ColorWidgetDef = "#494949"
-  canvas_alpha = 0.1
-  graph_bgcolor = "#797979"
+  canvas_alpha = 0.2
+  graph_bgcolor = "#696969"
   grid_color = '#aaaaaa'
 else:
   ColorModeDef = "background-color: #d9d9d9;"
@@ -33,9 +36,15 @@ else:
 ###########################################################################
 plot_angle = "-45"
 
-label_thinner_1 = 1
-
-label_thinner_2 = 7
+DifferentialEnergeticProtonFluxLabelThinner = 1
+DiscreteParticleFluxLabelThinner = 5
+DualXrayFluxLabelThinner = 7
+GeomagneticFieldLabelThinner = 7
+SolarParticleFluxLabelThinner = 1
+ACEDiffElectronProtonFluxLabelThinner = 1
+ACEIntegralProtonFluxLabelThinner = 2
+ACEInterplanetaryMagFieldLabelThinner = 1
+ACESolarWindPlasmaLabelThinner = 7
 
 GOESRangeProtonFluxColors = [
   '#ffd3aa',
