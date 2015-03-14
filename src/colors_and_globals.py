@@ -1,4 +1,4 @@
-colorMode = "Light"
+colorMode = "Dark"
 
 ###########################################################################
 # Version of the application
@@ -23,7 +23,7 @@ if(colorMode == "Dark"):
   ColorWidgetDef = "#494949"
   canvas_alpha = 0.2
   graph_bgcolor = "#696969"
-  grid_color = '#aaaaaa'
+  grid_color = '#555555'
 else:
   ColorModeDef = "background-color: #d9d9d9;"
   ColorWidgetDef = "#d9d9d9"
