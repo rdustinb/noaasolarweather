@@ -8,7 +8,13 @@ The application parses the data from the NOAA servers and initializes a timer fo
 
 which is embedded within a Qt Widget and thus updated individually.
 
-![Graph Image](screenshots/image.png "Three data graphs in the single application window.")
+Light Mode
+
+![Graph Image](screenshots/light.png "Multiple data graphs in the single application window.")
+
+Dark Mode
+
+![Graph Image](screenshots/dark.png "Multiple data graphs in the single application window.")
 
 Data
 ===
