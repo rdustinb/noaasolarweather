@@ -5,5 +5,5 @@ be more efficient and hopefully speed up the Application.
 The command run to generate the Profile report is:
 
 ```
-python3.4 -m cProfile -s "cumtime" src/SpaceWeather.py > profile/original_profile.log
+python -m cProfile -s "cumtime" src/SpaceWeather.py > profile/original_profile.log
 ```
