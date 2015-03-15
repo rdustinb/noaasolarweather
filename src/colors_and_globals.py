@@ -4,7 +4,7 @@
 # the interface, but that would require creating a type of HEX calculating
 # algorithm for each plot trace, etc
 ###########################################################################
-colorMode = "Dark"
+colorMode = "Light"
 
 ###########################################################################
 # Version of the application
@@ -81,11 +81,11 @@ DifferentialEnergeticProtonFluxColors = {
   ]
 }
 
-GOESGoemagFieldFluxColors = {
+GOESGeomagFieldFluxColors = {
   "Light": [
     "#9f0000",
     "#009f00",
-    "#0009f",
+    "#00009f",
     "#5f005f"
   ],
   "Dark": [

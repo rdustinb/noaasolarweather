@@ -46,18 +46,18 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     self.axes.hold(False)
     # x-axis, y-axis, color
     hp, = self.axes.plot(data_points, self.data["data"]["Hp"],
-      colors_and_globals.GOESGoemagFieldFluxColors[colors_and_globals.colorMode][0],
+      colors_and_globals.GOESGeomagFieldFluxColors[colors_and_globals.colorMode][0],
       label="East")
     # Now just overlay remaining datasets
     self.axes.hold(True)
     he, = self.axes.plot(data_points, self.data["data"]["He"],
-      colors_and_globals.GOESGoemagFieldFluxColors[colors_and_globals.colorMode][1],
+      colors_and_globals.GOESGeomagFieldFluxColors[colors_and_globals.colorMode][1],
       label="Down")
     hn, = self.axes.plot(data_points, self.data["data"]["Hn"],
-      colors_and_globals.GOESGoemagFieldFluxColors[colors_and_globals.colorMode][2],
+      colors_and_globals.GOESGeomagFieldFluxColors[colors_and_globals.colorMode][2],
       label="Axis")
     total, = self.axes.plot(data_points, self.data["data"]["Total"],
-      colors_and_globals.GOESGoemagFieldFluxColors[colors_and_globals.colorMode][3],
+      colors_and_globals.GOESGeomagFieldFluxColors[colors_and_globals.colorMode][3],
       label="Total")
     # Format the Graph
     self.formatGraph(plotTitle="Geomagnetic Vector Field Flux",
