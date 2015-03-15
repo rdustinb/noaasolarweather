@@ -24,7 +24,8 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     """
       Initialize the updating object.
     """
-    MyMplCanvas.__init__(self, left_edge=0.15, right_edge=0.82, top_edge=0.9, bottom_edge=0.22, *args, **kwargs)
+    MyMplCanvas.__init__(self, left_edge=0.15, right_edge=0.82, top_edge=0.9,
+      bottom_edge=0.22, *args, **kwargs)
     timer = QtCore.QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
@@ -44,12 +45,22 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    hp,     = self.axes.plot(data_points, self.data["data"]["Hp"]   , colors_and_globals.GOESGoemagFieldFluxColors[0], label="East")
+    hp, = self.axes.plot(data_points, self.data["data"]["Hp"],
+      colors_and_globals.GOESGoemagFieldFluxColors[colors_and_globals.colorMode][0],
+      label="East")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    he,     = self.axes.plot(data_points, self.data["data"]["He"]   , colors_and_globals.GOESGoemagFieldFluxColors[1], label="Down")
-    hn,     = self.axes.plot(data_points, self.data["data"]["Hn"]   , colors_and_globals.GOESGoemagFieldFluxColors[2], label="Axis")
-    total,  = self.axes.plot(data_points, self.data["data"]["Total"], colors_and_globals.GOESGoemagFieldFluxColors[3], label="Total")
+    he, = self.axes.plot(data_points, self.data["data"]["He"],
+      colors_and_globals.GOESGoemagFieldFluxColors[colors_and_globals.colorMode][1],
+      label="Down")
+    hn, = self.axes.plot(data_points, self.data["data"]["Hn"],
+      colors_and_globals.GOESGoemagFieldFluxColors[colors_and_globals.colorMode][2],
+      label="Axis")
+    total, = self.axes.plot(data_points, self.data["data"]["Total"],
+      colors_and_globals.GOESGoemagFieldFluxColors[colors_and_globals.colorMode][3],
+      label="Total")
     # Format the Graph
-    self.formatGraph(plotTitle="Geomagnetic Vector Field Flux", labelThinner=colors_and_globals.GeomagneticFieldLabelThinner, dataDict=self.data,
-      legend1=[hp, he, hn, total], legend1title='H Vector', legend1xoffset='1.27', legend1yoffset='1.12')
+    self.formatGraph(plotTitle="Geomagnetic Vector Field Flux",
+      labelThinner=colors_and_globals.GeomagneticFieldLabelThinner,
+      dataDict=self.data, legend1=[hp, he, hn, total], legend1title='H Vector',
+      legend1xoffset='1.27', legend1yoffset='1.12')

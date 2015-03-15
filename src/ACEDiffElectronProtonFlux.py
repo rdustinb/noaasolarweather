@@ -44,16 +44,32 @@ class MyDiffElecProtFlux(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    e1,  = self.axes.plot(data_points, self.data["data"]["38-53 eV Electron"]    , colors_and_globals.ACEDiffElecProtFluxColors[0], label="38-53")
+    p1,  = self.axes.plot(data_points, self.data["data"]["47-68 keV Proton"],
+      colors_and_globals.ACEDiffElecProtFluxColors[colors_and_globals.colorMode][0],
+      label="47-68")
+    p2,  = self.axes.plot(data_points, self.data["data"]["115-195 keV Proton"],
+      colors_and_globals.ACEDiffElecProtFluxColors[colors_and_globals.colorMode][1],
+      label="115-195")
+    p3,  = self.axes.plot(data_points, self.data["data"]["310-580 keV Proton"],
+      colors_and_globals.ACEDiffElecProtFluxColors[colors_and_globals.colorMode][2],
+      label="310-580")
+    p4,  = self.axes.plot(data_points, self.data["data"]["795-1193 keV Proton"],
+      colors_and_globals.ACEDiffElecProtFluxColors[colors_and_globals.colorMode][3],
+      label="795-1193")
+    p5,  = self.axes.plot(data_points, self.data["data"]["1060-1900 keV Proton"],
+      colors_and_globals.ACEDiffElecProtFluxColors[colors_and_globals.colorMode][4],
+      label="1060-1900")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    e2,  = self.axes.plot(data_points, self.data["data"]["175-315 eV Electron"]  , colors_and_globals.ACEDiffElecProtFluxColors[1], label="175-315")
-    p1,  = self.axes.plot(data_points, self.data["data"]["47-68 keV Proton"]     , colors_and_globals.ACEDiffElecProtFluxColors[2], label="47-68")
-    p2,  = self.axes.plot(data_points, self.data["data"]["115-195 keV Proton"]   , colors_and_globals.ACEDiffElecProtFluxColors[3], label="115-195")
-    p3,  = self.axes.plot(data_points, self.data["data"]["310-580 keV Proton"]   , colors_and_globals.ACEDiffElecProtFluxColors[4], label="310-580")
-    p4,  = self.axes.plot(data_points, self.data["data"]["795-1193 keV Proton"]  , colors_and_globals.ACEDiffElecProtFluxColors[5], label="795-1193")
-    p5,  = self.axes.plot(data_points, self.data["data"]["1060-1900 keV Proton"] , colors_and_globals.ACEDiffElecProtFluxColors[6], label="1060-1900")
+    e1,  = self.axes.plot(data_points, self.data["data"]["38-53 eV Electron"],
+      colors_and_globals.ACEDiffElecProtFluxColors[colors_and_globals.colorMode][5],
+      label="38-53")
+    e2,  = self.axes.plot(data_points, self.data["data"]["175-315 eV Electron"],
+      colors_and_globals.ACEDiffElecProtFluxColors[colors_and_globals.colorMode][6],
+      label="175-315")
     # Format the Graph
-    self.formatGraph(plotTitle="Differential Particle Flux", labelThinner=colors_and_globals.ACEDiffElectronProtonFluxLabelThinner, dataDict=self.data,
-      legend1=[p1,p2,p3,p4,p5], legend1title='p (keV)', legend1xoffset='1.245', legend1yoffset='1.12',
-      legend2=[e1,e2], legend2title='e (eV)', legend2xoffset='1.215', legend2yoffset='0.45')
+    self.formatGraph(plotTitle="Differential Particle Flux",
+      labelThinner=colors_and_globals.ACEDiffElectronProtonFluxLabelThinner,
+      dataDict=self.data, legend1=[p1,p2,p3,p4,p5], legend1title='p (keV)',
+      legend1xoffset='1.245', legend1yoffset='1.12', legend2=[e1,e2],
+      legend2title='e (eV)', legend2xoffset='1.215', legend2yoffset='0.45')

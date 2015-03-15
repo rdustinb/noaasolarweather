@@ -44,11 +44,19 @@ class MySolarWindPlasma(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    density,      = self.axes.plot(data_points, self.data["data"]["Density"]    , colors_and_globals.ACESolarWindPlasmaColors[0], label=self.data["units"]["Density"])
+    density,      = self.axes.plot(data_points, self.data["data"]["Density"],
+      colors_and_globals.ACESolarWindPlasmaColors[colors_and_globals.colorMode][0],
+      label=self.data["units"]["Density"])
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    speed,        = self.axes.plot(data_points, self.data["data"]["Speed"]      , colors_and_globals.ACESolarWindPlasmaColors[1], label=self.data["units"]["Speed"])
-    temperature,  = self.axes.plot(data_points, self.data["data"]["Temperature"], colors_and_globals.ACESolarWindPlasmaColors[2], label=self.data["units"]["Temperature"])
+    speed,        = self.axes.plot(data_points, self.data["data"]["Speed"],
+      colors_and_globals.ACESolarWindPlasmaColors[colors_and_globals.colorMode][1],
+      label=self.data["units"]["Speed"])
+    temperature,  = self.axes.plot(data_points, self.data["data"]["Temperature"],
+      colors_and_globals.ACESolarWindPlasmaColors[colors_and_globals.colorMode][2],
+      label=self.data["units"]["Temperature"])
     # Format the Graph
-    self.formatGraph(plotTitle="Solar Plasma", dataDict=self.data, labelThinner=colors_and_globals.ACESolarWindPlasmaLabelThinner, disableYLabel=True,
-      legend1=[density,speed,temperature], legend1title='Params', legend1xoffset='1.21', legend1yoffset='1.12')
+    self.formatGraph(plotTitle="Solar Plasma", dataDict=self.data,
+      labelThinner=colors_and_globals.ACESolarWindPlasmaLabelThinner,
+      disableYLabel=True, legend1=[density,speed,temperature],
+      legend1title='Params', legend1xoffset='1.21', legend1yoffset='1.12')

@@ -44,19 +44,53 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    Protons_95_keV,     = self.axes.plot(data_points, self.data["data"]["95 keV Protons"]   , colors_and_globals.GOESDiscreteParticleFluxColors[0], label="95")
+    Protons_95_keV, = self.axes.plot(data_points,
+      self.data["data"]["95 keV Protons"],
+      colors_and_globals.GOESDiscreteParticleFluxColors[colors_and_globals.colorMode][0],
+      label="95")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    Protons_140_keV,    = self.axes.plot(data_points, self.data["data"]["140 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[1], label="140")
-    Protons_210_keV,    = self.axes.plot(data_points, self.data["data"]["210 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[2], label="210")
-    Protons_300_keV,    = self.axes.plot(data_points, self.data["data"]["300 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[3], label="300")
-    Protons_475_keV,    = self.axes.plot(data_points, self.data["data"]["475 keV Protons"]  , colors_and_globals.GOESDiscreteParticleFluxColors[4], label="475")
-    Electrons_40_keV,   = self.axes.plot(data_points, self.data["data"]["40 keV Electrons"] , colors_and_globals.GOESDiscreteParticleFluxColors[5], label="40")
-    Electrons_75_keV,   = self.axes.plot(data_points, self.data["data"]["75 keV Electrons"] , colors_and_globals.GOESDiscreteParticleFluxColors[6], label="75")
-    Electrons_150_keV,  = self.axes.plot(data_points, self.data["data"]["150 keV Electrons"], colors_and_globals.GOESDiscreteParticleFluxColors[7], label="150")
-    Electrons_275_keV,  = self.axes.plot(data_points, self.data["data"]["275 keV Electrons"], colors_and_globals.GOESDiscreteParticleFluxColors[8], label="275")
-    Electrons_475_keV,  = self.axes.plot(data_points, self.data["data"]["475 keV Electrons"], colors_and_globals.GOESDiscreteParticleFluxColors[9], label="475")
+    Protons_140_keV, = self.axes.plot(data_points,
+      self.data["data"]["140 keV Protons"],
+      colors_and_globals.GOESDiscreteParticleFluxColors[colors_and_globals.colorMode][1],
+      label="140")
+    Protons_210_keV, = self.axes.plot(data_points,
+      self.data["data"]["210 keV Protons"],
+      colors_and_globals.GOESDiscreteParticleFluxColors[colors_and_globals.colorMode][2],
+      label="210")
+    Protons_300_keV, = self.axes.plot(data_points,
+      self.data["data"]["300 keV Protons"],
+      colors_and_globals.GOESDiscreteParticleFluxColors[colors_and_globals.colorMode][3],
+      label="300")
+    Protons_475_keV, = self.axes.plot(data_points,
+      self.data["data"]["475 keV Protons"],
+      colors_and_globals.GOESDiscreteParticleFluxColors[colors_and_globals.colorMode][4],
+      label="475")
+    Electrons_40_keV, = self.axes.plot(data_points,
+      self.data["data"]["40 keV Electrons"],
+      colors_and_globals.GOESDiscreteParticleFluxColors[colors_and_globals.colorMode][5],
+      label="40")
+    Electrons_75_keV, = self.axes.plot(data_points,
+      self.data["data"]["75 keV Electrons"],
+      colors_and_globals.GOESDiscreteParticleFluxColors[colors_and_globals.colorMode][6],
+      label="75")
+    Electrons_150_keV, = self.axes.plot(data_points,
+      self.data["data"]["150 keV Electrons"],
+      colors_and_globals.GOESDiscreteParticleFluxColors[colors_and_globals.colorMode][7],
+      label="150")
+    Electrons_275_keV, = self.axes.plot(data_points,
+      self.data["data"]["275 keV Electrons"],
+      colors_and_globals.GOESDiscreteParticleFluxColors[colors_and_globals.colorMode][8],
+      label="275")
+    Electrons_475_keV, = self.axes.plot(data_points,
+      self.data["data"]["475 keV Electrons"],
+      colors_and_globals.GOESDiscreteParticleFluxColors[colors_and_globals.colorMode][9],
+      label="475")
     # Format the Graph
-    self.formatGraph(plotTitle="Discrete Particle Flux", labelThinner=colors_and_globals.DiscreteParticleFluxLabelThinner, dataDict=self.data,
-      legend1=[Protons_95_keV,Protons_140_keV,Protons_210_keV,Protons_300_keV,Protons_475_keV], legend1title='p (keV)', legend1xoffset='1.2', legend1yoffset='1.12',
-      legend2=[Electrons_40_keV,Electrons_75_keV,Electrons_150_keV,Electrons_275_keV,Electrons_475_keV], legend2title='e (keV)', legend2xoffset='1.2', legend2yoffset='0.45')
+    self.formatGraph(plotTitle="Discrete Particle Flux",
+      labelThinner=colors_and_globals.DiscreteParticleFluxLabelThinner,
+      dataDict=self.data,
+      legend1=[Protons_95_keV,Protons_140_keV,Protons_210_keV,Protons_300_keV,Protons_475_keV],
+      legend1title='p (keV)', legend1xoffset='1.2', legend1yoffset='1.12',
+      legend2=[Electrons_40_keV,Electrons_75_keV,Electrons_150_keV,Electrons_275_keV,Electrons_475_keV],
+      legend2title='e (keV)', legend2xoffset='1.2', legend2yoffset='0.45')

@@ -1,3 +1,9 @@
+###########################################################################
+# This is the master color mode controlling variable. The architecture
+# currently supports only "Dark" or "Light". I may branch this to colorize
+# the interface, but that would require creating a type of HEX calculating
+# algorithm for each plot trace, etc
+###########################################################################
 colorMode = "Dark"
 
 ###########################################################################
@@ -58,7 +64,8 @@ DifferentialEnergeticProtonFluxColors = {
     '#003f7f',
     '#00009f',
     '#3f009f',
-    '#6f009f'],
+    '#6f009f'
+  ],
   "Dark": [
     '#ff0000',
     '#bf4f00',
@@ -70,56 +77,129 @@ DifferentialEnergeticProtonFluxColors = {
     '#00bf4f',
     '#0000ff',
     '#5f00ff',
-    '#af00ff'],
-  }
+    '#af00ff'
+  ]
+}
 
-GOESGoemagFieldFluxColors = [
-  '#aa7039',
-  '#a4a938',
-  '#255e69',
-  '#5b2971']
+GOESGoemagFieldFluxColors = {
+  "Light": [
+    "#9f0000",
+    "#009f00",
+    "#0009f",
+    "#5f005f"
+  ],
+  "Dark": [
+    "#ff0000",
+    "#00ff00",
+    "#0000ff",
+    "#7f007f"
+  ]
+}
 
-GOESDiscreteParticleFluxColors = [
-  '#ffd3aa',
-  '#aa7039',
-  '#552900',
-  '#cfd369',
-  '#a4a938',
-  '#515400',
-  '#6a959d',
-  '#255e69',
-  '#012c34',
-  '#9974aa']
+GOESDiscreteParticleFluxColors = {
+  "Light": [
+    '#9f0000',
+    '#7f3f00',
+    '#5f5f00',
+    '#3f7f00',
+    '#009f00',
+    '#007f3f',
+    '#005f5f',
+    '#003f7f',
+    '#00009f',
+    '#3f009f'
+  ],
+  "Dark": [
+    '#ff0000',
+    '#bf4f00',
+    '#8f8f00',
+    '#4fbf00',
+    '#00ff00',
+    '#00bf4f',
+    '#008f8f',
+    '#00bf4f',
+    '#0000ff',
+    '#5f00ff'
+  ]
+}
 
-GOESRangeParticleFluxColors = [
-  '#ffd3aa',
-  '#aa7039',
-  '#552900',
-  '#cfd369',
-  '#a4a938',
-  '#515400',
-  '#6a959d',
-  '#255e69',
-  '#012c34']
+GOESRangeParticleFluxColors = {
+  "Light": [
+    "#9f0000",
+    "#6f3f00",
+    "#3f6f00",
+    "#009f00",
+    "#006f3f",
+    "#003f6f",
+    "#00009f",
+    "#3f006f",
+    "#6f003f"
+  ],
+  "Dark": [
+    "#ff0000",
+    "#af5f00",
+    "#5faf00",
+    "#00ff00",
+    "#00af5f",
+    "#005faf",
+    "#0000ff",
+    "#5f00af",
+    "#af005f"
+  ]
+}
 
-GOESXrayFluxColors = [
-  '#aa7039',
-  '#255e69']
+GOESXrayFluxColors = {
+  "Light": [
+    "#9f0000",
+    "#00009f"
+  ],
+  "Dark": [
+    "#ff0000",
+    "#0000ff"
+  ]
+}
 
-ACEDiffElecProtFluxColors = [
-  '#ffd3aa',
-  '#aa7039',
-  '#552900',
-  '#cfd369',
-  '#a4a938',
-  '#515400',
-  '#6a959d']
+ACEDiffElecProtFluxColors = {
+  "Light": [
+    '#9f0000',
+    '#5f5f00',
+    '#009f00',
+    '#005f5f',
+    '#00009f',
+    '#3f007f',
+    '#7f003f'
+  ],
+  "Dark": [
+    '#ff0000',
+    '#7f7f00',
+    '#00ff00',
+    '#007f7f',
+    '#0000ff',
+    '#4f00bf',
+    '#bf004f'
+  ]
+}
 
-ACEIntegralProtonFluxColors = [
-  '#aa7039',
-  '#255e69']
+ACEIntegralProtonFluxColors = {
+  "Light": [
+    '#7f7f00',
+    '#007f7f'
+  ],
+  "Dark": [
+    '#bf3f00',
+    '#003fbf'
+  ]
+}
 
-ACESolarWindPlasmaColors = [
-  '#aa7039',
-  '#a4a938',
-  '#255e69']
+ACESolarWindPlasmaColors = {
+  "Light": [
+    '#9f0000',
+    '#009f00',
+    '#00009f'
+  ],
+  "Dark": [
+    '#ff0000',
+    '#00ff00',
+    '#0000ff'
+  ]
+}
