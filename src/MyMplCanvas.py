@@ -56,9 +56,10 @@ class MyMplCanvas(FigureCanvas):
     # Redraw plots
     self.draw()
 
-  def formatGraph(self, scale="log", plotTitle='', labelThinner=1, dataDict={}, disableYLabel=False,
-    legend1=[], legend1title='', legend1xoffset=1.22, legend1yoffset=1.12,
-    legend2=[], legend2title='', legend2xoffset=1.22, legend2yoffset=0.55):
+  def formatGraph(self, scale="log", plotTitle='', labelThinner=1, dataDict={},
+    disableYLabel=False, legend1=[], legend1title='', legend1xoffset=1.22,
+    legend1yoffset=1.12, legend2=[], legend2title='', legend2xoffset=1.22,
+    legend2yoffset=0.55):
     # Get the start date
     start_date = dataDict["datestamp"][0].split(sep=":")[0]
     # Get the start date
@@ -76,19 +77,24 @@ class MyMplCanvas(FigureCanvas):
     self.axes.set_xticks(dataPts)
     # Change the plot tick labels
     if(colors_and_globals.plot_angle[0] == "-"):
-      self.axes.set_xticklabels(dataDict["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
+      self.axes.set_xticklabels(dataDict["datestamp"],
+        rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
         horizontalalignment='left', fontsize=colors_and_globals.plotLabelSize)
     else:
-      self.axes.set_xticklabels(dataDict["datestamp"], rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
+      self.axes.set_xticklabels(dataDict["datestamp"],
+        rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
         horizontalalignment='right', fontsize=colors_and_globals.plotLabelSize)
     # Show Units of y-axis if enabled
     if(disableYLabel == False):
-      self.axes.set_ylabel(dataDict["units"], rotation='vertical', fontsize=colors_and_globals.plotLabelSize)
+      self.axes.set_ylabel(dataDict["units"], rotation='vertical',
+        fontsize=colors_and_globals.plotLabelSize)
     # Show Units of x-axis
     if(start_date != end_date):
-      self.axes.set_xlabel(("UTC Time (%s - %s)"%(start_date,end_date)), fontsize=colors_and_globals.plotLabelSize)
+      self.axes.set_xlabel(("UTC Time (%s - %s)"%(start_date,end_date)),
+        fontsize=colors_and_globals.plotLabelSize)
     else:
-      self.axes.set_xlabel(("UTC Time (%s)"%(end_date)), fontsize=colors_and_globals.plotLabelSize)
+      self.axes.set_xlabel(("UTC Time (%s)"%(end_date)),
+        fontsize=colors_and_globals.plotLabelSize)
     # Set the Plot Title
     self.axes.set_title(plotTitle, fontsize=colors_and_globals.plotTitleSize)
     # Create the Legends
@@ -96,13 +102,17 @@ class MyMplCanvas(FigureCanvas):
       legend1 = self.axes.legend(
         handles=legend1,
         framealpha=0.1,
-        loc=1, fontsize=colors_and_globals.legendSize, bbox_to_anchor=(float(legend1xoffset), float(legend1yoffset)), title=legend1title)
+        loc=1, fontsize=colors_and_globals.legendSize,
+        bbox_to_anchor=(float(legend1xoffset), float(legend1yoffset)),
+        title=legend1title)
       self.axes.add_artist(legend1)
     if((legend2 != []) and (legend2title != '')):
       legend2 = self.axes.legend(
         handles=legend2,
         framealpha=0.1,
-        loc=1, fontsize=colors_and_globals.legendSize, bbox_to_anchor=(float(legend2xoffset), float(legend2yoffset)), title=legend2title)
+        loc=1, fontsize=colors_and_globals.legendSize,
+        bbox_to_anchor=(float(legend2xoffset), float(legend2yoffset)),
+        title=legend2title)
       self.axes.add_artist(legend2)
 
 

@@ -24,7 +24,8 @@ class MyIntegralProtonFlux(MyMplCanvas):
     Initialize the updating object.
   """
   def __init__(self, *args, **kwargs):
-    MyMplCanvas.__init__(self, left_edge=0.16, right_edge=0.82, top_edge=0.9, bottom_edge=0.22, *args, **kwargs)
+    MyMplCanvas.__init__(self, left_edge=0.16, right_edge=0.82, top_edge=0.9,
+      bottom_edge=0.22, *args, **kwargs)
     timer = QtCore.QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
@@ -44,10 +45,16 @@ class MyIntegralProtonFlux(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    proton_gt10mev,  = self.axes.plot(data_points, self.data["data"][">10 MeV Proton"], colors_and_globals.ACEIntegralProtonFluxColors[0], label=">10")
+    proton_gt10mev,  = self.axes.plot(data_points, self.data["data"][">10 MeV Proton"],
+      colors_and_globals.ACEIntegralProtonFluxColors[colors_and_globals.colorMode][0],
+      label=">10")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    proton_gt30mev,  = self.axes.plot(data_points, self.data["data"][">30 MeV Proton"], colors_and_globals.ACEIntegralProtonFluxColors[1], label=">30")
+    proton_gt30mev,  = self.axes.plot(data_points, self.data["data"][">30 MeV Proton"],
+      colors_and_globals.ACEIntegralProtonFluxColors[colors_and_globals.colorMode][1],
+      label=">30")
     # Format the Graph
-    self.formatGraph(plotTitle="Integral Proton Flux", labelThinner=colors_and_globals.ACEIntegralProtonFluxLabelThinner, dataDict=self.data,
-      legend1=[proton_gt10mev,proton_gt30mev], legend1title='p (MeV)', legend1xoffset='1.27', legend1yoffset='1.12')
+    self.formatGraph(plotTitle="Integral Proton Flux",
+      labelThinner=colors_and_globals.ACEIntegralProtonFluxLabelThinner,
+      dataDict=self.data, legend1=[proton_gt10mev,proton_gt30mev],
+      legend1title='p (MeV)', legend1xoffset='1.27', legend1yoffset='1.12')

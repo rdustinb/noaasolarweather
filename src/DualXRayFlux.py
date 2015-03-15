@@ -44,10 +44,16 @@ class MyGOESXrayFlux(MyMplCanvas):
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     # x-axis, y-axis, color
-    short_xray, = self.axes.plot(data_points, self.data["data"]["0.05-0.4 nm"], colors_and_globals.GOESXrayFluxColors[0], label="0.05-0.4")
+    short_xray, = self.axes.plot(data_points, self.data["data"]["0.05-0.4 nm"],
+      colors_and_globals.GOESXrayFluxColors[colors_and_globals.colorMode][0],
+      label="0.05-0.4")
     # Now just overlay remaining datasets
     self.axes.hold(True)
-    long_xray,  = self.axes.plot(data_points, self.data["data"]["0.1-0.8 nm"] , colors_and_globals.GOESXrayFluxColors[1], label="0.1-0.8")
+    long_xray,  = self.axes.plot(data_points, self.data["data"]["0.1-0.8 nm"],
+      colors_and_globals.GOESXrayFluxColors[colors_and_globals.colorMode][1],
+      label="0.1-0.8")
     # Format the Graph
-    self.formatGraph(plotTitle="Differential xRay Flux", labelThinner=colors_and_globals.DualXrayFluxLabelThinner, dataDict=self.data,
-      legend1=[short_xray,long_xray], legend1title='nm', legend1xoffset='1.22', legend1yoffset='1.12')
+    self.formatGraph(plotTitle="Differential xRay Flux",
+      labelThinner=colors_and_globals.DualXrayFluxLabelThinner, dataDict=self.data,
+      legend1=[short_xray,long_xray], legend1title='nm', legend1xoffset='1.22',
+      legend1yoffset='1.12')
