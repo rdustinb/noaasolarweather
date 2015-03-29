@@ -4,7 +4,7 @@
 # the interface, but that would require creating a type of HEX calculating
 # algorithm for each plot trace, etc
 ###########################################################################
-colorMode = "Light"
+colorMode = "Dark"
 
 ###########################################################################
 # Version of the application
@@ -42,10 +42,8 @@ else:
 ###########################################################################
 plot_angle = "-45"
 
-DifferentialEnergeticProtonFluxLabel = 1
 DiscreteParticleFluxLabelThinner = 5
 DualXrayFluxLabelThinner = 7
-GeomagneticFieldLabelThinner = 7
 SolarParticleFluxLabelThinner = 1
 ACEDiffElectronProtonFluxLabelThinner = 1
 ACEIntegralProtonFluxLabelThinner = 2
@@ -81,20 +79,20 @@ elif(colorMode == "Dark"):
     'P11':'#af00ff'
   }
 
-GOESGeomagFieldFluxColors = {
-  "Light": [
-    "#9f0000",
-    "#009f00",
-    "#00009f",
-    "#5f005f"
-  ],
-  "Dark": [
-    "#ff0000",
-    "#00ff00",
-    "#0000ff",
-    "#7f007f"
-  ]
-}
+if(colorMode == "Light"):
+  GOESGeomagFieldFluxColors = {
+    'Hp'    : '#9f0000',
+    'He'    : '#009f00',
+    'Hn'    : '#00009f',
+    'Total' : '#5f005f'
+  }
+elif(colorMode == "Dark"):
+  GOESGeomagFieldFluxColors = {
+    'Hp'    : '#ff0000',
+    'He'    : '#00ff00',
+    'Hn'    : '#0000ff',
+    'Total' : '#7f007f'
+  }
 
 GOESDiscreteParticleFluxColors = {
   "Light": [

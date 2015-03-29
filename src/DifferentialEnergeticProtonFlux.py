@@ -50,12 +50,15 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     self.axes.hold(False)
     self.axes.plot(0)
     self.axes.hold(True)
-    # x-axis, y-axis, color
+    # Plot all data sets
     plot1 = [self.axes.plot(data_points, self.datas[key],
       colors_and_globals.DifferentialEnergeticProtonFluxColors[key],
       label=self.particles[key][1]
       ) for key in self.label_list]
-    dataPts = numpy.linspace(0,1,len(self.stamp))
+    # Format the Graph
+    self.format_graph(data_points)
+
+  def format_graph(self, data_points):
     # Set the graph background color
     self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
     # Change Plot to logarithmic
@@ -63,7 +66,7 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     # Show all plot grids
     self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
     # Set number of X-Axis ticks
-    self.axes.set_xticks(dataPts)
+    self.axes.set_xticks(data_points)
     # Separate dates and times
     (dates,times) = zip(*self.stamp)
     # Change the plot tick labels

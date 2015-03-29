@@ -18,6 +18,8 @@ import colors_and_globals
 import NoaaApi
 # Plotting Libraries
 import matplotlib
+# Data Directory library to create if necessary
+from pathlib import Path
 """
   As of MatPlotLib 1.5 qt4_compat will be deprecated for the more general
   qt_compat. Pulling that in instead.
@@ -39,6 +41,10 @@ else:
 ###########################################################################
 class ApplicationWindow(QtGui.QMainWindow):
   def __init__(self):
+    # Verify the existance of the data directory
+    if(not(Path("../data").exists())):
+      print("../data dir doesn't exist!")
+
     # Create the Main Window
     QtGui.QMainWindow.__init__(self)
     self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
@@ -59,12 +65,12 @@ class ApplicationWindow(QtGui.QMainWindow):
     l = QtGui.QVBoxLayout(self.main_widget)
     # Four Horizontal Layout objects
     h1 = QtGui.QHBoxLayout()
-    # h2 = QtGui.QHBoxLayout()
+    h2 = QtGui.QHBoxLayout()
     # h3 = QtGui.QHBoxLayout()
     # h4 = QtGui.QHBoxLayout()
     # Added as sublayouts to the top level vertical layout
     l.addLayout(h1)
-    # l.addLayout(h2)
+    l.addLayout(h2)
     # l.addLayout(h3)
     # l.addLayout(h4)
 
@@ -93,8 +99,8 @@ class ApplicationWindow(QtGui.QMainWindow):
     # GOESXrayFlux = MyGOESXrayFlux(self.main_widget, width=5, height=4, dpi=100)
     # h1.addWidget(GOESXrayFlux)
 
-    # GOESGoemagFieldFlux = MyGOESGoemagFieldFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
-    # h2.addWidget(GOESGoemagFieldFlux)
+    GOESGoemagFieldFlux = MyGOESGoemagFieldFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
+    h2.addWidget(GOESGoemagFieldFlux)
     # ACEIntegralProtonFlux = MyIntegralProtonFlux(self.main_widget, width=5, height=4, dpi=100)
     # h2.addWidget(ACEIntegralProtonFlux)
     # ACEInterplanetaryMagField = MyInterplanetaryMagField(self.main_widget, width=5, height=4, dpi=100)
