@@ -170,8 +170,13 @@ def getGOESRangeProtonFlux():
     Proton Flux, however GOES-15 also provides Proton Flux measurements as
     a secondary source.
   """
-  # URL = 'http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt'
-  # with urllib.request.urlopen(URL) as urlfh:
+  # Store the data locally
+  URL = 'http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt'
+  with urllib.request.urlopen(URL) as urlfh , open("../data/Gp_pchan_5m.txt", "w") as locfh:
+    for line in urlfh:
+      line = line.decode('utf-8')
+      locfh.write(line)
+  # Parse local data
   with open("../data/Gp_pchan_5m.txt", "r") as fh:
     datas = {}
     units = {}
