@@ -1,5 +1,6 @@
 #!/Library/Frameworks/Python.framework/Versions/3.4/bin/python3
 import sys
+import re
 
 if int(sys.version[0]) == 3:
   # print("Version 3.x!")
@@ -69,6 +70,93 @@ if int(sys.version[0]) == 2:
     http://www.swpc.noaa.gov/Data/index.html#measurements
 """
 
+def getData(url: str = "http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt"):
+  """
+    Generic data fetching function.
+  """
+  datas = {}
+  units = {}
+  particles = {}
+  label_list = []
+  stamp = []
+  source = ""
+  # Preliminary Check of the URL
+  if(not(isinstance(url,str))):
+    return TypeError
+  elif((url.find('http') == -1) or (url.find('.txt') == -1)):
+    return LookupError
+  else:
+    fh = urllib.request.urlopen(url)
+    # Print the Header
+    for line in fh:
+      line = line.decode('utf-8')
+      if(line.startswith('#')):
+        if(line.find('Label') != -1):
+          (blah,label) = line.split('Label:')
+          if(label.find('from') != -1):
+            (label,particle) = label.split('=')
+            (particle,energy) = particle.split('from')
+            (energy,unit) = energy.split('units #/')
+            # Remove leading and trailing whitespace
+            label = label.strip()
+            particle = particle.strip()
+            energy = energy.strip()
+            unit = unit.strip()
+            # Now remove excess whitespace
+            label = re.sub(" ", "", label)
+            particle = re.sub(" {2,}", " ", particle)
+            energy = re.sub(" {2,}", " ", energy)
+            unit = re.sub(" {2,}", " ", unit)
+            # Add the label to the data structure
+            datas[label] = []
+            units[label] = unit
+            particles[label] = (particle, energy)
+          elif(label.find('component') != -1):
+            (label,blah) = label.split('component =')
+            # Remove leading and trailing whitespace
+            label = label.strip()
+            # Now remove excess whitespace
+            label = re.sub(" {2,}", " ", label)
+            # Add the label to the data structure
+            datas[label] = []
+          else:
+            (label,blah) = label.split('=')
+            # Remove leading and trailing whitespace
+            # label = label.strip()
+            # Now remove all whitespace
+            label = re.sub(" ", "", label)
+            # Add the label to the data structure
+            datas[label] = []
+          label_list.append(label)
+        elif(line.find('Units') != -1):
+          # Dynamically change units to a string object
+          units = ""
+          (blah,units) = line.split('Units:')
+          # Split again if formatted this way
+          if(units.find('/') != -1):
+            (blah,units) = units.split('/')
+          units = units.strip()
+          units = re.sub(" {2,}", " ", units)
+        elif(line.find('Source') != -1):
+          (blah,source) = line.split('Source:')
+          source = source.strip()
+          source = re.sub(" {2,}", " ", source)
+        else:
+          pass
+      elif(line.startswith(':')):
+        pass
+      elif(len(line) == 0):
+        pass
+      else:
+        # Map out each data line to yr, mo, dy, hhmm, skip, skip, d0, d1, ... , dn
+        # Zipping up the original sequence of labels with the remainder data
+        # lines allows the for loop to then iterate through the new list
+        (yr,mo,dy,time,blah1,blah2,*datarow) = line.split()
+        stamp.append((str.join("",(yr,mo,dy)), time))
+        for (key, value) in zip(label_list, datarow):
+          datas[key].append(value)
+    return (datas, units, particles, stamp, source)
+
 #################################################
 #               GOES Data                       #
 #################################################
@@ -82,72 +170,56 @@ def getGOESRangeProtonFlux():
     Proton Flux, however GOES-15 also provides Proton Flux measurements as
     a secondary source.
   """
-  URL = 'http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt'
-  try:
-    fh = openUrl(URL)
-  except:
-    print("NoaaApi.getGOESRangeProtonFlux > Timeout while pulling NOAA Data...")
-    fh = ""
-    fh = openUrl(URL)
-  # Create the empty data structure
-  data_ret = {
-    "source":"",
-    "data":{
-      "0.7-4 MeV Protons"  :[],
-      "4-9 MeV Protons"    :[],
-      "9-15 MeV Protons"   :[],
-      "15-40 MeV Protons"  :[],
-      "38-82 MeV Protons"  :[],
-      "84-200 MeV Protons" :[],
-      "110-900 MeV Protons":[],
-      "350-420 MeV Protons":[],
-      "420-510 MeV Protons":[],
-      "510-700 MeV Protons":[],
-      ">700 MeV Protons"   :[]
-    },
-    "units":"p/cm2 * s * sr * MeV",
-    "update":"",
-    "datestamp":[],
-    "rawlines":[]
-  }
-  # Loop through the remote data file
-  for read_line in fh.readlines():
-    read_line = read_line.decode('utf-8').split()
-    if(len(read_line) > 1):
-      # Get the data samples
-      if((read_line[0][0] != '#') and (read_line[0][0] != ':')):
-        data_ret["rawlines"   ].append(read_line)
-        data_ret["datestamp"  ].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
-          read_line[2],read_line[3]))
-        data_ret["data"]["0.7-4 MeV Protons"  ].append(read_line[6])
-        data_ret["data"]["4-9 MeV Protons"    ].append(read_line[7])
-        data_ret["data"]["9-15 MeV Protons"   ].append(read_line[8])
-        data_ret["data"]["15-40 MeV Protons"  ].append(read_line[9])
-        data_ret["data"]["38-82 MeV Protons"  ].append(read_line[10])
-        data_ret["data"]["84-200 MeV Protons" ].append(read_line[11])
-        data_ret["data"]["110-900 MeV Protons"].append(read_line[12])
-        data_ret["data"]["350-420 MeV Protons"].append(read_line[13])
-        data_ret["data"]["420-510 MeV Protons"].append(read_line[14])
-        data_ret["data"]["510-700 MeV Protons"].append(read_line[15])
-        data_ret["data"][">700 MeV Protons"   ].append(read_line[16])
-      # Get data source
-      elif(read_line[1] == 'Source:'):
-        data_ret["source"] = str(read_line[2])
+  # URL = 'http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt'
+  # with urllib.request.urlopen(URL) as urlfh:
+  with open("../data/Gp_pchan_5m.txt", "r") as fh:
+    datas = {}
+    units = {}
+    particles = {}
+    label_list = []
+    stamp = []
+    # Skip the first two lines, just boiler plate stuff
+    next(fh)
+    next(fh)
+    # Iterator of Header
+    for line in fh:
+      # line = line.decode('utf-8')
+      if(line.startswith('#')):
+        if(line.find('Label') != -1):
+          (blah,label) = line.split('Label:')
+          (label,particle) = label.split('=')
+          (particle,energy) = particle.split('from')
+          (energy,unit) = energy.split('units #/')
+          # Remove leading and trailing whitespace
+          label = label.strip()
+          particle = particle.strip()
+          energy = energy.strip()
+          unit = unit.strip()
+          # Now remove excess whitespace
+          label = re.sub(" ", "", label)
+          particle = re.sub(" {2,}", " ", particle)
+          energy = re.sub(" {2,}", " ", energy)
+          unit = re.sub(" {2,}", " ", unit)
+          # Add the label to the data structure
+          datas[label] = []
+          units[label] = unit
+          particles[label] = (particle, energy)
+          label_list.append(label)
       else:
-        # Capture the update period
-        try:
-          if int(sys.version[0]) == 3:
-            check_val = read_line[1].split(sep="-")
-          if int(sys.version[0]) == 2:
-            check_val = read_line[1].split("-")
-          if(check_val[1] == "minute"):
-            data_ret["update"] = int(check_val[0])*60*1000
-        except IndexError:
-          pass
-  # Convert the data points from strings to numbers
-  for key in data_ret["data"].keys():
-    data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
-  return data_ret
+        # Stop decoding header
+        break
+    # Iterator of Data
+    for line in fh:
+      # line = line.decode('utf-8')
+      # Map out each data line to yr, mo, dy, hhmm, skip, skip, d0, d1, ... , dn
+      # Zipping up the original sequence of labels with the remainder data
+      # lines allows the for loop to then iterate through the new list
+      (yr,mo,dy,time,blah1,blah2,*datarow) = line.split()
+      stamp.append((str.join("",(yr,mo,dy)), time))
+      for (key, value) in zip(label_list, datarow):
+        datas[key].append(value)
+  # Now return the data
+  return(label_list,datas,stamp,units,particles)
 
 def getGOESGoemagFieldFlux():
   """
@@ -687,160 +759,165 @@ if __name__ == '__main__':
   print("------------------------------------")
   print("           Range Proton Flux")
   print("------------------------------------")
-  alldata = getGOESRangeProtonFlux()
-  print("data source is:")
-  print(alldata["source"])
-  for key,value in alldata["data"].items():
-    print("%s data is:" % (key))
-    print(value)
-  print("data units are:")
-  print(alldata["units"])
-  print("timestamps are:")
-  print(alldata["datestamp"])
-  print("update period in (ms) is:")
-  print(alldata["update"])
+  (label_list,datas,stamp,units,particles) = getGOESRangeProtonFlux()
+  print(label_list)
+  print(datas)
+  print(stamp)
+  print(units)
+  print(particles)
+  # print("data source is:")
+  # print(alldata["source"])
+  # for key,value in alldata["data"].items():
+  #   print("%s data is:" % (key))
+  #   print(value)
+  # print("data units are:")
+  # print(alldata["units"])
+  # print("timestamps are:")
+  # print(alldata["datestamp"])
+  # print("update period in (ms) is:")
+  # print(alldata["update"])
 
-  # Get Geomagnetic Flux Data
-  print("")
-  print("------------------------------------")
-  print("          Geomagnetic Flux")
-  print("------------------------------------")
-  alldata = getGOESGoemagFieldFlux()
-  print("data source is:")
-  print(alldata["source"])
-  for key,value in alldata["data"].items():
-    print("%s data is:" % (key))
-    print(value)
-  print("data units are:")
-  print(alldata["units"])
-  print("timestamps are:")
-  print(alldata["datestamp"])
-  print("update period in (ms) is:")
-  print(alldata["update"])
+  # # Get Geomagnetic Flux Data
+  # print("")
+  # print("------------------------------------")
+  # print("          Geomagnetic Flux")
+  # print("------------------------------------")
+  # alldata = getGOESGoemagFieldFlux()
+  # print("data source is:")
+  # print(alldata["source"])
+  # for key,value in alldata["data"].items():
+  #   print("%s data is:" % (key))
+  #   print(value)
+  # print("data units are:")
+  # print(alldata["units"])
+  # print("timestamps are:")
+  # print(alldata["datestamp"])
+  # print("update period in (ms) is:")
+  # print(alldata["update"])
 
-  # Get Discrete Energetic Particle Flux Data
-  print("")
-  print("------------------------------------")
-  print("  Discrete Energetic Particle Flux")
-  print("------------------------------------")
-  alldata = getGOESDiscreteParticleFlux()
-  print("data source is:")
-  print(alldata["source"])
-  for key,value in alldata["data"].items():
-    print("%s data is:" % (key))
-    print(value)
-  print("data units are:")
-  print(alldata["units"])
-  print("timestamps are:")
-  print(alldata["datestamp"])
-  print("update period in (ms) is:")
-  print(alldata["update"])
+  # # Get Discrete Energetic Particle Flux Data
+  # print("")
+  # print("------------------------------------")
+  # print("  Discrete Energetic Particle Flux")
+  # print("------------------------------------")
+  # alldata = getGOESDiscreteParticleFlux()
+  # print("data source is:")
+  # print(alldata["source"])
+  # for key,value in alldata["data"].items():
+  #   print("%s data is:" % (key))
+  #   print(value)
+  # print("data units are:")
+  # print(alldata["units"])
+  # print("timestamps are:")
+  # print(alldata["datestamp"])
+  # print("update period in (ms) is:")
+  # print(alldata["update"])
 
-  # Get Range Energetic Particle Flux Data
-  print("")
-  print("------------------------------------")
-  print("   Range Energetic Particle Flux")
-  print("------------------------------------")
-  alldata = getGOESRangeParticleFlux()
-  print("data source is:")
-  print(alldata["source"])
-  for key,value in alldata["data"].items():
-    print("%s data is:" % (key))
-    print(value)
-  print("data units are:")
-  print(alldata["units"])
-  print("timestamps are:")
-  print(alldata["datestamp"])
-  print("update period in (ms) is:")
-  print(alldata["update"])
+  # # Get Range Energetic Particle Flux Data
+  # print("")
+  # print("------------------------------------")
+  # print("   Range Energetic Particle Flux")
+  # print("------------------------------------")
+  # alldata = getGOESRangeParticleFlux()
+  # print("data source is:")
+  # print(alldata["source"])
+  # for key,value in alldata["data"].items():
+  #   print("%s data is:" % (key))
+  #   print(value)
+  # print("data units are:")
+  # print(alldata["units"])
+  # print("timestamps are:")
+  # print(alldata["datestamp"])
+  # print("update period in (ms) is:")
+  # print(alldata["update"])
 
-  # Get XRay Flux Data
-  print("")
-  print("------------------------------------")
-  print("           XRay Flux")
-  print("------------------------------------")
-  alldata = getGOESXrayFlux()
-  print("data source is:")
-  print(alldata["source"])
-  for key,value in alldata["data"].items():
-    print("%s data is:" % (key))
-    print(value)
-  print("data units are:")
-  print(alldata["units"])
-  print("timestamps are:")
-  print(alldata["datestamp"])
-  print("update period in (ms) is:")
-  print(alldata["update"])
+  # # Get XRay Flux Data
+  # print("")
+  # print("------------------------------------")
+  # print("           XRay Flux")
+  # print("------------------------------------")
+  # alldata = getGOESXrayFlux()
+  # print("data source is:")
+  # print(alldata["source"])
+  # for key,value in alldata["data"].items():
+  #   print("%s data is:" % (key))
+  #   print(value)
+  # print("data units are:")
+  # print(alldata["units"])
+  # print("timestamps are:")
+  # print(alldata["datestamp"])
+  # print("update period in (ms) is:")
+  # print(alldata["update"])
 
-  # Get Differential Flux Data
-  print("")
-  print("------------------------------------")
-  print("          Differential Flux")
-  print("------------------------------------")
-  alldata = getDiffElecProtFlux()
-  print("data source is:")
-  print(alldata["source"])
-  for key,value in alldata["data"].items():
-    print("%s data is:" % (key))
-    print(value)
-  print("data units are:")
-  print(alldata["units"])
-  print("timestamps are:")
-  print(alldata["datestamp"])
-  print("update period in (ms) is:")
-  print(alldata["update"])
+  # # Get Differential Flux Data
+  # print("")
+  # print("------------------------------------")
+  # print("          Differential Flux")
+  # print("------------------------------------")
+  # alldata = getDiffElecProtFlux()
+  # print("data source is:")
+  # print(alldata["source"])
+  # for key,value in alldata["data"].items():
+  #   print("%s data is:" % (key))
+  #   print(value)
+  # print("data units are:")
+  # print(alldata["units"])
+  # print("timestamps are:")
+  # print(alldata["datestamp"])
+  # print("update period in (ms) is:")
+  # print(alldata["update"])
 
-  # Get Differential Flux Data
-  print("")
-  print("------------------------------------")
-  print("  Integral High Energy Proton Flux")
-  print("------------------------------------")
-  alldata = getSolarIsotopeSpectrometer()
-  print("data source is:")
-  print(alldata["source"])
-  for key,value in alldata["data"].items():
-    print("%s data is:" % (key))
-    print(value)
-  print("data units are:")
-  print(alldata["units"])
-  print("timestamps are:")
-  print(alldata["datestamp"])
-  print("update period in (ms) is:")
-  print(alldata["update"])
+  # # Get Differential Flux Data
+  # print("")
+  # print("------------------------------------")
+  # print("  Integral High Energy Proton Flux")
+  # print("------------------------------------")
+  # alldata = getSolarIsotopeSpectrometer()
+  # print("data source is:")
+  # print(alldata["source"])
+  # for key,value in alldata["data"].items():
+  #   print("%s data is:" % (key))
+  #   print(value)
+  # print("data units are:")
+  # print(alldata["units"])
+  # print("timestamps are:")
+  # print(alldata["datestamp"])
+  # print("update period in (ms) is:")
+  # print(alldata["update"])
 
-  # Get Interplanetary Magnetic Field Flux
-  print("")
-  print("------------------------------------")
-  print("   Interplanetary Magnetic Field")
-  print("------------------------------------")
-  alldata = getInterplanetMagField()
-  print("data source is:")
-  print(alldata["source"])
-  for key,value in alldata["data"].items():
-    print("%s data is:" % (key))
-    print(value)
-  print("data units are:")
-  print(alldata["units"])
-  print("timestamps are:")
-  print(alldata["datestamp"])
-  print("update period in (ms) is:")
-  print(alldata["update"])
+  # # Get Interplanetary Magnetic Field Flux
+  # print("")
+  # print("------------------------------------")
+  # print("   Interplanetary Magnetic Field")
+  # print("------------------------------------")
+  # alldata = getInterplanetMagField()
+  # print("data source is:")
+  # print(alldata["source"])
+  # for key,value in alldata["data"].items():
+  #   print("%s data is:" % (key))
+  #   print(value)
+  # print("data units are:")
+  # print(alldata["units"])
+  # print("timestamps are:")
+  # print(alldata["datestamp"])
+  # print("update period in (ms) is:")
+  # print(alldata["update"])
 
-  # Get Solar Wind Plasma
-  print("")
-  print("------------------------------------")
-  print("         Solar Wind Plasma")
-  print("------------------------------------")
-  alldata = getSolarPlasma()
-  print("data source is:")
-  print(alldata["source"])
-  for key,value in alldata["data"].items():
-    print("%s data is:" % (key))
-    print(value)
-  for key,value in alldata["units"].items():
-    print("%s units are:" % (key))
-    print(value)
-  print("timestamps are:")
-  print(alldata["datestamp"])
-  print("update period in (ms) is:")
-  print(alldata["update"])
+  # # Get Solar Wind Plasma
+  # print("")
+  # print("------------------------------------")
+  # print("         Solar Wind Plasma")
+  # print("------------------------------------")
+  # alldata = getSolarPlasma()
+  # print("data source is:")
+  # print(alldata["source"])
+  # for key,value in alldata["data"].items():
+  #   print("%s data is:" % (key))
+  #   print(value)
+  # for key,value in alldata["units"].items():
+  #   print("%s units are:" % (key))
+  #   print(value)
+  # print("timestamps are:")
+  # print(alldata["datestamp"])
+  # print("update period in (ms) is:")
+  # print(alldata["update"])

@@ -19,11 +19,15 @@ else:
 # Specific Plot Canvas Objects
 ###########################################################################
 class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
-  data = ""
-  """
-    Initialize the updating object.
-  """
+  datas = {}
+  units = {}
+  particles = {}
+  label_list = []
+  stamp = []
   def __init__(self, *args, **kwargs):
+    """
+      Initialize the updating object.
+    """
     MyMplCanvas.__init__(self, *args, **kwargs)
     timer = QtCore.QTimer(self)
     # Tie the "update_figure" function to the timer
@@ -31,57 +35,55 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     # Millisecond Timer, Assign the update time based on the value returned by
     # the API call, store the API call data in an object-global data variable
     # to reduce the number of API calls required to initialize the plot
-    timer.start(self.data["update"])
+    timer.start(300000)
 
   def compute_initial_figure(self):
     """
       Initial data plot.
     """
     # Get the new data
-    self.data = NoaaApi.getGOESRangeProtonFlux()
+    (self.label_list,self.datas,self.stamp,self.units,self.particles) = \
+      NoaaApi.getGOESRangeProtonFlux()
     # Get number of data points
-    data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
+    data_points = numpy.linspace(0,1,len(self.stamp))
     # Next plot overwrites all previous plots
     self.axes.hold(False)
-    # x-axis, y-axis, color
-    p1, = self.axes.plot(data_points, self.data["data"]["0.7-4 MeV Protons"],
-      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][0],
-      label="0.7-4")
-    # Now just overlay remaining datasets
+    self.axes.plot(0)
     self.axes.hold(True)
-    p2, = self.axes.plot(data_points, self.data["data"]["4-9 MeV Protons"],
-      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][1],
-      label="4-9")
-    p3, = self.axes.plot(data_points, self.data["data"]["9-15 MeV Protons"],
-      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][2],
-      label="9-15")
-    p4, = self.axes.plot(data_points, self.data["data"]["15-40 MeV Protons"],
-      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][3],
-      label="15-40")
-    p5, = self.axes.plot(data_points, self.data["data"]["38-82 MeV Protons"],
-      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][4],
-      label="38-82")
-    p6, = self.axes.plot(data_points, self.data["data"]["84-200 MeV Protons"],
-      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][5],
-      label="84-200")
-    p7, = self.axes.plot(data_points, self.data["data"]["110-900 MeV Protons"],
-      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][6],
-      label="110-900")
-    p8, = self.axes.plot(data_points, self.data["data"]["350-420 MeV Protons"],
-      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][7],
-      label="350-420")
-    p9, = self.axes.plot(data_points, self.data["data"]["420-510 MeV Protons"],
-      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][8],
-      label="420-510")
-    p10, = self.axes.plot(data_points, self.data["data"]["510-700 MeV Protons"],
-      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][9],
-      label="510-700")
-    p11, = self.axes.plot(data_points, self.data["data"][">700 MeV Protons"],
-      colors_and_globals.DifferentialEnergeticProtonFluxColors[colors_and_globals.colorMode][10],
-      label=">700")
-    # Format the Graph
-    self.formatGraph(plotTitle="Differential Energetic Proton Flux",
-      labelThinner=colors_and_globals.DifferentialEnergeticProtonFluxLabel,
-      dataDict=self.data,
-      legend1=[p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11],
-      legend1title='MeV', legend1xoffset='1.22', legend1yoffset='1.13')
+    # x-axis, y-axis, color
+    plot1 = [self.axes.plot(data_points, self.datas[key],
+      colors_and_globals.DifferentialEnergeticProtonFluxColors[key],
+      label=self.particles[key][1]
+      ) for key in self.label_list]
+    dataPts = numpy.linspace(0,1,len(self.stamp))
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Change Plot to logarithmic
+    self.axes.set_yscale("log")
+    # Show all plot grids
+    self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
+    # Set number of X-Axis ticks
+    self.axes.set_xticks(dataPts)
+    # Separate dates and times
+    (dates,times) = zip(*self.stamp)
+    # Change the plot tick labels
+    if(colors_and_globals.plot_angle.find("-") != -1):
+      self.axes.set_xticklabels(times,
+        rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
+        horizontalalignment='left', fontsize=colors_and_globals.plotLabelSize)
+    else:
+      self.axes.set_xticklabels(times,
+        rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
+        horizontalalignment='right', fontsize=colors_and_globals.plotLabelSize)
+    # Show Units of y-axis
+    self.axes.set_ylabel("Particles / (cm2*s*sr*MeV)", rotation='vertical',
+      fontsize=colors_and_globals.plotLabelSize)
+    # Show Units of x-axis
+    if(dates[0] != dates[-1]):
+      self.axes.set_xlabel(("UTC Time (%s - %s)"%(dates[0],dates[-1])),
+        fontsize=colors_and_globals.plotLabelSize)
+    else:
+      self.axes.set_xlabel(("UTC Time (%s)"%(dates[-1])),
+        fontsize=colors_and_globals.plotLabelSize)
+    # Set the Plot Title
+    self.axes.set_title("Differential Proton Flux", fontsize=colors_and_globals.plotTitleSize)

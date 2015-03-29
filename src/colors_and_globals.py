@@ -52,34 +52,34 @@ ACEIntegralProtonFluxLabelThinner = 2
 ACEInterplanetaryMagFieldLabelThinner = 1
 ACESolarWindPlasmaLabelThinner = 7
 
-DifferentialEnergeticProtonFluxColors = {
-  "Light": [
-    '#9f0000',
-    '#7f3f00',
-    '#5f5f00',
-    '#3f7f00',
-    '#009f00',
-    '#007f3f',
-    '#005f5f',
-    '#003f7f',
-    '#00009f',
-    '#3f009f',
-    '#6f009f'
-  ],
-  "Dark": [
-    '#ff0000',
-    '#bf4f00',
-    '#8f8f00',
-    '#4fbf00',
-    '#00ff00',
-    '#00bf4f',
-    '#008f8f',
-    '#00bf4f',
-    '#0000ff',
-    '#5f00ff',
-    '#af00ff'
-  ]
-}
+if(colorMode == "Light"):
+  DifferentialEnergeticProtonFluxColors = {
+    'P1' :'#9f0000',
+    'P2' :'#7f3f00',
+    'P3' :'#5f5f00',
+    'P4' :'#3f7f00',
+    'P5' :'#009f00',
+    'P6' :'#007f3f',
+    'P7' :'#005f5f',
+    'P8' :'#003f7f',
+    'P9' :'#00009f',
+    'P10':'#3f009f',
+    'P11':'#6f009f'
+  }
+elif(colorMode == "Dark"):
+  DifferentialEnergeticProtonFluxColors = {
+    'P1' :'#ff0000',
+    'P2' :'#bf4f00',
+    'P3' :'#8f8f00',
+    'P4' :'#4fbf00',
+    'P5' :'#00ff00',
+    'P6' :'#00bf4f',
+    'P7' :'#008f8f',
+    'P8' :'#00bf4f',
+    'P9' :'#0000ff',
+    'P10':'#5f00ff',
+    'P11':'#af00ff'
+  }
 
 GOESGeomagFieldFluxColors = {
   "Light": [
