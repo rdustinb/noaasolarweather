@@ -27,8 +27,7 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     """
       Initialize the updating object.
     """
-    MyMplCanvas.__init__(self, left_edge=0.15, right_edge=0.82, top_edge=0.9,
-      bottom_edge=0.22, *args, **kwargs)
+    MyMplCanvas.__init__(self, *args, **kwargs)
     timer = QtCore.QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
@@ -97,3 +96,16 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
         fontsize=colors_and_globals.plotLabelSize)
     # Set the Plot Title
     self.axes.set_title("Geomagnetic Field", fontsize=colors_and_globals.plotTitleSize)
+    # class matplotlib.legend.Legend(parent, handles, labels, loc=None,
+    # numpoints=None, markerscale=None, scatterpoints=None, scatteryoffsets=None,
+    # prop=None, fontsize=None, borderpad=None, labelspacing=None, handlelength=None,
+    # handleheight=None, handletextpad=None, borderaxespad=None, columnspacing=None,
+    # ncol=1, mode=None, fancybox=None, shadow=None, title=None, framealpha=None,
+    # bbox_to_anchor=None, bbox_transform=None, frameon=None, handler_map=None)
+    # Create the legends
+    legend1 = self.axes.legend(
+      framealpha=0.1,
+      loc=1, fontsize=colors_and_globals.legendSize,
+      bbox_to_anchor=(1.24, 1.12),
+      title="Field")
+    self.axes.add_artist(legend1)

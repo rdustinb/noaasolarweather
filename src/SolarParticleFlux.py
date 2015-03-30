@@ -18,12 +18,16 @@ else:
 ###########################################################################
 # Specific Plot Canvas Objects
 ###########################################################################
-class MyGOESRangeParticleFlux(MyMplCanvas):
-  data = ""
-  """
-    Initialize the updating object.
-  """
+class MyGOESIntegralParticleFlux(MyMplCanvas):
+  datas = {}
+  units = {}
+  particles = {}
+  label_list = []
+  stamp = []
   def __init__(self, *args, **kwargs):
+    """
+      Initialize the updating object.
+    """
     MyMplCanvas.__init__(self, *args, **kwargs)
     timer = QtCore.QTimer(self)
     # Tie the "update_figure" function to the timer
@@ -31,59 +35,71 @@ class MyGOESRangeParticleFlux(MyMplCanvas):
     # Millisecond Timer, Assign the update time based on the value returned by
     # the API call, store the API call data in an object-global data variable
     # to reduce the number of API calls required to initialize the plot
-    timer.start(self.data["update"])
+    timer.start(300000)
 
   def compute_initial_figure(self):
     """
       Initial data plot.
     """
     # Get the new data
-    self.data = NoaaApi.getGOESRangeParticleFlux()
+    (self.label_list,self.datas,self.stamp,self.units,self.particles) = \
+      NoaaApi.getGOESIntegralParticleFlux()
     # Get number of data points
-    data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
+    data_points = numpy.linspace(0,1,len(self.stamp))
     # Next plot overwrites all previous plots
     self.axes.hold(False)
-    # x-axis, y-axis, color
-    Protons_gt1_MeV, = self.axes.plot(data_points,
-      self.data["data"][">1 Mev Protons"],
-      colors_and_globals.GOESRangeParticleFluxColors[colors_and_globals.colorMode][0],
-      label=">1")
-    # Now just overlay remaining datasets
+    self.axes.plot(0)
     self.axes.hold(True)
-    Protons_gt5_MeV, = self.axes.plot(data_points,
-      self.data["data"][">5 Mev Protons"],
-      colors_and_globals.GOESRangeParticleFluxColors[colors_and_globals.colorMode][1],
-      label=">5")
-    Protons_gt10_MeV, = self.axes.plot(data_points,
-      self.data["data"][">10 Mev Protons"],
-      colors_and_globals.GOESRangeParticleFluxColors[colors_and_globals.colorMode][2],
-      label=">10")
-    Protons_gt30_MeV, = self.axes.plot(data_points,
-      self.data["data"][">30 Mev Protons"],
-      colors_and_globals.GOESRangeParticleFluxColors[colors_and_globals.colorMode][3],
-      label=">30")
-    Protons_gt50_MeV, = self.axes.plot(data_points,
-      self.data["data"][">50 Mev Protons"],
-      colors_and_globals.GOESRangeParticleFluxColors[colors_and_globals.colorMode][4],
-      label=">50")
-    Protons_gt100_MeV, = self.axes.plot(data_points,
-      self.data["data"][">100 Mev Protons"],
-      colors_and_globals.GOESRangeParticleFluxColors[colors_and_globals.colorMode][5],
-      label=">100")
-    Electrons_gt0_8_MeV, = self.axes.plot(data_points,
-      self.data["data"][">0.8 Mev Electrons"],
-      colors_and_globals.GOESRangeParticleFluxColors[colors_and_globals.colorMode][6],
-      label=">0.8")
-    Electrons_gt2_0_MeV, = self.axes.plot(data_points,
-      self.data["data"][">2.0 Mev Electrons"],
-      colors_and_globals.GOESRangeParticleFluxColors[colors_and_globals.colorMode][7],
-      label=">2.0")
-    Electrons_gt4_0_MeV, = self.axes.plot(data_points,
-      self.data["data"][">4.0 Mev Electrons"],
-      colors_and_globals.GOESRangeParticleFluxColors[colors_and_globals.colorMode][8],
-      label=">4.0")
+    # Plot all data sets
+    plot1 = [self.axes.plot(data_points, self.datas[key],
+      colors_and_globals.GOESIntegralParticleFluxColors[key],
+      label=self.particles[key][1]
+      ) for key in self.label_list]
     # Format the Graph
-    self.formatGraph(plotTitle="Integral Particle Flux", labelThinner=colors_and_globals.SolarParticleFluxLabelThinner, dataDict=self.data,
-      legend1=[Protons_gt1_MeV,Protons_gt5_MeV,Protons_gt10_MeV,Protons_gt30_MeV,Protons_gt50_MeV,Protons_gt100_MeV], legend1title='p (MeV)', legend1xoffset='1.22', legend1yoffset='1.12',
-      legend2=[Electrons_gt0_8_MeV,Electrons_gt2_0_MeV,Electrons_gt4_0_MeV], legend2title='e (MeV)', legend2xoffset='1.215', legend2yoffset='0.35')
+    self.format_graph(data_points)
 
+  def format_graph(self, data_points):
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Change Plot to logarithmic
+    self.axes.set_yscale("log")
+    # Show all plot grids
+    self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
+    # Set number of X-Axis ticks
+    self.axes.set_xticks(data_points)
+    # Separate dates and times
+    (dates,times) = zip(*self.stamp)
+    # Change the plot tick labels
+    if(colors_and_globals.plot_angle.find("-") != -1):
+      self.axes.set_xticklabels(times,
+        rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
+        horizontalalignment='left', fontsize=colors_and_globals.plotLabelSize)
+    else:
+      self.axes.set_xticklabels(times,
+        rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
+        horizontalalignment='right', fontsize=colors_and_globals.plotLabelSize)
+    # Show Units of y-axis
+    self.axes.set_ylabel("Particles / (cm2*s*sr*MeV)", rotation='vertical',
+      fontsize=colors_and_globals.plotLabelSize)
+    # Show Units of x-axis
+    if(dates[0] != dates[-1]):
+      self.axes.set_xlabel(("UTC Time (%s - %s)"%(dates[0],dates[-1])),
+        fontsize=colors_and_globals.plotLabelSize)
+    else:
+      self.axes.set_xlabel(("UTC Time (%s)"%(dates[-1])),
+        fontsize=colors_and_globals.plotLabelSize)
+    # Set the Plot Title
+    self.axes.set_title("Integral Particle Flux", fontsize=colors_and_globals.plotTitleSize)
+    # class matplotlib.legend.Legend(parent, handles, labels, loc=None,
+    # numpoints=None, markerscale=None, scatterpoints=None, scatteryoffsets=None,
+    # prop=None, fontsize=None, borderpad=None, labelspacing=None, handlelength=None,
+    # handleheight=None, handletextpad=None, borderaxespad=None, columnspacing=None,
+    # ncol=1, mode=None, fancybox=None, shadow=None, title=None, framealpha=None,
+    # bbox_to_anchor=None, bbox_transform=None, frameon=None, handler_map=None)
+    # Create the legends
+    legend1 = self.axes.legend(
+      framealpha=0.1,
+      loc=1, fontsize=colors_and_globals.legendSize,
+      bbox_to_anchor=(1.24, 1.12),
+      title="Particle MeV")
+    self.axes.add_artist(legend1)

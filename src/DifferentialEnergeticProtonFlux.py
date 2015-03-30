@@ -90,3 +90,17 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
         fontsize=colors_and_globals.plotLabelSize)
     # Set the Plot Title
     self.axes.set_title("Differential Proton Flux", fontsize=colors_and_globals.plotTitleSize)
+    # class matplotlib.legend.Legend(parent, handles, labels, loc=None,
+    # numpoints=None, markerscale=None, scatterpoints=None, scatteryoffsets=None,
+    # prop=None, fontsize=None, borderpad=None, labelspacing=None, handlelength=None,
+    # handleheight=None, handletextpad=None, borderaxespad=None, columnspacing=None,
+    # ncol=1, mode=None, fancybox=None, shadow=None, title=None, framealpha=None,
+    # bbox_to_anchor=None, bbox_transform=None, frameon=None, handler_map=None)
+    # Create the legends
+    legend1 = self.axes.legend(
+      framealpha=0.1,
+      loc=1, fontsize=colors_and_globals.legendSize,
+      bbox_to_anchor=(1.24, 1.12),
+      title="Protons MeV")
+    self.axes.add_artist(legend1)
+

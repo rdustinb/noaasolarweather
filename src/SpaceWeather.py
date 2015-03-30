@@ -66,13 +66,13 @@ class ApplicationWindow(QtGui.QMainWindow):
     # Four Horizontal Layout objects
     h1 = QtGui.QHBoxLayout()
     h2 = QtGui.QHBoxLayout()
-    # h3 = QtGui.QHBoxLayout()
-    # h4 = QtGui.QHBoxLayout()
+    h3 = QtGui.QHBoxLayout()
+    h4 = QtGui.QHBoxLayout()
     # Added as sublayouts to the top level vertical layout
     l.addLayout(h1)
     l.addLayout(h2)
-    # l.addLayout(h3)
-    # l.addLayout(h4)
+    l.addLayout(h3)
+    l.addLayout(h4)
 
     self.main_widget.setFocus()
     self.setCentralWidget(self.main_widget)
@@ -106,13 +106,13 @@ class ApplicationWindow(QtGui.QMainWindow):
     # ACEInterplanetaryMagField = MyInterplanetaryMagField(self.main_widget, width=5, height=4, dpi=100)
     # h2.addWidget(ACEInterplanetaryMagField)
 
-    # GOESDiscreteParticleFlux = MyGOESDiscreteParticleFlux(self.main_widget, width=5, height=4, dpi=100)
-    # h3.addWidget(GOESDiscreteParticleFlux)
+    GOESDiscreteParticleFlux = MyGOESDiscreteParticleFlux(self.main_widget, width=5, height=4, dpi=100)
+    h3.addWidget(GOESDiscreteParticleFlux)
     # ACEDiffElecProtFlux = MyDiffElecProtFlux(self.main_widget, width=5, height=4, dpi=100)
     # h3.addWidget(ACEDiffElecProtFlux)
 
-    # GOESRangeParticleFlux = MyGOESRangeParticleFlux(self.main_widget, width=5, height=4, dpi=100)
-    # h4.addWidget(GOESRangeParticleFlux)
+    GOESRangeParticleFlux = MyGOESIntegralParticleFlux(self.main_widget, width=5, height=4, dpi=100)
+    h4.addWidget(GOESRangeParticleFlux)
     # ACESolarWindPlasma = MySolarWindPlasma(self.main_widget, width=5, height=4, dpi=100)
     # h4.addWidget(ACESolarWindPlasma)
 
@@ -143,7 +143,7 @@ Date: %s"""%(colors_and_globals.progversion,colors_and_globals.progbuild,colors_
 from DifferentialEnergeticProtonFlux import MyGOESRangeProtonFluxCanvas
 from GeomagneticField import MyGOESGoemagFieldFluxCanvas
 from DiscreteParticleFlux import MyGOESDiscreteParticleFlux
-from SolarParticleFlux import MyGOESRangeParticleFlux
+from SolarParticleFlux import MyGOESIntegralParticleFlux
 from DualXRayFlux import MyGOESXrayFlux
 from ACEDiffElectronProtonFlux import MyDiffElecProtFlux
 from ACEIntegralProtonFlux import MyIntegralProtonFlux

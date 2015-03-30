@@ -116,6 +116,7 @@ def getGOESRangeProtonFlux():
           label = re.sub(" ", "", label)
           particle = re.sub(" {2,}", " ", particle)
           energy = re.sub(" {2,}", " ", energy)
+          energy = energy.strip(" MeV")
           unit = re.sub(" {2,}", " ", unit)
           # Add the label to the data structure
           datas[label] = []
@@ -186,71 +187,65 @@ def getGOESDiscreteParticleFlux():
     energies.
   """
   URL = 'http://services.swpc.noaa.gov/text/goes-magnetospheric-particle-flux-ts1-primary.txt'
-  try:
-    fh = openUrl(URL)
-  except:
-    print("NoaaApi.getGOESDiscreteParticleFlux > Timeout while pulling NOAA Data...")
-    fh = ""
-    fh = openUrl(URL)
-  # Create the empty data structure
-  data_ret = {
-    "source":"",
-    "data":{
-      "95 keV Protons"   :[],
-      "140 keV Protons"  :[],
-      "210 keV Protons"  :[],
-      "300 keV Protons"  :[],
-      "475 keV Protons"  :[],
-      "40 keV Electrons" :[],
-      "75 keV Electrons" :[],
-      "150 keV Electrons":[],
-      "275 keV Electrons":[],
-      "475 keV Electrons":[]
-    },
-    "units":"p/cm2 * s * sr * MeV",
-    "update":"",
-    "datestamp":[],
-    "rawlines":[]
-  }
-  # Loop through the remote data file
-  for read_line in fh.readlines():
-    read_line = read_line.decode('utf-8').split()
-    if(len(read_line) > 1):
-      # Get the data samples
-      if((read_line[0][0] != '#') and (read_line[0][0] != ':')):
-        data_ret["rawlines"].append(read_line)
-        data_ret["datestamp"].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
-          read_line[2],read_line[3]))
-        data_ret["data"]["95 keV Protons"   ].append(read_line[6])
-        data_ret["data"]["140 keV Protons"  ].append(read_line[7])
-        data_ret["data"]["210 keV Protons"  ].append(read_line[8])
-        data_ret["data"]["300 keV Protons"  ].append(read_line[9])
-        data_ret["data"]["475 keV Protons"  ].append(read_line[10])
-        data_ret["data"]["40 keV Electrons" ].append(read_line[11])
-        data_ret["data"]["75 keV Electrons" ].append(read_line[12])
-        data_ret["data"]["150 keV Electrons"].append(read_line[13])
-        data_ret["data"]["275 keV Electrons"].append(read_line[14])
-        data_ret["data"]["475 keV Electrons"].append(read_line[15])
-      # Get data source
-      elif(read_line[1] == 'Source:'):
-        data_ret["source"] = str(read_line[2])
+  with urllib.request.urlopen(URL) as urlfh , open("../data/Gp_magnetospheric_particles_ts1.txt", "w") as locfh:
+    for line in urlfh:
+      line = line.decode('utf-8')
+      locfh.write(line)
+  # Parse local data
+  with open("../data/Gp_magnetospheric_particles_ts1.txt", "r") as fh:
+    datas = {}
+    units = {}
+    particles = {}
+    label_list = []
+    stamp = []
+    # Skip the first two lines, just boiler plate stuff
+    next(fh)
+    next(fh)
+    # Iterator of Header
+    for line in fh:
+      if(line.startswith('#') and not(line.startswith('#-'))):
+        if(line.find('Label') != -1):
+          (blah,label) = line.split('Label:')
+          (label,energy) = label.split('=')
+          (blah,energy) = energy.split('from')
+          (energy,particle) = energy.split(' keV ')
+          (particle,unit) = particle.split('units #/')
+          # Remove leading and trailing whitespace
+          label = label.strip()
+          particle = particle.strip()
+          energy = energy.strip()
+          unit = unit.strip()
+          # Now remove excess whitespace
+          label = re.sub(" ", "", label)
+          particle = re.sub(" {2,}", " ", particle)
+          energy = re.sub(" {2,}", " ", energy)
+          unit = re.sub(" {2,}", " ", unit)
+          # Append either 'p' or 'e'
+          if(particle == "Protons"):
+            energy = " ".join(['p',energy])
+          elif(particle == "Electrons"):
+            energy = " ".join(['e',energy])
+          # Add the label to the data structure
+          datas[label] = []
+          units[label] = unit
+          particles[label] = (particle, energy)
+          label_list.append(label)
       else:
-        # Capture the update period
-        try:
-          if int(sys.version[0]) == 3:
-            check_val = read_line[1].split(sep="-")
-          if int(sys.version[0]) == 2:
-            check_val = read_line[1].split("-")
-          if(check_val[1] == "minute"):
-            data_ret["update"] = int(check_val[0])*60*1000
-        except IndexError:
-          pass
-  # Convert the data points from strings to numbers
-  for key in data_ret["data"].keys():
-    data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
-  return data_ret
+        # Stop decoding header
+        break
+    # Iterator of Data
+    for line in fh:
+      # Map out each data line to yr, mo, dy, hhmm, skip, skip, d0, d1, ... , dn
+      # Zipping up the original sequence of labels with the remainder data
+      # lines allows the for loop to then iterate through the new list
+      (yr,mo,dy,time,blah1,blah2,*datarow) = line.split()
+      stamp.append((str.join("",(yr,mo,dy)), time))
+      for (key, value) in zip(label_list, datarow):
+        datas[key].append(value)
+  # Now return the data
+  return(label_list,datas,stamp,units,particles)
 
-def getGOESRangeParticleFlux():
+def getGOESIntegralParticleFlux():
   """
     Similar to the getGOESDiscreteParticleFlux function, however this dataset returns
     particle counts for only 6 proton ranges and 3 electron ranges. The ranges of
@@ -259,67 +254,60 @@ def getGOESRangeParticleFlux():
     of protons >5MeV.
   """
   URL = 'http://services.swpc.noaa.gov/text/goes-particle-flux-primary.txt'
-  try:
-    fh = openUrl(URL)
-  except:
-    print("NoaaApi.getGOESRangeParticleFlux > Timeout while pulling NOAA Data...")
-    fh = ""
-    fh = openUrl(URL)
-  # Create the empty data structure
-  data_ret = {
-    "source":"",
-    "data":{
-      ">1 Mev Protons"    :[],
-      ">5 Mev Protons"    :[],
-      ">10 Mev Protons"   :[],
-      ">30 Mev Protons"   :[],
-      ">50 Mev Protons"   :[],
-      ">100 Mev Protons"  :[],
-      ">0.8 Mev Electrons":[],
-      ">2.0 Mev Electrons":[],
-      ">4.0 Mev Electrons":[]
-    },
-    "units":"p/cm2 * s * sr * MeV",
-    "update":"",
-    "datestamp":[],
-    "rawlines":[]
-  }
-  # Loop through the remote data file
-  for read_line in fh.readlines():
-    read_line = read_line.decode('utf-8').split()
-    if(len(read_line) > 1):
-      # Get the data samples
-      if((read_line[0][0] != '#') and (read_line[0][0] != ':')):
-        data_ret["rawlines"].append(read_line)
-        data_ret["datestamp"].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
-          read_line[2],read_line[3]))
-        data_ret["data"][">1 Mev Protons"    ].append(read_line[6])
-        data_ret["data"][">5 Mev Protons"    ].append(read_line[7])
-        data_ret["data"][">10 Mev Protons"   ].append(read_line[8])
-        data_ret["data"][">30 Mev Protons"   ].append(read_line[9])
-        data_ret["data"][">50 Mev Protons"   ].append(read_line[10])
-        data_ret["data"][">100 Mev Protons"  ].append(read_line[11])
-        data_ret["data"][">0.8 Mev Electrons"].append(read_line[12])
-        data_ret["data"][">2.0 Mev Electrons"].append(read_line[13])
-        data_ret["data"][">4.0 Mev Electrons"].append(read_line[14])
-      # Get data source
-      elif(read_line[1] == 'Source:'):
-        data_ret["source"] = str(read_line[2])
+  with urllib.request.urlopen(URL) as urlfh , open("../data/Gp_part_5m.txt", "w") as locfh:
+    for line in urlfh:
+      line = line.decode('utf-8')
+      locfh.write(line)
+  # Parse local data
+  with open("../data/Gp_part_5m.txt", "r") as fh:
+    datas = {}
+    units = {}
+    particles = {}
+    label_list = []
+    stamp = []
+    # Skip the first two lines, just boiler plate stuff
+    next(fh)
+    next(fh)
+    # Iterator of Header
+    for line in fh:
+      if(line.startswith('#') and not(line.startswith('#-'))):
+        if(line.find('Label') != -1):
+          (blah,label) = line.split('Label:')
+          (label,particle) = label.split('=')
+          (particle,energy) = particle.split('at')
+          # Remove leading and trailing whitespace
+          label = label.strip()
+          particle = particle.strip()
+          energy = energy.strip()
+          # Now remove excess whitespace
+          label = re.sub(" ", "", label)
+          particle = re.sub(" {2,}", " ", particle)
+          energy = re.sub(" {2,}", " ", energy)
+          energy = energy.strip(" Mev")
+          # Append either 'p' or 'e'
+          if(particle == "Particles"):
+            energy = " ".join(['p',energy])
+          elif(particle == "Electrons"):
+            energy = " ".join(['e',energy])
+          # Add the label to the data structure
+          datas[label] = []
+          units[label] = "cm2-s-sr"
+          particles[label] = (particle, energy)
+          label_list.append(label)
       else:
-        # Capture the update period
-        try:
-          if int(sys.version[0]) == 3:
-            check_val = read_line[1].split(sep="-")
-          if int(sys.version[0]) == 2:
-            check_val = read_line[1].split("-")
-          if(check_val[1] == "minute"):
-            data_ret["update"] = int(check_val[0])*60*1000
-        except IndexError:
-          pass
-  # Convert the data points from strings to numbers
-  for key in data_ret["data"].keys():
-    data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
-  return data_ret
+        # Stop decoding header
+        break
+    # Iterator of Data
+    for line in fh:
+      # Map out each data line to yr, mo, dy, hhmm, skip, skip, d0, d1, ... , dn
+      # Zipping up the original sequence of labels with the remainder data
+      # lines allows the for loop to then iterate through the new list
+      (yr,mo,dy,time,blah1,blah2,*datarow) = line.split()
+      stamp.append((str.join("",(yr,mo,dy)), time))
+      for (key, value) in zip(label_list, datarow):
+        datas[key].append(value)
+  # Now return the data
+  return(label_list,datas,stamp,units,particles)
 
 def getGOESXrayFlux():
   """
@@ -664,76 +652,41 @@ if __name__ == '__main__':
   print(stamp)
   print(units)
   print(particles)
-  # print("data source is:")
-  # print(alldata["source"])
-  # for key,value in alldata["data"].items():
-  #   print("%s data is:" % (key))
-  #   print(value)
-  # print("data units are:")
-  # print(alldata["units"])
-  # print("timestamps are:")
-  # print(alldata["datestamp"])
-  # print("update period in (ms) is:")
-  # print(alldata["update"])
 
   # Get Geomagnetic Flux Data
   print("")
   print("------------------------------------")
   print("          Geomagnetic Flux")
   print("------------------------------------")
-  (label_list,datas,stamp,units) = getGOESGoemagFieldFlux()
+  (label_list,datas,stamp,units) = getGOESGeomagFieldFlux()
   print(label_list)
   print(datas)
   print(stamp)
   print(units)
-  # alldata = getGOESGoemagFieldFlux()
-  # print("data source is:")
-  # print(alldata["source"])
-  # for key,value in alldata["data"].items():
-  #   print("%s data is:" % (key))
-  #   print(value)
-  # print("data units are:")
-  # print(alldata["units"])
-  # print("timestamps are:")
-  # print(alldata["datestamp"])
-  # print("update period in (ms) is:")
-  # print(alldata["update"])
 
-  # # Get Discrete Energetic Particle Flux Data
-  # print("")
-  # print("------------------------------------")
-  # print("  Discrete Energetic Particle Flux")
-  # print("------------------------------------")
-  # alldata = getGOESDiscreteParticleFlux()
-  # print("data source is:")
-  # print(alldata["source"])
-  # for key,value in alldata["data"].items():
-  #   print("%s data is:" % (key))
-  #   print(value)
-  # print("data units are:")
-  # print(alldata["units"])
-  # print("timestamps are:")
-  # print(alldata["datestamp"])
-  # print("update period in (ms) is:")
-  # print(alldata["update"])
+  # Get Discrete Energetic Particle Flux Data
+  print("")
+  print("------------------------------------")
+  print("  Discrete Energetic Particle Flux")
+  print("------------------------------------")
+  (label_list,datas,stamp,units,particles) = getGOESDiscreteParticleFlux()
+  print(label_list)
+  print(datas)
+  print(stamp)
+  print(units)
+  print(particles)
 
-  # # Get Range Energetic Particle Flux Data
-  # print("")
-  # print("------------------------------------")
-  # print("   Range Energetic Particle Flux")
-  # print("------------------------------------")
-  # alldata = getGOESRangeParticleFlux()
-  # print("data source is:")
-  # print(alldata["source"])
-  # for key,value in alldata["data"].items():
-  #   print("%s data is:" % (key))
-  #   print(value)
-  # print("data units are:")
-  # print(alldata["units"])
-  # print("timestamps are:")
-  # print(alldata["datestamp"])
-  # print("update period in (ms) is:")
-  # print(alldata["update"])
+  # # Get Integral Energetic Particle Flux Data
+  print("")
+  print("------------------------------------")
+  print("   Integral Energetic Particle Flux")
+  print("------------------------------------")
+  (label_list,datas,stamp,units,particles) = getGOESIntegralParticleFlux()
+  print(label_list)
+  print(datas)
+  print(stamp)
+  print(units)
+  print(particles)
 
   # # Get XRay Flux Data
   # print("")
