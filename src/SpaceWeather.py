@@ -18,8 +18,6 @@ import colors_and_globals
 import NoaaApi
 # Plotting Libraries
 import matplotlib
-# Data Directory library to create if necessary
-from pathlib import Path
 """
   As of MatPlotLib 1.5 qt4_compat will be deprecated for the more general
   qt_compat. Pulling that in instead.
@@ -42,8 +40,9 @@ else:
 class ApplicationWindow(QtGui.QMainWindow):
   def __init__(self):
     # Verify the existance of the data directory
-    if(not(Path("../data").exists())):
-      print("../data dir doesn't exist!")
+    if(not(os.path.exists("../data"))):
+      print("../data dir doesn't exist! Creating data directory...")
+      os.makedirs("../data")
 
     # Create the Main Window
     QtGui.QMainWindow.__init__(self)

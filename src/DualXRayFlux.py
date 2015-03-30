@@ -53,6 +53,28 @@ class MyGOESXrayFlux(MyMplCanvas):
       colors_and_globals.GOESXrayFluxColors[key],
       label=self.particles[key][1]
       ) for key in self.label_list]
+    # Add Highlighting for flares
+    R1 = numpy.repeat(numpy.array(10e-6), len(self.stamp))
+    R2 = numpy.repeat(numpy.array(50e-6), len(self.stamp))
+    R3 = numpy.repeat(numpy.array(10e-5), len(self.stamp))
+    R4 = numpy.repeat(numpy.array(10e-4), len(self.stamp))
+    R5 = numpy.repeat(numpy.array(20e-4), len(self.stamp))
+    # Fill Flares if present
+    self.axes.fill_between(numpy.linspace(0,1,len(self.stamp)), R1, \
+      self.datas["Short"], where=self.datas["Short"]>R1, \
+      color=colors_and_globals.GOESXrayFlare['R1'])
+    self.axes.fill_between(numpy.linspace(0,1,len(self.stamp)), R2, \
+      self.datas["Short"], where=self.datas["Short"]>R2, \
+      color=colors_and_globals.GOESXrayFlare['R2'])
+    self.axes.fill_between(numpy.linspace(0,1,len(self.stamp)), R3, \
+      self.datas["Short"], where=self.datas["Short"]>R3, \
+      color=colors_and_globals.GOESXrayFlare['R3'])
+    self.axes.fill_between(numpy.linspace(0,1,len(self.stamp)), R4, \
+      self.datas["Short"], where=self.datas["Short"]>R4, \
+      color=colors_and_globals.GOESXrayFlare['R4'])
+    self.axes.fill_between(numpy.linspace(0,1,len(self.stamp)), R5, \
+      self.datas["Short"], where=self.datas["Short"]>R5, \
+      color=colors_and_globals.GOESXrayFlare['R5'])
     # Format the Graph
     self.format_graph()
 
@@ -106,4 +128,5 @@ class MyGOESXrayFlux(MyMplCanvas):
       bbox_to_anchor=(1.24, 1.12),
       title="Nanometer")
     self.axes.add_artist(legend1)
+
 

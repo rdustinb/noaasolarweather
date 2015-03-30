@@ -50,6 +50,7 @@ ACEIntegralProtonFluxLabelThinner = 2
 ACEInterplanetaryMagFieldLabelThinner = 1
 ACESolarWindPlasmaLabelThinner = 7
 
+# GOES Differential Proton Flux
 if(colorMode == "Light"):
   DifferentialEnergeticProtonFluxColors = {
     'P1' :'#9f0000',
@@ -79,6 +80,7 @@ elif(colorMode == "Dark"):
     'P11':'#af00ff'
   }
 
+# GOES Geomagnetic Field
 if(colorMode == "Light"):
   GOESGeomagFieldFluxColors = {
     'Hp'    : '#9f0000',
@@ -94,6 +96,7 @@ elif(colorMode == "Dark"):
     'Total' : '#7f007f'
   }
 
+# GOES Discrete Particle Flux
 if(colorMode == "Light"):
   GOESDiscreteParticleFluxColors = {
     'P1': '#9f0000',
@@ -121,6 +124,7 @@ elif(colorMode == "Dark"):
     'E5': '#5f00ff'
   }
 
+# GOES Integral Particle Flux
 if(colorMode == "Light"):
   GOESIntegralParticleFluxColors = {
     'P>1'   : '#9f0000',
@@ -146,38 +150,55 @@ elif(colorMode == "Dark"):
     'E>4.0' : '#af005f'
   }
 
+# GOES Xray Flux, Flares
 if(colorMode == "Light"):
   GOESXrayFluxColors = {
     'Short' : '#9f0000',
     'Long'  : '#00009f'
+  }
+  GOESXrayFlare = {
+    'R1' : '#fff700',
+    'R2' : '#ffc900',
+    'R3' : '#ff9a00',
+    'R4' : '#ff0000',
+    'R5' : '#7f0000'
   }
 elif(colorMode == "Dark"):
   GOESXrayFluxColors = {
     'Short' : '#ff0000',
     'Long'  : '#0000ff'
   }
+  GOESXrayFlare = {
+    'R1' : '#fff700',
+    'R2' : '#ffc900',
+    'R3' : '#ff9a00',
+    'R4' : '#ff0000',
+    'R5' : '#7f0000'
+  }
 
+# ACE Differential Particle Flux
 if(colorMode == "Light"):
   ACEDiffElecProtFluxColors = {
     '38-53'     : '#9f0000',
-    '175-315'   : '#5f5f00',
-    '47-68'     : '#009f00',
-    '115-195'   : '#005f5f',
-    '310-580'   : '#00009f',
-    '795-1193'  : '#3f007f',
-    '1060-1900' : '#7f003f'
+    '175-315'   : '#7f3f00',
+    '47-68'     : '#5f5f00',
+    '115-195'   : '#3f7f00',
+    '310-580'   : '#009f00',
+    '795-1193'  : '#007f3f',
+    '1060-1900' : '#005f5f'
   }
 elif(colorMode == "Dark"):
   ACEDiffElecProtFluxColors = {
     '38-53'     : '#ff0000',
-    '175-315'   : '#7f7f00',
-    '47-68'     : '#00ff00',
-    '115-195'   : '#007f7f',
-    '310-580'   : '#0000ff',
-    '795-1193'  : '#4f00bf',
-    '1060-1900' : '#bf004f'
+    '175-315'   : '#bf4f00',
+    '47-68'     : '#8f8f00',
+    '115-195'   : '#4fbf00',
+    '310-580'   : '#00ff00',
+    '795-1193'  : '#00bf4f',
+    '1060-1900' : '#008f8f'
   }
 
+# ACE Integral Proton Flux
 ACEIntegralProtonFluxColors = {
   "Light": [
     '#7f7f00',
@@ -189,6 +210,7 @@ ACEIntegralProtonFluxColors = {
   ]
 }
 
+# ACE Solar Wind Plasma
 ACESolarWindPlasmaColors = {
   "Light": [
     '#9f0000',
