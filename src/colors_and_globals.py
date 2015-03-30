@@ -10,7 +10,7 @@ colorMode = "Dark"
 # Version of the application
 ###########################################################################
 progversion = "2.0.4"
-progbuild = "7"
+progbuild = "8"
 progdate = "20150329"
 
 ###########################################################################
@@ -19,7 +19,7 @@ progdate = "20150329"
 font = {'size' : 7}
 init_posx = 150
 init_posy = 0
-init_app_width = 500
+init_app_width = 1000
 init_app_height = 850
 plotTitleSize = 8
 plotLabelSize = 6
@@ -146,37 +146,37 @@ elif(colorMode == "Dark"):
     'E>4.0' : '#af005f'
   }
 
-GOESXrayFluxColors = {
-  "Light": [
-    "#9f0000",
-    "#00009f"
-  ],
-  "Dark": [
-    "#ff0000",
-    "#0000ff"
-  ]
-}
+if(colorMode == "Light"):
+  GOESXrayFluxColors = {
+    'Short' : '#9f0000',
+    'Long'  : '#00009f'
+  }
+elif(colorMode == "Dark"):
+  GOESXrayFluxColors = {
+    'Short' : '#ff0000',
+    'Long'  : '#0000ff'
+  }
 
-ACEDiffElecProtFluxColors = {
-  "Light": [
-    '#9f0000',
-    '#5f5f00',
-    '#009f00',
-    '#005f5f',
-    '#00009f',
-    '#3f007f',
-    '#7f003f'
-  ],
-  "Dark": [
-    '#ff0000',
-    '#7f7f00',
-    '#00ff00',
-    '#007f7f',
-    '#0000ff',
-    '#4f00bf',
-    '#bf004f'
-  ]
-}
+if(colorMode == "Light"):
+  ACEDiffElecProtFluxColors = {
+    '38-53'     : '#9f0000',
+    '175-315'   : '#5f5f00',
+    '47-68'     : '#009f00',
+    '115-195'   : '#005f5f',
+    '310-580'   : '#00009f',
+    '795-1193'  : '#3f007f',
+    '1060-1900' : '#7f003f'
+  }
+elif(colorMode == "Dark"):
+  ACEDiffElecProtFluxColors = {
+    '38-53'     : '#ff0000',
+    '175-315'   : '#7f7f00',
+    '47-68'     : '#00ff00',
+    '115-195'   : '#007f7f',
+    '310-580'   : '#0000ff',
+    '795-1193'  : '#4f00bf',
+    '1060-1900' : '#bf004f'
+  }
 
 ACEIntegralProtonFluxColors = {
   "Light": [

@@ -96,8 +96,8 @@ class ApplicationWindow(QtGui.QMainWindow):
     # circular fashion will result in a nicely laid out set of plots
     GOESRangeProtonFlux = MyGOESRangeProtonFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
     h1.addWidget(GOESRangeProtonFlux)
-    # GOESXrayFlux = MyGOESXrayFlux(self.main_widget, width=5, height=4, dpi=100)
-    # h1.addWidget(GOESXrayFlux)
+    GOESXrayFlux = MyGOESXrayFlux(self.main_widget, width=5, height=4, dpi=100)
+    h1.addWidget(GOESXrayFlux)
 
     GOESGoemagFieldFlux = MyGOESGoemagFieldFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
     h2.addWidget(GOESGoemagFieldFlux)
@@ -108,8 +108,8 @@ class ApplicationWindow(QtGui.QMainWindow):
 
     GOESDiscreteParticleFlux = MyGOESDiscreteParticleFlux(self.main_widget, width=5, height=4, dpi=100)
     h3.addWidget(GOESDiscreteParticleFlux)
-    # ACEDiffElecProtFlux = MyDiffElecProtFlux(self.main_widget, width=5, height=4, dpi=100)
-    # h3.addWidget(ACEDiffElecProtFlux)
+    ACEDiffElecProtFlux = MyDiffElecProtFlux(self.main_widget, width=5, height=4, dpi=100)
+    h3.addWidget(ACEDiffElecProtFlux)
 
     GOESRangeParticleFlux = MyGOESIntegralParticleFlux(self.main_widget, width=5, height=4, dpi=100)
     h4.addWidget(GOESRangeParticleFlux)

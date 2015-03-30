@@ -44,21 +44,19 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     # Get the new data
     (self.label_list,self.datas,self.stamp,self.units,self.particles) = \
       NoaaApi.getGOESRangeProtonFlux()
-    # Get number of data points
-    data_points = numpy.linspace(0,1,len(self.stamp))
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     self.axes.plot(0)
     self.axes.hold(True)
     # Plot all data sets
-    plot1 = [self.axes.plot(data_points, self.datas[key],
+    plot1 = [self.axes.plot(numpy.linspace(0,1,len(self.stamp)), self.datas[key],
       colors_and_globals.DifferentialEnergeticProtonFluxColors[key],
       label=self.particles[key][1]
       ) for key in self.label_list]
     # Format the Graph
-    self.format_graph(data_points)
+    self.format_graph()
 
-  def format_graph(self, data_points):
+  def format_graph(self):
     # Set the graph background color
     self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
     # Change Plot to logarithmic
@@ -66,7 +64,7 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     # Show all plot grids
     self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
     # Set number of X-Axis ticks
-    self.axes.set_xticks(data_points)
+    self.axes.set_xticks(numpy.linspace(0,1,len(self.stamp)))
     # Separate dates and times
     (dates,times) = zip(*self.stamp)
     # Change the plot tick labels

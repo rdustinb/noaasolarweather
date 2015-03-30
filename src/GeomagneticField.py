@@ -43,14 +43,12 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     # Get the new data
     (self.label_list,self.datas,self.stamp,self.units) = \
       NoaaApi.getGOESGeomagFieldFlux()
-    # Get number of data points
-    data_points = numpy.linspace(0,1,len(self.stamp))
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     self.axes.plot(0)
     self.axes.hold(True)
     # Plot all data sets
-    plot1 = [self.axes.plot(data_points, self.datas[key],
+    plot1 = [self.axes.plot(numpy.linspace(0,1,len(self.stamp)), self.datas[key],
       colors_and_globals.GOESGeomagFieldFluxColors[key],
       label=key
       ) for key in self.label_list]
@@ -69,10 +67,8 @@ class MyGOESGoemagFieldFluxCanvas(MyMplCanvas):
     self.stamp = [x \
       for x in self.stamp[0::7]
     ]
-    # Get number of data points
-    data_points = numpy.linspace(0,1,len(self.stamp))
     # Set number of X-Axis ticks
-    self.axes.set_xticks(data_points)
+    self.axes.set_xticks(numpy.linspace(0,1,len(self.stamp)))
     # Separate dates and times
     (dates,times) = zip(*self.stamp)
     # Change the plot tick labels

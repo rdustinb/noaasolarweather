@@ -19,57 +19,85 @@ else:
 # Specific Plot Canvas Objects
 ###########################################################################
 class MyDiffElecProtFlux(MyMplCanvas):
-  data = ""
-  """
-    Initialize the updating object.
-  """
+  datas = {}
+  units = ""
+  particles = {}
+  label_list = []
+  stamp = []
   def __init__(self, *args, **kwargs):
-    MyMplCanvas.__init__(self, *args, **kwargs)
+    """
+      Initialize the updating object.
+    """
+    MyMplCanvas.__init__(self, right_edge=0.80, *args, **kwargs)
     timer = QtCore.QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
     # Millisecond Timer, Assign the update time based on the value returned by
     # the API call, store the API call data in an object-global data variable
     # to reduce the number of API calls required to initialize the plot
-    timer.start(self.data["update"])
+    timer.start(300000)
 
   def compute_initial_figure(self):
     """
       Initial data plot.
     """
     # Get the new data
-    self.data = NoaaApi.getDiffElecProtFlux()
-    # Get number of data points
-    data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
+    (self.label_list,self.datas,self.stamp,self.units,self.particles) = \
+      NoaaApi.getDiffElecProtFlux()
     # Next plot overwrites all previous plots
     self.axes.hold(False)
-    # x-axis, y-axis, color
-    p1,  = self.axes.plot(data_points, self.data["data"]["47-68 keV Proton"],
-      colors_and_globals.ACEDiffElecProtFluxColors[colors_and_globals.colorMode][0],
-      label="47-68")
-    p2,  = self.axes.plot(data_points, self.data["data"]["115-195 keV Proton"],
-      colors_and_globals.ACEDiffElecProtFluxColors[colors_and_globals.colorMode][1],
-      label="115-195")
-    p3,  = self.axes.plot(data_points, self.data["data"]["310-580 keV Proton"],
-      colors_and_globals.ACEDiffElecProtFluxColors[colors_and_globals.colorMode][2],
-      label="310-580")
-    p4,  = self.axes.plot(data_points, self.data["data"]["795-1193 keV Proton"],
-      colors_and_globals.ACEDiffElecProtFluxColors[colors_and_globals.colorMode][3],
-      label="795-1193")
-    p5,  = self.axes.plot(data_points, self.data["data"]["1060-1900 keV Proton"],
-      colors_and_globals.ACEDiffElecProtFluxColors[colors_and_globals.colorMode][4],
-      label="1060-1900")
-    # Now just overlay remaining datasets
+    self.axes.plot(0)
     self.axes.hold(True)
-    e1,  = self.axes.plot(data_points, self.data["data"]["38-53 eV Electron"],
-      colors_and_globals.ACEDiffElecProtFluxColors[colors_and_globals.colorMode][5],
-      label="38-53")
-    e2,  = self.axes.plot(data_points, self.data["data"]["175-315 eV Electron"],
-      colors_and_globals.ACEDiffElecProtFluxColors[colors_and_globals.colorMode][6],
-      label="175-315")
+    # Plot all data sets
+    plot1 = [self.axes.plot(numpy.linspace(0,1,len(self.stamp)), self.datas[key],
+      colors_and_globals.ACEDiffElecProtFluxColors[key],
+      label=self.particles[key][1]
+      ) for key in self.label_list]
     # Format the Graph
-    self.formatGraph(plotTitle="Differential Particle Flux",
-      labelThinner=colors_and_globals.ACEDiffElectronProtonFluxLabelThinner,
-      dataDict=self.data, legend1=[p1,p2,p3,p4,p5], legend1title='p (keV)',
-      legend1xoffset='1.245', legend1yoffset='1.12', legend2=[e1,e2],
-      legend2title='e (eV)', legend2xoffset='1.215', legend2yoffset='0.45')
+    self.format_graph()
+
+  def format_graph(self):
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Change Plot to logarithmic
+    self.axes.set_yscale("log")
+    # Show all plot grids
+    self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
+    # Set number of X-Axis ticks
+    self.axes.set_xticks(numpy.linspace(0,1,len(self.stamp)))
+    # Separate dates and times
+    (dates,times) = zip(*self.stamp)
+    # Change the plot tick labels
+    if(colors_and_globals.plot_angle.find("-") != -1):
+      self.axes.set_xticklabels(times,
+        rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
+        horizontalalignment='left', fontsize=colors_and_globals.plotLabelSize)
+    else:
+      self.axes.set_xticklabels(times,
+        rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
+        horizontalalignment='right', fontsize=colors_and_globals.plotLabelSize)
+    # Show Units of y-axis
+    self.axes.set_ylabel(self.units, rotation='vertical',
+      fontsize=colors_and_globals.plotLabelSize)
+    # Show Units of x-axis
+    if(dates[0] != dates[-1]):
+      self.axes.set_xlabel(("UTC Time (%s - %s)"%(dates[0],dates[-1])),
+        fontsize=colors_and_globals.plotLabelSize)
+    else:
+      self.axes.set_xlabel(("UTC Time (%s)"%(dates[-1])),
+        fontsize=colors_and_globals.plotLabelSize)
+    # Set the Plot Title
+    self.axes.set_title("Particle Differential Flux", fontsize=colors_and_globals.plotTitleSize)
+    # class matplotlib.legend.Legend(parent, handles, labels, loc=None,
+    # numpoints=None, markerscale=None, scatterpoints=None, scatteryoffsets=None,
+    # prop=None, fontsize=None, borderpad=None, labelspacing=None, handlelength=None,
+    # handleheight=None, handletextpad=None, borderaxespad=None, columnspacing=None,
+    # ncol=1, mode=None, fancybox=None, shadow=None, title=None, framealpha=None,
+    # bbox_to_anchor=None, bbox_transform=None, frameon=None, handler_map=None)
+    # Create the legends
+    legend1 = self.axes.legend(
+      framealpha=0.1,
+      loc=1, fontsize=colors_and_globals.legendSize,
+      bbox_to_anchor=(1.28, 1.12),
+      title="Particle MeV")
+    self.axes.add_artist(legend1)

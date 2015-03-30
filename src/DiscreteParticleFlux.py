@@ -28,7 +28,7 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     """
       Initialize the updating object.
     """
-    MyMplCanvas.__init__(self, *args, **kwargs)
+    MyMplCanvas.__init__(self, right_edge=0.84, *args, **kwargs)
     timer = QtCore.QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
@@ -86,7 +86,7 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
         rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
         horizontalalignment='right', fontsize=colors_and_globals.plotLabelSize)
     # Show Units of y-axis
-    self.axes.set_ylabel("Particles / (cm2*s*sr*MeV)", rotation='vertical',
+    self.axes.set_ylabel("Particles / (cm2*s*sr*keV)", rotation='vertical',
       fontsize=colors_and_globals.plotLabelSize)
     # Show Units of x-axis
     if(dates[0] != dates[-1]):
@@ -107,6 +107,6 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     legend1 = self.axes.legend(
       framealpha=0.1,
       loc=1, fontsize=colors_and_globals.legendSize,
-      bbox_to_anchor=(1.24, 1.12),
+      bbox_to_anchor=(1.21, 1.12),
       title="Particle keV")
     self.axes.add_artist(legend1)
