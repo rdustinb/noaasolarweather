@@ -177,7 +177,7 @@ def getGOESGeomagFieldFlux():
       (yr,mo,dy,time,blah1,blah2,*datarow) = line.split()
       stamp.append((str.join("",(yr,mo,dy)), time))
       for (key, value) in zip(label_list, datarow):
-        datas[key].append(value)
+        datas[key].append(float(value))
   # Now return the data
   return(label_list,datas,stamp,units)
 
@@ -242,7 +242,7 @@ def getGOESDiscreteParticleFlux():
       (yr,mo,dy,time,blah1,blah2,*datarow) = line.split()
       stamp.append((str.join("",(yr,mo,dy)), time))
       for (key, value) in zip(label_list, datarow):
-        datas[key].append(value)
+        datas[key].append(float(value))
   # Now return the data
   return(label_list,datas,stamp,units,particles)
 
@@ -306,7 +306,7 @@ def getGOESIntegralParticleFlux():
       (yr,mo,dy,time,blah1,blah2,*datarow) = line.split()
       stamp.append((str.join("",(yr,mo,dy)), time))
       for (key, value) in zip(label_list, datarow):
-        datas[key].append(value)
+        datas[key].append(float(value))
   # Now return the data
   return(label_list,datas,stamp,units,particles)
 
