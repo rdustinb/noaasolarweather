@@ -19,7 +19,11 @@ else:
 # Specific Plot Canvas Objects
 ###########################################################################
 class MySolarWindPlasma(MyMplCanvas):
-  data = ""
+  datas = {}
+  units = ""
+  particles = {}
+  label_list = []
+  stamp = []
   """
     Initialize the updating object.
   """
@@ -31,32 +35,74 @@ class MySolarWindPlasma(MyMplCanvas):
     # Millisecond Timer, Assign the update time based on the value returned by
     # the API call, store the API call data in an object-global data variable
     # to reduce the number of API calls required to initialize the plot
-    timer.start(self.data["update"])
+    timer.start(60000)
 
   def compute_initial_figure(self):
     """
       Initial data plot.
     """
     # Get the new data
-    self.data = NoaaApi.getSolarPlasma()
-    # Get number of data points
-    data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
+    (self.label_list,self.datas,self.stamp,self.units,self.particles) = \
+      NoaaApi.getSolarPlasma()
     # Next plot overwrites all previous plots
     self.axes.hold(False)
-    # x-axis, y-axis, color
-    density,      = self.axes.plot(data_points, self.data["data"]["Density"],
-      colors_and_globals.ACESolarWindPlasmaColors[colors_and_globals.colorMode][0],
-      label=self.data["units"]["Density"])
-    # Now just overlay remaining datasets
+    self.axes.plot(0)
     self.axes.hold(True)
-    speed,        = self.axes.plot(data_points, self.data["data"]["Speed"],
-      colors_and_globals.ACESolarWindPlasmaColors[colors_and_globals.colorMode][1],
-      label=self.data["units"]["Speed"])
-    temperature,  = self.axes.plot(data_points, self.data["data"]["Temperature"],
-      colors_and_globals.ACESolarWindPlasmaColors[colors_and_globals.colorMode][2],
-      label=self.data["units"]["Temperature"])
+    # Plot all data sets
+    plot1 = [self.axes.plot(numpy.linspace(0,1,len(self.stamp)), self.datas[key],
+      colors_and_globals.ACESolarWindPlasmaColors[key],
+      label=self.particles[key][1]
+      ) for key in self.label_list]
     # Format the Graph
-    self.formatGraph(plotTitle="Solar Plasma", dataDict=self.data,
-      labelThinner=colors_and_globals.ACESolarWindPlasmaLabelThinner,
-      disableYLabel=True, legend1=[density,speed,temperature],
-      legend1title='Params', legend1xoffset='1.21', legend1yoffset='1.12')
+    self.format_graph()
+
+  def format_graph(self):
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Change Plot to logarithmic
+    self.axes.set_yscale("log")
+    # Show all plot grids
+    self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
+    # Thin the number of x-axis labels and ticks, this works with the list of
+    # tuples that are the date/time stamps
+    self.stamp = [x \
+      for x in self.stamp[0::7]
+    ]
+    # Set number of X-Axis ticks
+    self.axes.set_xticks(numpy.linspace(0,1,len(self.stamp)))
+    # Separate dates and times
+    (dates,times) = zip(*self.stamp)
+    # Change the plot tick labels
+    if(colors_and_globals.plot_angle.find("-") != -1):
+      self.axes.set_xticklabels(times,
+        rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
+        horizontalalignment='left', fontsize=colors_and_globals.plotLabelSize)
+    else:
+      self.axes.set_xticklabels(times,
+        rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
+        horizontalalignment='right', fontsize=colors_and_globals.plotLabelSize)
+    # Show Units of y-axis
+    self.axes.set_ylabel("Density, Speed, Temperature", rotation='vertical',
+      fontsize=colors_and_globals.plotLabelSize)
+    # Show Units of x-axis
+    if(dates[0] != dates[-1]):
+      self.axes.set_xlabel(("UTC Time (%s - %s)"%(dates[0],dates[-1])),
+        fontsize=colors_and_globals.plotLabelSize)
+    else:
+      self.axes.set_xlabel(("UTC Time (%s)"%(dates[-1])),
+        fontsize=colors_and_globals.plotLabelSize)
+    # Set the Plot Title
+    self.axes.set_title("Solar Wind Plasma", fontsize=colors_and_globals.plotTitleSize)
+    # class matplotlib.legend.Legend(parent, handles, labels, loc=None,
+    # numpoints=None, markerscale=None, scatterpoints=None, scatteryoffsets=None,
+    # prop=None, fontsize=None, borderpad=None, labelspacing=None, handlelength=None,
+    # handleheight=None, handletextpad=None, borderaxespad=None, columnspacing=None,
+    # ncol=1, mode=None, fancybox=None, shadow=None, title=None, framealpha=None,
+    # bbox_to_anchor=None, bbox_transform=None, frameon=None, handler_map=None)
+    # Create the legends
+    legend1 = self.axes.legend(
+      framealpha=0.1,
+      loc=1, fontsize=colors_and_globals.legendSize,
+      bbox_to_anchor=(1.24, 1.12),
+      title="Params")
+    self.axes.add_artist(legend1)

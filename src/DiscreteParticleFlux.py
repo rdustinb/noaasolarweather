@@ -108,5 +108,5 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
       framealpha=0.1,
       loc=1, fontsize=colors_and_globals.legendSize,
       bbox_to_anchor=(1.21, 1.12),
-      title="Particle keV")
+      title="keV")
     self.axes.add_artist(legend1)

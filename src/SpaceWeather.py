@@ -112,8 +112,8 @@ class ApplicationWindow(QtGui.QMainWindow):
 
     GOESRangeParticleFlux = MyGOESIntegralParticleFlux(self.main_widget, width=5, height=4, dpi=100)
     h4.addWidget(GOESRangeParticleFlux)
-    # ACESolarWindPlasma = MySolarWindPlasma(self.main_widget, width=5, height=4, dpi=100)
-    # h4.addWidget(ACESolarWindPlasma)
+    ACESolarWindPlasma = MySolarWindPlasma(self.main_widget, width=5, height=4, dpi=100)
+    h4.addWidget(ACESolarWindPlasma)
 
   def fileQuit(self):
     self.close()

@@ -42,13 +42,7 @@ else:
 ###########################################################################
 plot_angle = "-45"
 
-DiscreteParticleFluxLabelThinner = 5
-DualXrayFluxLabelThinner = 7
-SolarParticleFluxLabelThinner = 1
-ACEDiffElectronProtonFluxLabelThinner = 1
-ACEIntegralProtonFluxLabelThinner = 2
 ACEInterplanetaryMagFieldLabelThinner = 1
-ACESolarWindPlasmaLabelThinner = 7
 
 # GOES Differential Proton Flux
 if(colorMode == "Light"):
@@ -211,15 +205,15 @@ elif(colorMode == "Dark"):
   }
 
 # ACE Solar Wind Plasma
-ACESolarWindPlasmaColors = {
-  "Light": [
-    '#9f0000',
-    '#009f00',
-    '#00009f'
-  ],
-  "Dark": [
-    '#ff0000',
-    '#00ff00',
-    '#0000ff'
-  ]
-}
+if(colorMode == "Light"):
+  ACESolarWindPlasmaColors = {
+    'density' : '#9f0000',
+    'speed'   : '#009f00',
+    'temp'    : '#00009f'
+  }
+elif(colorMode == "Dark"):
+  ACESolarWindPlasmaColors = {
+    'density' : '#ff0000',
+    'speed'   : '#00ff00',
+    'temp'    : '#0000ff'
+  }

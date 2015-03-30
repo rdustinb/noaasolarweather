@@ -99,6 +99,6 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
       framealpha=0.1,
       loc=1, fontsize=colors_and_globals.legendSize,
       bbox_to_anchor=(1.24, 1.12),
-      title="Proton MeV")
+      title="MeV")
     self.axes.add_artist(legend1)
 

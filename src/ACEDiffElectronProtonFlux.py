@@ -87,7 +87,7 @@ class MyDiffElecProtFlux(MyMplCanvas):
       self.axes.set_xlabel(("UTC Time (%s)"%(dates[-1])),
         fontsize=colors_and_globals.plotLabelSize)
     # Set the Plot Title
-    self.axes.set_title("Particle Differential Flux", fontsize=colors_and_globals.plotTitleSize)
+    self.axes.set_title("Differential Particle Flux", fontsize=colors_and_globals.plotTitleSize)
     # class matplotlib.legend.Legend(parent, handles, labels, loc=None,
     # numpoints=None, markerscale=None, scatterpoints=None, scatteryoffsets=None,
     # prop=None, fontsize=None, borderpad=None, labelspacing=None, handlelength=None,
@@ -99,5 +99,5 @@ class MyDiffElecProtFlux(MyMplCanvas):
       framealpha=0.1,
       loc=1, fontsize=colors_and_globals.legendSize,
       bbox_to_anchor=(1.28, 1.12),
-      title="Particle MeV")
+      title="MeV")
     self.axes.add_artist(legend1)
