@@ -100,8 +100,8 @@ class ApplicationWindow(QtGui.QMainWindow):
 
     GOESGoemagFieldFlux = MyGOESGoemagFieldFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
     h2.addWidget(GOESGoemagFieldFlux)
-    # ACEIntegralProtonFlux = MyIntegralProtonFlux(self.main_widget, width=5, height=4, dpi=100)
-    # h2.addWidget(ACEIntegralProtonFlux)
+    ACEIntegralProtonFlux = MyIntegralProtonFlux(self.main_widget, width=5, height=4, dpi=100)
+    h2.addWidget(ACEIntegralProtonFlux)
     # ACEInterplanetaryMagField = MyInterplanetaryMagField(self.main_widget, width=5, height=4, dpi=100)
     # h2.addWidget(ACEInterplanetaryMagField)
 

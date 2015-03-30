@@ -199,16 +199,16 @@ elif(colorMode == "Dark"):
   }
 
 # ACE Integral Proton Flux
-ACEIntegralProtonFluxColors = {
-  "Light": [
-    '#7f7f00',
-    '#007f7f'
-  ],
-  "Dark": [
-    '#bf3f00',
-    '#003fbf'
-  ]
-}
+if(colorMode == "Light"):
+  ACEIntegralProtonFluxColors = {
+    '>10' : '#7f7f00',
+    '>30' : '#007f7f'
+  }
+elif(colorMode == "Dark"):
+  ACEIntegralProtonFluxColors = {
+    '>10' : '#bf3f00',
+    '>30' : '#003fbf'
+  }
 
 # ACE Solar Wind Plasma
 ACESolarWindPlasmaColors = {

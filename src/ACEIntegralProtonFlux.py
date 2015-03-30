@@ -19,7 +19,11 @@ else:
 # Specific Plot Canvas Objects
 ###########################################################################
 class MyIntegralProtonFlux(MyMplCanvas):
-  data = ""
+  datas = {}
+  units = ""
+  particles = {}
+  label_list = []
+  stamp = []
   """
     Initialize the updating object.
   """
@@ -32,29 +36,69 @@ class MyIntegralProtonFlux(MyMplCanvas):
     # Millisecond Timer, Assign the update time based on the value returned by
     # the API call, store the API call data in an object-global data variable
     # to reduce the number of API calls required to initialize the plot
-    timer.start(self.data["update"])
+    timer.start(300000)
 
   def compute_initial_figure(self):
     """
       Initial data plot.
     """
     # Get the new data
-    self.data = NoaaApi.getSolarIsotopeSpectrometer()
-    # Get number of data points
-    data_points = numpy.linspace(0,1,len(self.data["datestamp"]))
+    (self.label_list,self.datas,self.stamp,self.units,self.particles) = \
+      NoaaApi.getIntegralProtonFlux()
     # Next plot overwrites all previous plots
     self.axes.hold(False)
-    # x-axis, y-axis, color
-    proton_gt10mev,  = self.axes.plot(data_points, self.data["data"][">10 MeV Proton"],
-      colors_and_globals.ACEIntegralProtonFluxColors[colors_and_globals.colorMode][0],
-      label=">10")
-    # Now just overlay remaining datasets
+    self.axes.plot(0)
     self.axes.hold(True)
-    proton_gt30mev,  = self.axes.plot(data_points, self.data["data"][">30 MeV Proton"],
-      colors_and_globals.ACEIntegralProtonFluxColors[colors_and_globals.colorMode][1],
-      label=">30")
+    # Plot all data sets
+    plot1 = [self.axes.plot(numpy.linspace(0,1,len(self.stamp)), self.datas[key],
+      colors_and_globals.ACEIntegralProtonFluxColors[key],
+      label=self.particles[key][1]
+      ) for key in self.label_list]
     # Format the Graph
-    self.formatGraph(plotTitle="Integral Proton Flux",
-      labelThinner=colors_and_globals.ACEIntegralProtonFluxLabelThinner,
-      dataDict=self.data, legend1=[proton_gt10mev,proton_gt30mev],
-      legend1title='p (MeV)', legend1xoffset='1.27', legend1yoffset='1.12')
+    self.format_graph()
+
+  def format_graph(self):
+    # Set the graph background color
+    self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
+    # Change Plot to logarithmic
+    self.axes.set_yscale("log")
+    # Show all plot grids
+    self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
+    # Set number of X-Axis ticks
+    self.axes.set_xticks(numpy.linspace(0,1,len(self.stamp)))
+    # Separate dates and times
+    (dates,times) = zip(*self.stamp)
+    # Change the plot tick labels
+    if(colors_and_globals.plot_angle.find("-") != -1):
+      self.axes.set_xticklabels(times,
+        rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
+        horizontalalignment='left', fontsize=colors_and_globals.plotLabelSize)
+    else:
+      self.axes.set_xticklabels(times,
+        rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
+        horizontalalignment='right', fontsize=colors_and_globals.plotLabelSize)
+    # Show Units of y-axis
+    self.axes.set_ylabel(self.units, rotation='vertical',
+      fontsize=colors_and_globals.plotLabelSize)
+    # Show Units of x-axis
+    if(dates[0] != dates[-1]):
+      self.axes.set_xlabel(("UTC Time (%s - %s)"%(dates[0],dates[-1])),
+        fontsize=colors_and_globals.plotLabelSize)
+    else:
+      self.axes.set_xlabel(("UTC Time (%s)"%(dates[-1])),
+        fontsize=colors_and_globals.plotLabelSize)
+    # Set the Plot Title
+    self.axes.set_title("Proton Integral Flux", fontsize=colors_and_globals.plotTitleSize)
+    # class matplotlib.legend.Legend(parent, handles, labels, loc=None,
+    # numpoints=None, markerscale=None, scatterpoints=None, scatteryoffsets=None,
+    # prop=None, fontsize=None, borderpad=None, labelspacing=None, handlelength=None,
+    # handleheight=None, handletextpad=None, borderaxespad=None, columnspacing=None,
+    # ncol=1, mode=None, fancybox=None, shadow=None, title=None, framealpha=None,
+    # bbox_to_anchor=None, bbox_transform=None, frameon=None, handler_map=None)
+    # Create the legends
+    legend1 = self.axes.legend(
+      framealpha=0.1,
+      loc=1, fontsize=colors_and_globals.legendSize,
+      bbox_to_anchor=(1.28, 1.12),
+      title="Proton MeV")
+    self.axes.add_artist(legend1)
