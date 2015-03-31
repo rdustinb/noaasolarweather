@@ -497,62 +497,39 @@ def getInterplanetMagField():
   """
   # Open the file handle
   URL = 'http://services.swpc.noaa.gov/text/ace-magnetometer.txt'
-  try:
-    fh = openUrl(URL)
-  except:
-    print("NoaaApi.getInterplanetMagField > Timeout while pulling NOAA Data...")
-    fh = ""
-    fh = openUrl(URL)
-  # Create the empty data structure
-  data_ret = {
-    "source":"",
-    "data":{
-      "Bx"       :[],
-      "By"       :[],
-      "Bz"       :[],
-      "Bt"       :[],
-      "Latitude" :[],
-      "Longitude":[]
-    },
-    "units":"nT",
-    "update":"",
-    "datestamp":[],
-    "rawlines":[]
-  }
-  # Loop through the remote data file
-  for read_line in fh.readlines():
-    read_line = read_line.decode('utf-8').split()
-    if(len(read_line) > 1):
-      # Get the data samples
-      if((read_line[0][0] != '#') and (read_line[0][0] != ':')):
-        data_ret["rawlines"   ].append(read_line)
-        data_ret["datestamp"  ].append("%s/%s/%s:%s"%(read_line[0],read_line[1],
-          read_line[2],read_line[3]))
-        # Interplanetary Magnetic Field
-        data_ret["data"]["Bx"       ].append(read_line[7])
-        data_ret["data"]["By"       ].append(read_line[8])
-        data_ret["data"]["Bz"       ].append(read_line[9])
-        data_ret["data"]["Bt"       ].append(read_line[10])
-        data_ret["data"]["Latitude" ].append(read_line[11])
-        data_ret["data"]["Longitude"].append(read_line[12])
-      # Get data source
-      elif(read_line[1] == 'Source:'):
-        data_ret["source"] = str(read_line[2])
+  with urllib.request.urlopen(URL) as urlfh , open("../data/ace_mag_1m.txt", "w") as locfh:
+    for line in urlfh:
+      line = line.decode('utf-8')
+      locfh.write(line)
+  # Parse local data
+  with open("../data/ace_mag_1m.txt", "r") as fh:
+    datas = {}
+    label_list = ['Total','Latitude','Longitude']
+    stamp = []
+    # Skip the first two lines, just boiler plate stuff
+    next(fh)
+    next(fh)
+    # Iterator of Header
+    for line in fh:
+      if(line.startswith('#') and not(line.startswith('#-'))):
+        pass
       else:
-        # Capture the update period
-        try:
-          if int(sys.version[0]) == 3:
-            check_val = read_line[1].split(sep="-")
-          if int(sys.version[0]) == 2:
-            check_val = read_line[1].split("-")
-          if(check_val[1] == "minute"):
-            data_ret["update"] = int(check_val[0])*60*1000
-        except IndexError:
-          pass
-  # Convert the data points from strings to numbers
-  for key in data_ret["data"].keys():
-    data_ret["data"][key] = [float(i) for i in data_ret["data"][key]]
-  return data_ret
+        # Stop decoding header
+        break
+    # Iterator of Data
+    for line in fh:
+      # Map out each data line to yr, mo, dy, hhmm, skip, skip, d0, d1, ... , dn
+      # Zipping up the original sequence of labels with the remainder data
+      # lines allows the for loop to then iterate through the new list
+      (yr,mo,dy,time,blah1,blah2,blah3,blah4,blah5,blah6,*datarow) = line.split()
+      stamp.append((str.join("",(yr,mo,dy)), time))
+      for (key, value) in zip(label_list, datarow):
+        if key in datas:
+          datas[key].append(float(value))
+        else:
+          datas[key] = [float(value)]
+  # Now return the data
+  return(label_list,datas,stamp)
 
 def getSolarPlasma():
   """
@@ -691,23 +668,15 @@ if __name__ == '__main__':
   print(units)
   print(particles)
 
-  # # Get Interplanetary Magnetic Field Flux
-  # print("")
-  # print("------------------------------------")
-  # print("   Interplanetary Magnetic Field")
-  # print("------------------------------------")
-  # alldata = getInterplanetMagField()
-  # print("data source is:")
-  # print(alldata["source"])
-  # for key,value in alldata["data"].items():
-  #   print("%s data is:" % (key))
-  #   print(value)
-  # print("data units are:")
-  # print(alldata["units"])
-  # print("timestamps are:")
-  # print(alldata["datestamp"])
-  # print("update period in (ms) is:")
-  # print(alldata["update"])
+  # Get Interplanetary Magnetic Field Flux
+  print("")
+  print("------------------------------------")
+  print("   Interplanetary Magnetic Field")
+  print("------------------------------------")
+  (label_list,datas,stamp) = getInterplanetMagField()
+  print(label_list)
+  print(datas)
+  print(stamp)
 
   # Get Solar Wind Plasma
   print("")

@@ -21,7 +21,9 @@ else:
 # Specific Plot Canvas Objects
 ###########################################################################
 class MyInterplanetaryMagField(MyMplCanvas):
-  data = ""
+  datas = {}
+  label_list = []
+  stamp = []
   """
     Initialize the updating object.
   """
@@ -34,55 +36,54 @@ class MyInterplanetaryMagField(MyMplCanvas):
     # Millisecond Timer, Assign the update time based on the value returned by
     # the API call, store the API call data in an object-global data variable
     # to reduce the number of API calls required to initialize the plot
-    timer.start(self.data["update"])
+    timer.start(60000)
 
   def compute_initial_figure(self):
     """
       Initial data plot.
     """
     # Get the new data
-    self.data = NoaaApi.getInterplanetMagField()
-    # Get the start date
-    start_date = self.data["datestamp"][0].split(sep=":")[0]
-    # Get the start date
-    end_date = self.data["datestamp"][-1].split(sep=":")[0]
-    # Strip only the timestamp out of the array of date/time stamps, keep only a few
-    self.data["datestamp"] = [x.split(sep=":")[1] for x in self.data["datestamp"]]
+    (self.label_list,self.datas,self.stamp) = \
+      NoaaApi.getInterplanetMagField()
+    # Next plot overwrites all previous plots
+    self.axes.hold(False)
+    self.axes.plot(0)
+    self.axes.hold(True)
     # Set the Plot Limits
-    self.axes.autoscale(False)
-    self.axes.set_xlim(0,360)
-    # print(help(self.axes.set_xlim))
-    self.axes.set_ylim(-90,90)
+    # self.axes.autoscale(False)
+    # self.axes.set_xlim(0,360)
+    # self.axes.set_ylim(-90,90)
     # Remove data that is missing
-    self.data["data"]["Bt"],self.data["data"]["Latitude"],  \
-    self.data["data"]["Longitude"],self.data["datestamp"] = \
+    self.datas["Total"],self.datas["Latitude"],  \
+    self.datas["Longitude"],self.stamp = \
     zip(*[i for i in zip(                                   \
-        self.data["data"]["Bt"],                            \
-        self.data["data"]["Latitude"],                      \
-        self.data["data"]["Longitude"],                     \
-        self.data["datestamp"]                              \
+        self.datas["Total"],                            \
+        self.datas["Latitude"],                      \
+        self.datas["Longitude"],                     \
+        self.stamp                              \
       )                                                     \
       if i[0] != -999.9])
     # Calculate the smallest/largest mag field value to provide proper scaling
-    smallest = min(self.data["data"]["Bt"])
-    largest = max(self.data["data"]["Bt"])
+    smallest = min(self.datas["Total"])
+    largest = max(self.datas["Total"])
     # Normalize values
-    self.data["data"]["Bt"] = \
-      [7*(3.14159*(t - smallest)**2) for t in self.data["data"]["Bt"]]
+    self.datas["Total"] = \
+      [7*(3.14159*(t - smallest)**2) for t in self.datas["Total"]]
     # Create a color array
     pt_colors = [[1,0,0,i]                          \
-      for i in [(1/len(self.data["data"]["Bt"]))*x  \
-      for x in range(len(self.data["data"]["Bt"]))]]
-    # Next plot overwrites all previous plots
-    self.axes.hold(False)
+      for i in [(1/len(self.datas["Total"]))*x  \
+      for x in range(len(self.datas["Total"]))]]
     # Loop Through the individual plot values
     self.axes.scatter(
-      self.data["data"]["Longitude"],
-      self.data["data"]["Latitude"],
-      s=self.data["data"]["Bt"],
-      c=pt_colors, label=self.data["data"]["Bt"]
+      self.datas["Longitude"],
+      self.datas["Latitude"],
+      s=self.datas["Total"],
+      c=pt_colors, label=self.datas["Total"]
     )
     # Format the Graph
+    self.format_graph(pt_colors,smallest,largest)
+
+  def format_graph(self,pt_colors,smallest,largest):
     self.axes.set_ylabel("Latitude (GSM)",
       fontsize=colors_and_globals.plotLabelSize)
     self.axes.set_xlabel("Longitude (GSM)",
@@ -96,21 +97,21 @@ class MyInterplanetaryMagField(MyMplCanvas):
       fontsize=colors_and_globals.plotTitleSize)
     # Add Legend (time)
     newest = patches.Patch(color=(1,0,0), alpha=pt_colors[-1][3],
-      ec='black', label=self.data["datestamp"][-1])
+      ec='black', label=self.stamp[-1][1])
     oldest = patches.Patch(color=(1,0,0), alpha=pt_colors[1][3],
-      ec='black', label=self.data["datestamp"][0])
+      ec='black', label=self.stamp[0][1])
     legend1 = self.axes.legend(
       handles=[newest,oldest],
       framealpha=0.1,
       loc=1, fontsize=colors_and_globals.legendSize,
       bbox_to_anchor=(1.27,1.12), title="Time")
     # Add Legend (size correlates to nT value)
-    leg_small = patches.Circle(xy=(smallest,smallest), facecolor='none', edgecolor='none', label=str(smallest)+" nT")
-    leg_large = patches.Circle(xy=(largest,largest), facecolor='none', edgecolor='none', label=str(largest)+" nT")
-    legend2 = self.axes.legend(
-      handles=[leg_small,leg_large],
-      framealpha=0.1,
-      loc=1, fontsize=colors_and_globals.legendSize,
-      bbox_to_anchor=(1.27,0.81), title="Strength")
+    # leg_small = patches.Circle(xy=(smallest,smallest), facecolor='none', edgecolor='none', label=str(smallest)+" nT")
+    # leg_large = patches.Circle(xy=(largest,largest), facecolor='none', edgecolor='none', label=str(largest)+" nT")
+    # legend2 = self.axes.legend(
+    #   handles=[leg_small,leg_large],
+    #   framealpha=0.1,
+    #   loc=1, fontsize=colors_and_globals.legendSize,
+    #   bbox_to_anchor=(1.27,0.81), title="Strength")
     self.axes.add_artist(legend1)
-    self.axes.add_artist(legend2)
+    # self.axes.add_artist(legend2)
