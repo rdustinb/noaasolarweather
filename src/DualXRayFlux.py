@@ -59,6 +59,12 @@ class MyGOESXrayFlux(MyMplCanvas):
     R3 = numpy.repeat(numpy.array(10e-5), len(self.stamp))
     R4 = numpy.repeat(numpy.array(10e-4), len(self.stamp))
     R5 = numpy.repeat(numpy.array(20e-4), len(self.stamp))
+    # Test Data
+    # R1 = numpy.repeat(numpy.array(10e-10), len(self.stamp))
+    # R2 = numpy.repeat(numpy.array(50e-10), len(self.stamp))
+    # R3 = numpy.repeat(numpy.array(10e-9), len(self.stamp))
+    # R4 = numpy.repeat(numpy.array(50e-9), len(self.stamp))
+    # R5 = numpy.repeat(numpy.array(10e-8), len(self.stamp))
     # Fill Flares if present
     self.axes.fill_between(numpy.linspace(0,1,len(self.stamp)), R1, \
       self.datas["Short"], where=self.datas["Short"]>R1, \

@@ -64,6 +64,11 @@ class MyIntegralProtonFlux(MyMplCanvas):
     self.axes.set_yscale("log")
     # Show all plot grids
     self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
+    # Thin the number of x-axis labels and ticks, this works with the list of
+    # tuples that are the date/time stamps
+    self.stamp = [x \
+      for x in self.stamp[0::2]
+    ]
     # Set number of X-Axis ticks
     self.axes.set_xticks(numpy.linspace(0,1,len(self.stamp)))
     # Separate dates and times

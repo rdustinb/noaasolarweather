@@ -47,7 +47,7 @@ class ApplicationWindow(QtGui.QMainWindow):
     # Create the Main Window
     QtGui.QMainWindow.__init__(self)
     self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-    self.setWindowTitle("application main window")
+    self.setWindowTitle("Space Weather")
 
     # Create the Menu Bar
     self.file_menu = QtGui.QMenu('&File', self)
@@ -75,9 +75,6 @@ class ApplicationWindow(QtGui.QMainWindow):
 
     self.main_widget.setFocus()
     self.setCentralWidget(self.main_widget)
-
-    # Print initial plot data status message
-    # self.statusBar().showMessage("Fetching initial plot data...")
 
     self.setWindowTitle("Space Weather Grapher - Fetching initial plot data...")
     self.show()
@@ -122,19 +119,10 @@ class ApplicationWindow(QtGui.QMainWindow):
     self.fileQuit()
 
   def about(self):
-    QtGui.QMessageBox.about(self, "About",
-      (
-"""Space Weather Application
-ver %s
-2015 RDustinB"""%colors_and_globals.progversion)
-    )
+    QtGui.QMessageBox.about(self, "About", ("Space Weather Application \nVersion: %s\n2015, RDustinB"%(colors_and_globals.progversion)))
+
   def version(self):
-    QtGui.QMessageBox.about(self, "Version",
-      (
-"""Version: %s
-Build: %s
-Date: %s"""%(colors_and_globals.progversion,colors_and_globals.progbuild,colors_and_globals.progdate))
-    )
+    QtGui.QMessageBox.about(self, "Version", ("Version: %s\nBuild: %s\nDate: %s"%(colors_and_globals.progversion,colors_and_globals.progbuild,colors_and_globals.progdate)))
 
 ###########################################################################
 # Plotting Objects, Calls the Backend API

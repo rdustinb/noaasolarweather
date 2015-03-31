@@ -54,31 +54,34 @@ class MyInterplanetaryMagField(MyMplCanvas):
     # self.axes.set_xlim(0,360)
     # self.axes.set_ylim(-90,90)
     # Remove data that is missing
-    self.datas["Total"],self.datas["Latitude"],  \
-    self.datas["Longitude"],self.stamp = \
-    zip(*[i for i in zip(                                   \
-        self.datas["Total"],                            \
-        self.datas["Latitude"],                      \
-        self.datas["Longitude"],                     \
-        self.stamp                              \
-      )                                                     \
+    self.datas["Total"],self.datas["Latitude"],   \
+    self.datas["Longitude"],self.stamp =          \
+    zip(*[i for i in zip(                         \
+        self.datas["Total"],                      \
+        self.datas["Latitude"],                   \
+        self.datas["Longitude"],                  \
+        self.stamp                                \
+      )                                           \
       if i[0] != -999.9])
     # Calculate the smallest/largest mag field value to provide proper scaling
     smallest = min(self.datas["Total"])
     largest = max(self.datas["Total"])
+    # Calculate the Sizing Multiplier
+    area_m = 7/(largest - smallest)
     # Normalize values
     self.datas["Total"] = \
-      [7*(3.14159*(t - smallest)**2) for t in self.datas["Total"]]
+      [(3.14159*(area_m*(t - smallest))**2) for t in self.datas["Total"]]
     # Create a color array
-    pt_colors = [[1,0,0,i]                          \
-      for i in [(1/len(self.datas["Total"]))*x  \
-      for x in range(len(self.datas["Total"]))]]
+    # pt_colors = [[1,0,0,i]                        \
+    #   for i in [(1/len(self.datas["Total"]))*x    \
+    #   for x in range(len(self.datas["Total"]))]]
+    pt_colors = [x*(256/len(self.datas["Total"])) for x in range(len(self.datas["Total"]))]
     # Loop Through the individual plot values
     self.axes.scatter(
       self.datas["Longitude"],
       self.datas["Latitude"],
       s=self.datas["Total"],
-      c=pt_colors, label=self.datas["Total"]
+      c=pt_colors, label=self.datas["Total"], alpha=0.4
     )
     # Format the Graph
     self.format_graph(pt_colors,smallest,largest)
@@ -96,15 +99,15 @@ class MyInterplanetaryMagField(MyMplCanvas):
     self.axes.set_title("Interplanetary Magnetic Field",
       fontsize=colors_and_globals.plotTitleSize)
     # Add Legend (time)
-    newest = patches.Patch(color=(1,0,0), alpha=pt_colors[-1][3],
-      ec='black', label=self.stamp[-1][1])
-    oldest = patches.Patch(color=(1,0,0), alpha=pt_colors[1][3],
-      ec='black', label=self.stamp[0][1])
-    legend1 = self.axes.legend(
-      handles=[newest,oldest],
-      framealpha=0.1,
-      loc=1, fontsize=colors_and_globals.legendSize,
-      bbox_to_anchor=(1.27,1.12), title="Time")
+    # newest = patches.Patch(color=pt_colors[-1], alpha=0.5,
+    #   ec='black', label=self.stamp[-1][1])
+    # oldest = patches.Patch(color=pt_colors[-1], alpha=0.5,
+    #   ec='black', label=self.stamp[0][1])
+    # legend1 = self.axes.legend(
+    #   handles=[newest,oldest],
+    #   framealpha=0.1,
+    #   loc=1, fontsize=colors_and_globals.legendSize,
+    #   bbox_to_anchor=(1.27,1.12), title="Time")
     # Add Legend (size correlates to nT value)
     # leg_small = patches.Circle(xy=(smallest,smallest), facecolor='none', edgecolor='none', label=str(smallest)+" nT")
     # leg_large = patches.Circle(xy=(largest,largest), facecolor='none', edgecolor='none', label=str(largest)+" nT")
@@ -113,5 +116,5 @@ class MyInterplanetaryMagField(MyMplCanvas):
     #   framealpha=0.1,
     #   loc=1, fontsize=colors_and_globals.legendSize,
     #   bbox_to_anchor=(1.27,0.81), title="Strength")
-    self.axes.add_artist(legend1)
+    # self.axes.add_artist(legend1)
     # self.axes.add_artist(legend2)
