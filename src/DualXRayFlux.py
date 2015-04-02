@@ -1,19 +1,21 @@
 from MyMplCanvas import MyMplCanvas
-import NoaaApi
-import numpy
+from numpy import linspace, repeat, array
+from NoaaApi import storeGOESXrayFlux
+from NoaaApi import getGOESXrayFlux
 import colors_and_globals
 """
   As of MatPlotLib 1.5 qt4_compat will be deprecated for the more general
   qt_compat. Pulling that in instead.
 """
-from matplotlib.backends import qt_compat
+from matplotlib.backends.qt_compat import QT_API
+from matplotlib.backends.qt_compat import QT_API_PYSIDE
 """
   Branch using PyQt or PySide based on MatPlotLib values.
 """
-if(qt_compat.QT_API == qt_compat.QT_API_PYSIDE):
-  from PySide import QtGui, QtCore
+if(QT_API == QT_API_PYSIDE):
+  from PySide.QtCore import QTimer
 else:
-  from PyQt4 import QtGui, QtCore
+  from PyQt4.QtCore import QTimer
 
 ###########################################################################
 # Specific Plot Canvas Objects
@@ -29,7 +31,7 @@ class MyGOESXrayFlux(MyMplCanvas):
       Initialize the updating object.
     """
     MyMplCanvas.__init__(self, *args, **kwargs)
-    timer = QtCore.QTimer(self)
+    timer = QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
     # Millisecond Timer, Assign the update time based on the value returned by
@@ -43,7 +45,7 @@ class MyGOESXrayFlux(MyMplCanvas):
       This is the actual timer updating method.
     """
     # Update the graph data
-    NoaaApi.storeGOESXrayFlux()
+    storeGOESXrayFlux()
     # Call the compute initial function, only difference is the .draw() method below
     self.compute_initial_figure()
     # Redraw plots
@@ -55,42 +57,42 @@ class MyGOESXrayFlux(MyMplCanvas):
     """
     # Get the new data
     (self.label_list,self.datas,self.stamp,self.units,self.particles) = \
-      NoaaApi.getGOESXrayFlux()
+      getGOESXrayFlux()
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     self.axes.plot(0)
     self.axes.hold(True)
     # Plot all data sets
-    plot1 = [self.axes.plot(numpy.linspace(0,1,len(self.stamp)), self.datas[key],
+    plot1 = [self.axes.plot(linspace(0,1,len(self.stamp)), self.datas[key],
       colors_and_globals.GOESXrayFluxColors[key],
       label=self.particles[key][1]
       ) for key in self.label_list]
     # Add Highlighting for flares
-    R1 = numpy.repeat(numpy.array(10e-6), len(self.stamp))
-    R2 = numpy.repeat(numpy.array(50e-6), len(self.stamp))
-    R3 = numpy.repeat(numpy.array(10e-5), len(self.stamp))
-    R4 = numpy.repeat(numpy.array(10e-4), len(self.stamp))
-    R5 = numpy.repeat(numpy.array(20e-4), len(self.stamp))
+    R1 = repeat(array(10e-6), len(self.stamp))
+    R2 = repeat(array(50e-6), len(self.stamp))
+    R3 = repeat(array(10e-5), len(self.stamp))
+    R4 = repeat(array(10e-4), len(self.stamp))
+    R5 = repeat(array(20e-4), len(self.stamp))
     # Test Data
-    # R1 = numpy.repeat(numpy.array(10e-10), len(self.stamp))
-    # R2 = numpy.repeat(numpy.array(50e-10), len(self.stamp))
-    # R3 = numpy.repeat(numpy.array(10e-9), len(self.stamp))
-    # R4 = numpy.repeat(numpy.array(50e-9), len(self.stamp))
-    # R5 = numpy.repeat(numpy.array(10e-8), len(self.stamp))
+    # R1 = repeat(array(10e-10), len(self.stamp))
+    # R2 = repeat(array(50e-10), len(self.stamp))
+    # R3 = repeat(array(10e-9), len(self.stamp))
+    # R4 = repeat(array(50e-9), len(self.stamp))
+    # R5 = repeat(array(10e-8), len(self.stamp))
     # Fill Flares if present
-    self.axes.fill_between(numpy.linspace(0,1,len(self.stamp)), R1, \
+    self.axes.fill_between(linspace(0,1,len(self.stamp)), R1, \
       self.datas["Short"], where=self.datas["Short"]>R1, \
       color=colors_and_globals.GOESXrayFlare['R1'])
-    self.axes.fill_between(numpy.linspace(0,1,len(self.stamp)), R2, \
+    self.axes.fill_between(linspace(0,1,len(self.stamp)), R2, \
       self.datas["Short"], where=self.datas["Short"]>R2, \
       color=colors_and_globals.GOESXrayFlare['R2'])
-    self.axes.fill_between(numpy.linspace(0,1,len(self.stamp)), R3, \
+    self.axes.fill_between(linspace(0,1,len(self.stamp)), R3, \
       self.datas["Short"], where=self.datas["Short"]>R3, \
       color=colors_and_globals.GOESXrayFlare['R3'])
-    self.axes.fill_between(numpy.linspace(0,1,len(self.stamp)), R4, \
+    self.axes.fill_between(linspace(0,1,len(self.stamp)), R4, \
       self.datas["Short"], where=self.datas["Short"]>R4, \
       color=colors_and_globals.GOESXrayFlare['R4'])
-    self.axes.fill_between(numpy.linspace(0,1,len(self.stamp)), R5, \
+    self.axes.fill_between(linspace(0,1,len(self.stamp)), R5, \
       self.datas["Short"], where=self.datas["Short"]>R5, \
       color=colors_and_globals.GOESXrayFlare['R5'])
     # Format the Graph
@@ -109,7 +111,7 @@ class MyGOESXrayFlux(MyMplCanvas):
       for x in self.stamp[0::7]
     ]
     # Set number of X-Axis ticks
-    self.axes.set_xticks(numpy.linspace(0,1,len(self.stamp)))
+    self.axes.set_xticks(linspace(0,1,len(self.stamp)))
     # Separate dates and times
     (dates,times) = zip(*self.stamp)
     # Change the plot tick labels
@@ -146,5 +148,3 @@ class MyGOESXrayFlux(MyMplCanvas):
       bbox_to_anchor=(1.24, 1.12),
       title="Nanometer")
     self.axes.add_artist(legend1)
-
-

@@ -1,19 +1,21 @@
 from MyMplCanvas import MyMplCanvas
-import NoaaApi
-import numpy
+from numpy import linspace
+from NoaaApi import storeGOESDiscreteParticleFlux
+from NoaaApi import getGOESDiscreteParticleFlux
 import colors_and_globals
 """
   As of MatPlotLib 1.5 qt4_compat will be deprecated for the more general
   qt_compat. Pulling that in instead.
 """
-from matplotlib.backends import qt_compat
+from matplotlib.backends.qt_compat import QT_API
+from matplotlib.backends.qt_compat import QT_API_PYSIDE
 """
   Branch using PyQt or PySide based on MatPlotLib values.
 """
-if(qt_compat.QT_API == qt_compat.QT_API_PYSIDE):
-  from PySide import QtGui, QtCore
+if(QT_API == QT_API_PYSIDE):
+  from PySide.QtCore import QTimer
 else:
-  from PyQt4 import QtGui, QtCore
+  from PyQt4.QtCore import QTimer
 
 ###########################################################################
 # Specific Plot Canvas Objects
@@ -29,7 +31,7 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
       Initialize the updating object.
     """
     MyMplCanvas.__init__(self, right_edge=0.84, *args, **kwargs)
-    timer = QtCore.QTimer(self)
+    timer = QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
     # Millisecond Timer, Assign the update time based on the value returned by
@@ -43,7 +45,7 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
       This is the actual timer updating method.
     """
     # Update the graph data
-    NoaaApi.storeGOESDiscreteParticleFlux()
+    storeGOESDiscreteParticleFlux()
     # Call the compute initial function, only difference is the .draw() method below
     self.compute_initial_figure()
     # Redraw plots
@@ -55,9 +57,9 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
     """
     # Get the new data
     (self.label_list,self.datas,self.stamp,self.units,self.particles) = \
-      NoaaApi.getGOESDiscreteParticleFlux()
+      getGOESDiscreteParticleFlux()
     # Get number of data points
-    data_points = numpy.linspace(0,1,len(self.stamp))
+    data_points = linspace(0,1,len(self.stamp))
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     self.axes.plot(0)
@@ -83,7 +85,7 @@ class MyGOESDiscreteParticleFlux(MyMplCanvas):
       for x in self.stamp[0::7]
     ]
     # Get number of data points
-    data_points = numpy.linspace(0,1,len(self.stamp))
+    data_points = linspace(0,1,len(self.stamp))
     # Set number of X-Axis ticks
     self.axes.set_xticks(data_points)
     # Separate dates and times

@@ -1,19 +1,21 @@
 from MyMplCanvas import MyMplCanvas
-import NoaaApi
-import numpy
+from numpy import linspace
+from NoaaApi import storeGOESRangeProtonFlux
+from NoaaApi import getGOESRangeProtonFlux
 import colors_and_globals
 """
   As of MatPlotLib 1.5 qt4_compat will be deprecated for the more general
   qt_compat. Pulling that in instead.
 """
-from matplotlib.backends import qt_compat
+from matplotlib.backends.qt_compat import QT_API
+from matplotlib.backends.qt_compat import QT_API_PYSIDE
 """
   Branch using PyQt or PySide based on MatPlotLib values.
 """
-if(qt_compat.QT_API == qt_compat.QT_API_PYSIDE):
-  from PySide import QtGui, QtCore
+if(QT_API == QT_API_PYSIDE):
+  from PySide.QtCore import QTimer
 else:
-  from PyQt4 import QtGui, QtCore
+  from PyQt4.QtCore import QTimer
 
 ###########################################################################
 # Specific Plot Canvas Objects
@@ -29,7 +31,7 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
       Initialize the updating object.
     """
     MyMplCanvas.__init__(self, *args, **kwargs)
-    timer = QtCore.QTimer(self)
+    timer = QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
     # Millisecond Timer, Assign the update time based on the value returned by
@@ -43,7 +45,7 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
       This is the actual timer updating method.
     """
     # Update the graph data
-    NoaaApi.storeGOESRangeProtonFlux()
+    storeGOESRangeProtonFlux()
     # Call the compute initial function, only difference is the .draw() method below
     self.compute_initial_figure()
     # Redraw plots
@@ -55,13 +57,13 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     """
     # Get the new data
     (self.label_list,self.datas,self.stamp,self.units,self.particles) = \
-      NoaaApi.getGOESRangeProtonFlux()
+      getGOESRangeProtonFlux()
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     self.axes.plot(0)
     self.axes.hold(True)
     # Plot all data sets
-    plot1 = [self.axes.plot(numpy.linspace(0,1,len(self.stamp)), self.datas[key],
+    plot1 = [self.axes.plot(linspace(0,1,len(self.stamp)), self.datas[key],
       colors_and_globals.DifferentialEnergeticProtonFluxColors[key],
       label=self.particles[key][1]
       ) for key in self.label_list]
@@ -76,7 +78,7 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     # Show all plot grids
     self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
     # Set number of X-Axis ticks
-    self.axes.set_xticks(numpy.linspace(0,1,len(self.stamp)))
+    self.axes.set_xticks(linspace(0,1,len(self.stamp)))
     # Separate dates and times
     (dates,times) = zip(*self.stamp)
     # Change the plot tick labels

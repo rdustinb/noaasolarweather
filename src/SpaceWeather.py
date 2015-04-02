@@ -14,30 +14,54 @@
 ###########################################################################
 # Pull in the global values
 import colors_and_globals
-# Custom backend Libraries
-import NoaaApi
-# Plotting Libraries
-import matplotlib
+###########################################################################
+# Plotting Objects, Calls the Backend API
+###########################################################################
+from DifferentialEnergeticProtonFlux import MyGOESRangeProtonFluxCanvas
+from GeomagneticField import MyGOESGoemagFieldFluxCanvas
+from DiscreteParticleFlux import MyGOESDiscreteParticleFlux
+from SolarParticleFlux import MyGOESIntegralParticleFlux
+from DualXRayFlux import MyGOESXrayFlux
+from ACEDiffElectronProtonFlux import MyDiffElecProtFlux
+from ACEIntegralProtonFlux import MyIntegralProtonFlux
+from ACEInterplanetaryMagField import MyInterplanetaryMagField
+from ACESolarWindPlasma import MySolarWindPlasma
 """
   As of MatPlotLib 1.5 qt4_compat will be deprecated for the more general
   qt_compat. Pulling that in instead.
 """
+from matplotlib import rc
 from matplotlib.backends import qt_compat
 # Libraries to create the GUI
-import sys
+from sys import exit
+from sys import argv
 import os
 """
   Branch using PyQt or PySide based on MatPlotLib values.
 """
 if(qt_compat.QT_API == qt_compat.QT_API_PYSIDE):
-  from PySide import QtGui, QtCore
+  from PySide.QtGui import QMainWindow
+  from PySide.QtGui import QMenu
+  from PySide.QtGui import QWidget
+  from PySide.QtGui import QVBoxLayout
+  from PySide.QtGui import QHBoxLayout
+  from PySide.QtGui import QMessageBox
+  from PySide.QtGui import QApplication
+  from PySide import QtCore
 else:
-  from PyQt4 import QtGui, QtCore
+  from PySide.QtGui import QMainWindow
+  from PySide.QtGui import QMenu
+  from Pyside.QtGui import QWidget
+  from Pyside.QtGui import QVBoxLayout
+  from Pyside.QtGui import QHBoxLayout
+  from Pyside.QtGui import QMessageBox
+  from PySide.QtGui import QApplication
+  from PySide import QtCore
 
 ###########################################################################
 # Main Application Object
 ###########################################################################
-class ApplicationWindow(QtGui.QMainWindow):
+class ApplicationWindow(QMainWindow):
   def __init__(self):
     # Verify the existance of the data directory
     if(not(os.path.exists("../data"))):
@@ -45,12 +69,12 @@ class ApplicationWindow(QtGui.QMainWindow):
       os.makedirs("../data")
 
     # Create the Main Window
-    QtGui.QMainWindow.__init__(self)
+    QMainWindow.__init__(self)
     self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
     self.setWindowTitle("Space Weather")
 
     # Create the Menu Bar
-    self.file_menu = QtGui.QMenu('&File', self)
+    self.file_menu = QMenu('&File', self)
     self.file_menu.addAction('&Quit', self.fileQuit,
                  QtCore.Qt.CTRL + QtCore.Qt.Key_Q)
     self.file_menu.addAction('&Close', self.fileQuit,
@@ -59,14 +83,14 @@ class ApplicationWindow(QtGui.QMainWindow):
     self.file_menu.addAction('&Version', self.version)
     self.menuBar().addMenu(self.file_menu)
 
-    self.main_widget = QtGui.QWidget(self)
+    self.main_widget = QWidget(self)
     # Single Vertical Layout object
-    l = QtGui.QVBoxLayout(self.main_widget)
+    l = QVBoxLayout(self.main_widget)
     # Four Horizontal Layout objects
-    h1 = QtGui.QHBoxLayout()
-    h2 = QtGui.QHBoxLayout()
-    h3 = QtGui.QHBoxLayout()
-    h4 = QtGui.QHBoxLayout()
+    h1 = QHBoxLayout()
+    h2 = QHBoxLayout()
+    h3 = QHBoxLayout()
+    h4 = QHBoxLayout()
     # Added as sublayouts to the top level vertical layout
     l.addLayout(h1)
     l.addLayout(h2)
@@ -119,32 +143,19 @@ class ApplicationWindow(QtGui.QMainWindow):
     self.fileQuit()
 
   def about(self):
-    QtGui.QMessageBox.about(self, "About", ("Space Weather Application \nVersion: %s\n2015, RDustinB"%(colors_and_globals.progversion)))
+    QMessageBox.about(self, "About", ("Space Weather Application \nVersion: %s\n2015, RDustinB"%(colors_and_globals.progversion)))
 
   def version(self):
-    QtGui.QMessageBox.about(self, "Version", ("Version: %s\nBuild: %s\nDate: %s"%(colors_and_globals.progversion,colors_and_globals.progbuild,colors_and_globals.progdate)))
-
-###########################################################################
-# Plotting Objects, Calls the Backend API
-###########################################################################
-from DifferentialEnergeticProtonFlux import MyGOESRangeProtonFluxCanvas
-from GeomagneticField import MyGOESGoemagFieldFluxCanvas
-from DiscreteParticleFlux import MyGOESDiscreteParticleFlux
-from SolarParticleFlux import MyGOESIntegralParticleFlux
-from DualXRayFlux import MyGOESXrayFlux
-from ACEDiffElectronProtonFlux import MyDiffElecProtFlux
-from ACEIntegralProtonFlux import MyIntegralProtonFlux
-from ACEInterplanetaryMagField import MyInterplanetaryMagField
-from ACESolarWindPlasma import MySolarWindPlasma
+    QMessageBox.about(self, "Version", ("Version: %s\nBuild: %s\nDate: %s"%(colors_and_globals.progversion,colors_and_globals.progbuild,colors_and_globals.progdate)))
 
 ###########################################################################
 # Run the Application
 ###########################################################################
-matplotlib.rc('font', **colors_and_globals.font)
-qApp = QtGui.QApplication(sys.argv)
+rc('font', **colors_and_globals.font)
+qApp = QApplication(argv)
 aw = ApplicationWindow()
 # Notify user that initial data has been populater
 # aw.statusBar().showMessage("Initial data sets have been downloaded.", 15000)
 aw.setWindowTitle("Space Weather Grapher")
-sys.exit(qApp.exec_())
+exit(qApp.exec_())
 #qApp.exec_()

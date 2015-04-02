@@ -1,22 +1,23 @@
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 import colors_and_globals
-import numpy
+from numpy import linspace
 """
   As of MatPlotLib 1.5 qt4_compat will be deprecated for the more general
   qt_compat. Pulling that in instead.
 """
-from matplotlib.backends import qt_compat
+from matplotlib.backends.qt_compat import QT_API
+from matplotlib.backends.qt_compat import QT_API_PYSIDE
 """
   Branch using PyQt or PySide based on MatPlotLib values.
 """
-if(qt_compat.QT_API == qt_compat.QT_API_PYSIDE):
-  from PySide import QtGui, QtCore
+if(QT_API == QT_API_PYSIDE):
+  from PySide.QtGui import QSizePolicy
 else:
-  from PyQt4 import QtGui, QtCore
+  from PyQt4.QtGui import QSizePolicy
 
 # Generic Canvas Object
-class MyMplCanvas(FigureCanvas):
+class MyMplCanvas(FigureCanvasQTAgg):
   def __init__(self, parent=None, width=5, height=4, dpi=100, subplot=111,
     left_edge=0.10, right_edge=0.82, top_edge=0.9, bottom_edge=0.22):
     """
@@ -33,13 +34,11 @@ class MyMplCanvas(FigureCanvas):
     self.axes = fig.add_subplot(subplot)
     self.compute_initial_figure()
     # Call Parent canvas init
-    FigureCanvas.__init__(self, fig)
+    FigureCanvasQTAgg.__init__(self, fig)
     self.setParent(parent)
     # Plot size adjusts with window adjustment
-    FigureCanvas.setSizePolicy(self,
-                              QtGui.QSizePolicy.Expanding,
-                              QtGui.QSizePolicy.Expanding)
-    FigureCanvas.updateGeometry(self)
+    FigureCanvasQTAgg.setSizePolicy(self,QSizePolicy.Expanding,QSizePolicy.Expanding)
+    FigureCanvasQTAgg.updateGeometry(self)
 
   def compute_initial_figure(self):
     """
@@ -63,7 +62,7 @@ class MyMplCanvas(FigureCanvas):
     end_date = dataDict["datestamp"][-1].split(sep=":")[0]
     # Strip only the timestamp out of the array of date/time stamps, keep only a few
     dataDict["datestamp"] = [x.split(sep=":")[1] for x in dataDict["datestamp"][0::labelThinner]]
-    dataPts = numpy.linspace(0,1,len(dataDict["datestamp"]))
+    dataPts = linspace(0,1,len(dataDict["datestamp"]))
     # Set the graph background color
     self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
     # Change Plot to logarithmic

@@ -9,9 +9,9 @@ colorMode = "Dark"
 ###########################################################################
 # Version of the application
 ###########################################################################
-progversion = "2.0.4"
-progbuild = "8"
-progdate = "20150329"
+progversion = "2.0.5"
+progbuild = "1"
+progdate = "20150402"
 
 ###########################################################################
 # Application Globals
@@ -41,8 +41,6 @@ else:
 # Graphing Widget Values
 ###########################################################################
 plot_angle = "-45"
-
-ACEInterplanetaryMagFieldLabelThinner = 1
 
 # GOES Differential Proton Flux
 if(colorMode == "Light"):

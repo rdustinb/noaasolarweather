@@ -1,21 +1,20 @@
 from MyMplCanvas import MyMplCanvas
-import NoaaApi
-import numpy
+from NoaaApi import storeInterplanetMagField
+from NoaaApi import getInterplanetMagField
 import colors_and_globals
 """
   As of MatPlotLib 1.5 qt4_compat will be deprecated for the more general
   qt_compat. Pulling that in instead.
 """
-from matplotlib.backends import qt_compat
-from matplotlib import patches
-from matplotlib.legend_handler import HandlerPatch
+from matplotlib.backends.qt_compat import QT_API
+from matplotlib.backends.qt_compat import QT_API_PYSIDE
 """
   Branch using PyQt or PySide based on MatPlotLib values.
 """
-if(qt_compat.QT_API == qt_compat.QT_API_PYSIDE):
-  from PySide import QtGui, QtCore
+if(QT_API == QT_API_PYSIDE):
+  from PySide.QtCore import QTimer
 else:
-  from PyQt4 import QtGui, QtCore
+  from PyQt4.QtCore import QTimer
 
 ###########################################################################
 # Specific Plot Canvas Objects
@@ -30,7 +29,7 @@ class MyInterplanetaryMagField(MyMplCanvas):
   def __init__(self, *args, **kwargs):
     MyMplCanvas.__init__(self, left_edge=0.17, right_edge=0.82, top_edge=0.9,
         bottom_edge=0.18, *args, **kwargs)
-    timer = QtCore.QTimer(self)
+    timer = QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
     # Millisecond Timer, Assign the update time based on the value returned by
@@ -43,7 +42,7 @@ class MyInterplanetaryMagField(MyMplCanvas):
       This is the actual timer updating method.
     """
     # Update the graph data
-    NoaaApi.storeInterplanetMagField()
+    storeInterplanetMagField()
     # Call the compute initial function, only difference is the .draw() method below
     self.compute_initial_figure()
     # Redraw plots
@@ -55,7 +54,7 @@ class MyInterplanetaryMagField(MyMplCanvas):
     """
     # Get the new data
     (self.label_list,self.datas,self.stamp) = \
-      NoaaApi.getInterplanetMagField()
+      getInterplanetMagField()
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     self.axes.plot(0)
@@ -101,4 +100,3 @@ class MyInterplanetaryMagField(MyMplCanvas):
     # Set the Plot Title
     self.axes.set_title("Interplanetary Magnetic Field",
       fontsize=colors_and_globals.plotTitleSize)
-
