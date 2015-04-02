@@ -60,10 +60,6 @@ class MyInterplanetaryMagField(MyMplCanvas):
     self.axes.hold(False)
     self.axes.plot(0)
     self.axes.hold(True)
-    # Set the Plot Limits
-    # self.axes.autoscale(False)
-    # self.axes.set_xlim(0,360)
-    # self.axes.set_ylim(-90,90)
     # Remove data that is missing
     self.datas["Total"],self.datas["Latitude"],   \
     self.datas["Longitude"],self.stamp =          \
@@ -83,7 +79,7 @@ class MyInterplanetaryMagField(MyMplCanvas):
     self.datas["Total"] = \
       [(3.14159*(area_m*(t - smallest))**2) for t in self.datas["Total"]]
     pt_colors = [x*(256/len(self.datas["Total"])) for x in range(len(self.datas["Total"]))]
-    # Loop Through the individual plot values
+    # Scatter Plot by Latitude/Longitude
     self.axes.scatter(
       self.datas["Longitude"],
       self.datas["Latitude"],
