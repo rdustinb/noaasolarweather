@@ -71,24 +71,22 @@ if int(sys.version[0]) == 2:
 """
 
 #################################################
-#               GOES Data                       #
+#        GOES Energetic Proton Flux             #
 #################################################
-def getGOESRangeProtonFlux():
+def storeGOESRangeProtonFlux():
   """
-    Apparently the NOAA Data Site was restructured which could explain
-    why I was having issues accessing data when I first started writing
-    this script/application.
-
     This particular URL happens to be from GOES-13, the primary source of
     Proton Flux, however GOES-15 also provides Proton Flux measurements as
     a secondary source.
   """
   # Store the data locally
   URL = 'http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt'
-  with urllib.request.urlopen(URL) as urlfh , open("../data/Gp_pchan_5m.txt", "w") as locfh:
+  with openUrl(URL) as urlfh , open("../data/Gp_pchan_5m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
       locfh.write(line)
+
+def getGOESRangeProtonFlux():
   # Parse local data
   with open("../data/Gp_pchan_5m.txt", "r") as fh:
     datas = {}
@@ -139,17 +137,22 @@ def getGOESRangeProtonFlux():
   # Now return the data
   return(label_list,datas,stamp,units,particles)
 
-def getGOESGeomagFieldFlux():
+#################################################
+#          GOES Geomagnetic Field               #
+#################################################
+def storeGOESGeomagFieldFlux():
   """
     This function call will return the three dimensions of geomagnetic Flux
     density around the earth. The three dimensions and the total field have
     units of nanotesla.
   """
   URL = 'http://services.swpc.noaa.gov/text/goes-magnetometer-primary.txt'
-  with urllib.request.urlopen(URL) as urlfh , open("../data/Gp_mag_1m.txt", "w") as locfh:
+  with openUrl(URL) as urlfh , open("../data/Gp_mag_1m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
       locfh.write(line)
+
+def getGOESGeomagFieldFlux():
   # Parse local data
   with open("../data/Gp_mag_1m.txt", "r") as fh:
     datas = {}
@@ -181,17 +184,22 @@ def getGOESGeomagFieldFlux():
   # Now return the data
   return(label_list,datas,stamp,units)
 
-def getGOESDiscreteParticleFlux():
+#################################################
+#         GOES Discrete Particle Flux           #
+#################################################
+def storeGOESDiscreteParticleFlux():
   """
     This call will collect the data from the energetic Proton/Electron Flux. This
     API returns a list of 10 data lists of as many distinct proton and electron
     energies.
   """
   URL = 'http://services.swpc.noaa.gov/text/goes-magnetospheric-particle-flux-ts1-primary.txt'
-  with urllib.request.urlopen(URL) as urlfh , open("../data/Gp_magnetospheric_particles_ts1.txt", "w") as locfh:
+  with openUrl(URL) as urlfh , open("../data/Gp_magnetospheric_particles_ts1.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
       locfh.write(line)
+
+def getGOESDiscreteParticleFlux():
   # Parse local data
   with open("../data/Gp_magnetospheric_particles_ts1.txt", "r") as fh:
     datas = {}
@@ -246,7 +254,10 @@ def getGOESDiscreteParticleFlux():
   # Now return the data
   return(label_list,datas,stamp,units,particles)
 
-def getGOESIntegralParticleFlux():
+#################################################
+#         GOES Integral Particle Flux           #
+#################################################
+def storeGOESIntegralParticleFlux():
   """
     Similar to the getGOESDiscreteParticleFlux function, however this dataset returns
     particle counts for only 6 proton ranges and 3 electron ranges. The ranges of
@@ -255,10 +266,12 @@ def getGOESIntegralParticleFlux():
     of protons >5MeV.
   """
   URL = 'http://services.swpc.noaa.gov/text/goes-particle-flux-primary.txt'
-  with urllib.request.urlopen(URL) as urlfh , open("../data/Gp_part_5m.txt", "w") as locfh:
+  with openUrl(URL) as urlfh , open("../data/Gp_part_5m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
       locfh.write(line)
+
+def getGOESIntegralParticleFlux():
   # Parse local data
   with open("../data/Gp_part_5m.txt", "r") as fh:
     datas = {}
@@ -310,17 +323,22 @@ def getGOESIntegralParticleFlux():
   # Now return the data
   return(label_list,datas,stamp,units,particles)
 
-def getGOESXrayFlux():
+#################################################
+#                 GOES XRay Flux                #
+#################################################
+def storeGOESXrayFlux():
   """
     Apparently the NOAA Data Site was restructured which could explain
     why I was having issues accessing data when I first started writing
     this script/application.
   """
   URL = 'http://services.swpc.noaa.gov/text/goes-xray-flux-primary.txt'
-  with urllib.request.urlopen(URL) as urlfh , open("../data/Gp_xr_1m.txt", "w") as locfh:
+  with openUrl(URL) as urlfh , open("../data/Gp_xr_1m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
       locfh.write(line)
+
+def getGOESXrayFlux():
   # Parse local data
   with open("../data/Gp_xr_1m.txt", "r") as fh:
     datas = {}
@@ -367,9 +385,9 @@ def getGOESXrayFlux():
   return(label_list,datas,stamp,units,particles)
 
 #################################################
-#                  ACE Data                     #
+#         ACE Differential Particle Flux        #
 #################################################
-def getDiffElecProtFlux():
+def storeDiffElecProtFlux():
   """
     This API call will pull data from the ACE Satellite for real-time averaged
     electron and proton flux. The units of measure are for differential flux
@@ -389,10 +407,12 @@ def getDiffElecProtFlux():
       MeV - unit of energy, Mega Electrov-Volt
   """
   URL = 'http://services.swpc.noaa.gov/text/ace-epam.txt'
-  with urllib.request.urlopen(URL) as urlfh , open("../data/ace_epam_5m.txt", "w") as locfh:
+  with openUrl(URL) as urlfh , open("../data/ace_epam_5m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
       locfh.write(line)
+
+def getDiffElecProtFlux():
   # Parse local data
   with open("../data/ace_epam_5m.txt", "r") as fh:
     datas = {}
@@ -437,7 +457,10 @@ def getDiffElecProtFlux():
   # Now return the data
   return(label_list,datas,stamp,units,particles)
 
-def getIntegralProtonFlux():
+#################################################
+#           ACE Integral Proton Flux            #
+#################################################
+def storeIntegralProtonFlux():
   """
     This API call only measures the integral of high energy protons above two
     specific energy levels: 10MeV and 30MeV.
@@ -445,10 +468,12 @@ def getIntegralProtonFlux():
     Measurements are taken every 5 minutes.
   """
   URL = 'http://services.swpc.noaa.gov/text/ace-sis.txt'
-  with urllib.request.urlopen(URL) as urlfh , open("../data/ace_sis_5m.txt", "w") as locfh:
+  with openUrl(URL) as urlfh , open("../data/ace_sis_5m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
       locfh.write(line)
+
+def getIntegralProtonFlux():
   # Parse local data
   with open("../data/ace_sis_5m.txt", "r") as fh:
     datas = {}
@@ -485,7 +510,10 @@ def getIntegralProtonFlux():
   # Now return the data
   return(label_list,datas,stamp,units,particles)
 
-def getInterplanetMagField():
+#################################################
+#       ACE Interplanetary Magnetic Field       #
+#################################################
+def storeInterplanetMagField():
   """
     This API returns an interesting set of data, it provides a measurement of
     three dimensional axis of magnetic flux in nano-tesla, and a total 3D vector
@@ -497,10 +525,12 @@ def getInterplanetMagField():
   """
   # Open the file handle
   URL = 'http://services.swpc.noaa.gov/text/ace-magnetometer.txt'
-  with urllib.request.urlopen(URL) as urlfh , open("../data/ace_mag_1m.txt", "w") as locfh:
+  with openUrl(URL) as urlfh , open("../data/ace_mag_1m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
       locfh.write(line)
+
+def getInterplanetMagField():
   # Parse local data
   with open("../data/ace_mag_1m.txt", "r") as fh:
     datas = {}
@@ -531,7 +561,10 @@ def getInterplanetMagField():
   # Now return the data
   return(label_list,datas,stamp)
 
-def getSolarPlasma():
+#################################################
+#               ACE Solar Plasma                #
+#################################################
+def storeSolarPlasma():
   """
     This API returns the real time averaged data of the solar wind plasma as
     measured by one of the ACE satellites. It measures proton density, bulk
@@ -544,10 +577,12 @@ def getSolarPlasma():
   """
   # Open the file handle
   URL = 'http://services.swpc.noaa.gov/text/ace-swepam.txt'
-  with urllib.request.urlopen(URL) as urlfh , open("../data/ace_swepam_1m.txt", "w") as locfh:
+  with openUrl(URL) as urlfh , open("../data/ace_swepam_1m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
       locfh.write(line)
+
+def getSolarPlasma():
   # Parse local data
   with open("../data/ace_swepam_1m.txt", "r") as fh:
     datas = {}

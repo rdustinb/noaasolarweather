@@ -51,10 +51,7 @@ class MyMplCanvas(FigureCanvas):
     """
       This is the actual timer updating method.
     """
-    # Call the compute initial function, only difference is the .draw() method below
-    self.compute_initial_figure()
-    # Redraw plots
-    self.draw()
+    pass
 
   def formatGraph(self, scale="log", plotTitle='', labelThinner=1, dataDict={},
     disableYLabel=False, legend1=[], legend1title='', legend1xoffset=1.22,

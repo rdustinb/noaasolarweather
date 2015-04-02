@@ -36,6 +36,18 @@ class MyGOESXrayFlux(MyMplCanvas):
     # the API call, store the API call data in an object-global data variable
     # to reduce the number of API calls required to initialize the plot
     timer.start(60000)
+    self.compute_initial_figure()
+
+  def update_figure(self):
+    """
+      This is the actual timer updating method.
+    """
+    # Update the graph data
+    NoaaApi.storeGOESXrayFlux()
+    # Call the compute initial function, only difference is the .draw() method below
+    self.compute_initial_figure()
+    # Redraw plots
+    self.draw()
 
   def compute_initial_figure(self):
     """

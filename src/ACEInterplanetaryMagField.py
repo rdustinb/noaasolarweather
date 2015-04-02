@@ -38,6 +38,17 @@ class MyInterplanetaryMagField(MyMplCanvas):
     # to reduce the number of API calls required to initialize the plot
     timer.start(60000)
 
+  def update_figure(self):
+    """
+      This is the actual timer updating method.
+    """
+    # Update the graph data
+    NoaaApi.storeInterplanetMagField()
+    # Call the compute initial function, only difference is the .draw() method below
+    self.compute_initial_figure()
+    # Redraw plots
+    self.draw()
+
   def compute_initial_figure(self):
     """
       Initial data plot.
@@ -71,10 +82,6 @@ class MyInterplanetaryMagField(MyMplCanvas):
     # Normalize values
     self.datas["Total"] = \
       [(3.14159*(area_m*(t - smallest))**2) for t in self.datas["Total"]]
-    # Create a color array
-    # pt_colors = [[1,0,0,i]                        \
-    #   for i in [(1/len(self.datas["Total"]))*x    \
-    #   for x in range(len(self.datas["Total"]))]]
     pt_colors = [x*(256/len(self.datas["Total"])) for x in range(len(self.datas["Total"]))]
     # Loop Through the individual plot values
     self.axes.scatter(
@@ -98,23 +105,4 @@ class MyInterplanetaryMagField(MyMplCanvas):
     # Set the Plot Title
     self.axes.set_title("Interplanetary Magnetic Field",
       fontsize=colors_and_globals.plotTitleSize)
-    # Add Legend (time)
-    # newest = patches.Patch(color=pt_colors[-1], alpha=0.5,
-    #   ec='black', label=self.stamp[-1][1])
-    # oldest = patches.Patch(color=pt_colors[-1], alpha=0.5,
-    #   ec='black', label=self.stamp[0][1])
-    # legend1 = self.axes.legend(
-    #   handles=[newest,oldest],
-    #   framealpha=0.1,
-    #   loc=1, fontsize=colors_and_globals.legendSize,
-    #   bbox_to_anchor=(1.27,1.12), title="Time")
-    # Add Legend (size correlates to nT value)
-    # leg_small = patches.Circle(xy=(smallest,smallest), facecolor='none', edgecolor='none', label=str(smallest)+" nT")
-    # leg_large = patches.Circle(xy=(largest,largest), facecolor='none', edgecolor='none', label=str(largest)+" nT")
-    # legend2 = self.axes.legend(
-    #   handles=[leg_small,leg_large],
-    #   framealpha=0.1,
-    #   loc=1, fontsize=colors_and_globals.legendSize,
-    #   bbox_to_anchor=(1.27,0.81), title="Strength")
-    # self.axes.add_artist(legend1)
-    # self.axes.add_artist(legend2)
+
