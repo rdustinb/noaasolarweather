@@ -30,7 +30,7 @@ class MyGOESIntegralParticleFlux(MyMplCanvas):
     """
       Initialize the updating object.
     """
-    MyMplCanvas.__init__(self, *args, **kwargs)
+    MyMplCanvas.__init__(self, right_edge=0.81, *args, **kwargs)
     timer = QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
@@ -58,29 +58,32 @@ class MyGOESIntegralParticleFlux(MyMplCanvas):
     # Get the new data
     (self.label_list,self.datas,self.stamp,self.units,self.particles) = \
       getGOESIntegralParticleFlux()
-    # Get number of data points
-    data_points = linspace(0,1,len(self.stamp))
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     self.axes.plot(0)
     self.axes.hold(True)
     # Plot all data sets
-    plot1 = [self.axes.plot(data_points, self.datas[key],
+    plot1 = [self.axes.plot(linspace(0,1,len(self.stamp)), self.datas[key],
       colors_and_globals.GOESIntegralParticleFluxColors[key],
       label=self.particles[key][1]
       ) for key in self.label_list]
     # Format the Graph
-    self.format_graph(data_points)
+    self.format_graph()
 
-  def format_graph(self, data_points):
+  def format_graph(self):
     # Set the graph background color
     self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
     # Change Plot to logarithmic
     self.axes.set_yscale("log")
     # Show all plot grids
     self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
+    # Thin the number of x-axis labels and ticks, this works with the list of
+    # tuples that are the date/time stamps
+    self.stamp = [x \
+      for x in self.stamp[0::2]
+    ]
     # Set number of X-Axis ticks
-    self.axes.set_xticks(data_points)
+    self.axes.set_xticks(linspace(0,1,len(self.stamp)))
     # Separate dates and times
     (dates,times) = zip(*self.stamp)
     # Change the plot tick labels
@@ -112,8 +115,8 @@ class MyGOESIntegralParticleFlux(MyMplCanvas):
     # bbox_to_anchor=None, bbox_transform=None, frameon=None, handler_map=None)
     # Create the legends
     legend1 = self.axes.legend(
-      framealpha=0.1,
+      framealpha=0,
       loc=1, fontsize=colors_and_globals.legendSize,
-      bbox_to_anchor=(1.24, 1.12),
+      bbox_to_anchor=(1.30, 1.12),
       title="MeV")
     self.axes.add_artist(legend1)

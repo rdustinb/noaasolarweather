@@ -30,7 +30,7 @@ class MySolarWindPlasma(MyMplCanvas):
     """
       Initialize the updating object.
     """
-    MyMplCanvas.__init__(self, *args, **kwargs)
+    MyMplCanvas.__init__(self, right_edge=0.84, *args, **kwargs)
     timer = QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
@@ -115,8 +115,8 @@ class MySolarWindPlasma(MyMplCanvas):
     # bbox_to_anchor=None, bbox_transform=None, frameon=None, handler_map=None)
     # Create the legends
     legend1 = self.axes.legend(
-      framealpha=0.1,
+      framealpha=0,
       loc=1, fontsize=colors_and_globals.legendSize,
-      bbox_to_anchor=(1.24, 1.12),
+      bbox_to_anchor=(1.25, 1.12),
       title="Params")
     self.axes.add_artist(legend1)

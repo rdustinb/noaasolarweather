@@ -90,12 +90,10 @@ class ApplicationWindow(QMainWindow):
     h1 = QHBoxLayout()
     h2 = QHBoxLayout()
     h3 = QHBoxLayout()
-    h4 = QHBoxLayout()
     # Added as sublayouts to the top level vertical layout
     l.addLayout(h1)
     l.addLayout(h2)
     l.addLayout(h3)
-    l.addLayout(h4)
 
     self.main_widget.setFocus()
     self.setCentralWidget(self.main_widget)
@@ -118,6 +116,8 @@ class ApplicationWindow(QMainWindow):
     h1.addWidget(GOESRangeProtonFlux)
     GOESXrayFlux = MyGOESXrayFlux(self.main_widget, width=5, height=4, dpi=100)
     h1.addWidget(GOESXrayFlux)
+    ACESolarWindPlasma = MySolarWindPlasma(self.main_widget, width=5, height=4, dpi=100)
+    h1.addWidget(ACESolarWindPlasma)
 
     GOESGoemagFieldFlux = MyGOESGoemagFieldFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
     h2.addWidget(GOESGoemagFieldFlux)
@@ -130,11 +130,8 @@ class ApplicationWindow(QMainWindow):
     h3.addWidget(GOESDiscreteParticleFlux)
     ACEDiffElecProtFlux = MyDiffElecProtFlux(self.main_widget, width=5, height=4, dpi=100)
     h3.addWidget(ACEDiffElecProtFlux)
-
     GOESRangeParticleFlux = MyGOESIntegralParticleFlux(self.main_widget, width=5, height=4, dpi=100)
-    h4.addWidget(GOESRangeParticleFlux)
-    ACESolarWindPlasma = MySolarWindPlasma(self.main_widget, width=5, height=4, dpi=100)
-    h4.addWidget(ACESolarWindPlasma)
+    h3.addWidget(GOESRangeParticleFlux)
 
   def fileQuit(self):
     self.close()

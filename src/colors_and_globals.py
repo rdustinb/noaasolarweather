@@ -4,7 +4,7 @@
 # the interface, but that would require creating a type of HEX calculating
 # algorithm for each plot trace, etc
 ###########################################################################
-colorMode = "Dark"
+colorMode = "Light"
 
 ###########################################################################
 # Version of the application
@@ -18,9 +18,9 @@ progdate = "20150402"
 ###########################################################################
 font = {'size' : 7}
 init_posx = 150
-init_posy = 0
+init_posy = 50
 init_app_width = 1000
-init_app_height = 850
+init_app_height = 650
 plotTitleSize = 8
 plotLabelSize = 6
 legendSize = 6

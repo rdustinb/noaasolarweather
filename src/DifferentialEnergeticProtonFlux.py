@@ -30,7 +30,7 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     """
       Initialize the updating object.
     """
-    MyMplCanvas.__init__(self, *args, **kwargs)
+    MyMplCanvas.__init__(self, right_edge=0.80, *args, **kwargs)
     timer = QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
@@ -77,6 +77,11 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     self.axes.set_yscale("log")
     # Show all plot grids
     self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
+    # Thin the number of x-axis labels and ticks, this works with the list of
+    # tuples that are the date/time stamps
+    self.stamp = [x \
+      for x in self.stamp[0::2]
+    ]
     # Set number of X-Axis ticks
     self.axes.set_xticks(linspace(0,1,len(self.stamp)))
     # Separate dates and times
@@ -110,9 +115,9 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     # bbox_to_anchor=None, bbox_transform=None, frameon=None, handler_map=None)
     # Create the legends
     legend1 = self.axes.legend(
-      framealpha=0.1,
+      framealpha=0,
       loc=1, fontsize=colors_and_globals.legendSize,
-      bbox_to_anchor=(1.24, 1.12),
+      bbox_to_anchor=(1.33, 1.12),
       title="MeV")
     self.axes.add_artist(legend1)
 

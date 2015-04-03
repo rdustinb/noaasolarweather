@@ -27,7 +27,7 @@ class MyInterplanetaryMagField(MyMplCanvas):
     Initialize the updating object.
   """
   def __init__(self, *args, **kwargs):
-    MyMplCanvas.__init__(self, left_edge=0.17, right_edge=0.78, top_edge=0.9,
+    MyMplCanvas.__init__(self, right_edge=0.84, top_edge=0.9,
         bottom_edge=0.18, *args, **kwargs)
     timer = QTimer(self)
     # Tie the "update_figure" function to the timer
@@ -76,7 +76,7 @@ class MyInterplanetaryMagField(MyMplCanvas):
     area_m = 7/(largest - smallest)
     # Normalize values
     self.datas["Total"] = \
-      [(3.14159*(area_m*(t - smallest))**2) for t in self.datas["Total"]]
+      [(3.14159*(area_m*(t - smallest+(area_m/10)))**2) for t in self.datas["Total"]]
     pt_colors = [x*(256/len(self.datas["Total"])) for x in range(len(self.datas["Total"]))]
     # Scatter Plot by Latitude/Longitude
     self.axes.scatter(
@@ -86,8 +86,8 @@ class MyInterplanetaryMagField(MyMplCanvas):
       c=pt_colors, label=self.datas["Total"], alpha=0.4
     )
     # Draw False Values for size legend
-    leg_smallest = (3.14159*(area_m*(smallest))**2)
-    leg_largest = (3.14159*(area_m*(largest))**2)
+    leg_smallest = min(self.datas["Total"])
+    leg_largest = max(self.datas["Total"])
     small = self.axes.scatter([], [], s=leg_smallest, facecolors='none', edgecolors='k')
     large = self.axes.scatter([], [], s=leg_largest, facecolors='none', edgecolors='k')
     # Create the size legend labels
@@ -95,9 +95,9 @@ class MyInterplanetaryMagField(MyMplCanvas):
     # Legend
     leg = self.axes.legend(
       [small, large], leg_labels,
-      framealpha=0.1,
+      framealpha=0,
       loc=1, fontsize=colors_and_globals.legendSize,
-      bbox_to_anchor=(1.35, 1.12),
+      bbox_to_anchor=(1.27, 1.12),
       title="nT",
       borderpad=1,
       scatterpoints=1)

@@ -30,8 +30,7 @@ class MyIntegralProtonFlux(MyMplCanvas):
     Initialize the updating object.
   """
   def __init__(self, *args, **kwargs):
-    MyMplCanvas.__init__(self, left_edge=0.16, right_edge=0.82, top_edge=0.9,
-      bottom_edge=0.22, *args, **kwargs)
+    MyMplCanvas.__init__(self, right_edge=0.85, *args, **kwargs)
     timer = QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
@@ -116,8 +115,8 @@ class MyIntegralProtonFlux(MyMplCanvas):
     # bbox_to_anchor=None, bbox_transform=None, frameon=None, handler_map=None)
     # Create the legends
     legend1 = self.axes.legend(
-      framealpha=0.1,
+      framealpha=0,
       loc=1, fontsize=colors_and_globals.legendSize,
-      bbox_to_anchor=(1.28, 1.12),
+      bbox_to_anchor=(1.23, 1.12),
       title="MeV")
     self.axes.add_artist(legend1)

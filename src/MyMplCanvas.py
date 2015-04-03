@@ -19,7 +19,7 @@ else:
 # Generic Canvas Object
 class MyMplCanvas(FigureCanvasQTAgg):
   def __init__(self, parent=None, width=5, height=4, dpi=100, subplot=111,
-    left_edge=0.10, right_edge=0.82, top_edge=0.9, bottom_edge=0.22):
+    left_edge=0.15, right_edge=0.82, top_edge=0.9, bottom_edge=0.22):
     """
       class matplotlib.figure.Figure(figsize=None, dpi=None, facecolor=None,
         edgecolor=None, linewidth=0.0, frameon=None, subplotpars=None,

@@ -30,7 +30,7 @@ class MyGOESXrayFlux(MyMplCanvas):
     """
       Initialize the updating object.
     """
-    MyMplCanvas.__init__(self, *args, **kwargs)
+    MyMplCanvas.__init__(self, right_edge=0.80, *args, **kwargs)
     timer = QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
@@ -108,7 +108,7 @@ class MyGOESXrayFlux(MyMplCanvas):
     # Thin the number of x-axis labels and ticks, this works with the list of
     # tuples that are the date/time stamps
     self.stamp = [x \
-      for x in self.stamp[0::7]
+      for x in self.stamp[0::9]
     ]
     # Set number of X-Axis ticks
     self.axes.set_xticks(linspace(0,1,len(self.stamp)))
@@ -143,8 +143,8 @@ class MyGOESXrayFlux(MyMplCanvas):
     # bbox_to_anchor=None, bbox_transform=None, frameon=None, handler_map=None)
     # Create the legends
     legend1 = self.axes.legend(
-      framealpha=0.1,
+      framealpha=0,
       loc=1, fontsize=colors_and_globals.legendSize,
-      bbox_to_anchor=(1.24, 1.12),
-      title="Nanometer")
+      bbox_to_anchor=(1.33, 1.12),
+      title="nm")
     self.axes.add_artist(legend1)
