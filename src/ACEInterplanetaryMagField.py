@@ -2,6 +2,7 @@ from MyMplCanvas import MyMplCanvas
 from NoaaApi import storeInterplanetMagField
 from NoaaApi import getInterplanetMagField
 import colors_and_globals
+from math import pi
 """
   As of MatPlotLib 1.5 qt4_compat will be deprecated for the more general
   qt_compat. Pulling that in instead.
@@ -69,14 +70,16 @@ class MyInterplanetaryMagField(MyMplCanvas):
         self.stamp                                \
       )                                           \
       if i[0] != -999.9])
-    # Calculate the smallest/largest mag field value to provide proper scaling
+    # Only used for legend labelling
     smallest = min(self.datas["Total"])
+    middle = "%.1f"%((max(self.datas["Total"]) - min(self.datas["Total"]))/2 + min(self.datas["Total"]))
     largest = max(self.datas["Total"])
-    # Calculate the Sizing Multiplier
-    area_m = 7/(largest - smallest)
+    leg_smallest = pi*(min(self.datas["Total"]))**2/2.5
+    leg_mid = pi*(((max(self.datas["Total"]) - min(self.datas["Total"]))/2 + min(self.datas["Total"])))**2/2.5
+    leg_largest = pi*(max(self.datas["Total"]))**2/2.5
     # Normalize values
     self.datas["Total"] = \
-      [(3.14159*(area_m*(t - smallest+(area_m/10)))**2) for t in self.datas["Total"]]
+      [pi*(t**2)/2.5 for t in self.datas["Total"]]
     pt_colors = [x*(256/len(self.datas["Total"])) for x in range(len(self.datas["Total"]))]
     # Scatter Plot by Latitude/Longitude
     self.axes.scatter(
@@ -86,15 +89,16 @@ class MyInterplanetaryMagField(MyMplCanvas):
       c=pt_colors, label=self.datas["Total"], alpha=0.4
     )
     # Draw False Values for size legend
-    leg_smallest = min(self.datas["Total"])
-    leg_largest = max(self.datas["Total"])
     small = self.axes.scatter([], [], s=leg_smallest, facecolors='none', edgecolors='k')
+    blank1 = self.axes.scatter([], [], facecolors='none', edgecolors='none')
+    mid = self.axes.scatter([], [], s=leg_mid, facecolors='none', edgecolors='k')
+    blank2 = self.axes.scatter([], [], facecolors='none', edgecolors='none')
     large = self.axes.scatter([], [], s=leg_largest, facecolors='none', edgecolors='k')
     # Create the size legend labels
-    leg_labels = [str(smallest), str(largest)]
+    leg_labels = [smallest, " ", middle, " ", largest]
     # Legend
     leg = self.axes.legend(
-      [small, large], leg_labels,
+      [small, blank1, mid, blank2, large], leg_labels,
       framealpha=0,
       loc=1, fontsize=colors_and_globals.legendSize,
       bbox_to_anchor=(1.27, 1.12),
@@ -102,9 +106,9 @@ class MyInterplanetaryMagField(MyMplCanvas):
       borderpad=1,
       scatterpoints=1)
     # Format the Graph
-    self.format_graph(pt_colors,smallest,largest)
+    self.format_graph()
 
-  def format_graph(self,pt_colors,smallest,largest):
+  def format_graph(self):
     self.axes.set_ylabel("Latitude (GSM)",
       fontsize=colors_and_globals.plotLabelSize)
     self.axes.set_xlabel("Longitude (GSM)",
