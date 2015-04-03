@@ -27,7 +27,7 @@ if int(sys.version[0]) == 2:
     http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt
     http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-secondary.txt
 
-  Geomagnetic Components and Total Field - getGOESGoemagFieldFlux()
+  Geomagnetic Components and Total Field - getGOESGeomagFieldFlux()
     http://services.swpc.noaa.gov/text/goes-magnetometer-primary.txt
     http://services.swpc.noaa.gov/text/goes-magnetometer-secondary.txt
 

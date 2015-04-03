@@ -27,7 +27,7 @@ class MyInterplanetaryMagField(MyMplCanvas):
     Initialize the updating object.
   """
   def __init__(self, *args, **kwargs):
-    MyMplCanvas.__init__(self, left_edge=0.17, right_edge=0.82, top_edge=0.9,
+    MyMplCanvas.__init__(self, left_edge=0.17, right_edge=0.78, top_edge=0.9,
         bottom_edge=0.18, *args, **kwargs)
     timer = QTimer(self)
     # Tie the "update_figure" function to the timer
@@ -85,6 +85,22 @@ class MyInterplanetaryMagField(MyMplCanvas):
       s=self.datas["Total"],
       c=pt_colors, label=self.datas["Total"], alpha=0.4
     )
+    # Draw False Values for size legend
+    leg_smallest = (3.14159*(area_m*(smallest))**2)
+    leg_largest = (3.14159*(area_m*(largest))**2)
+    small = self.axes.scatter([], [], s=leg_smallest, facecolors='none', edgecolors='k')
+    large = self.axes.scatter([], [], s=leg_largest, facecolors='none', edgecolors='k')
+    # Create the size legend labels
+    leg_labels = [str(smallest), str(largest)]
+    # Legend
+    leg = self.axes.legend(
+      [small, large], leg_labels,
+      framealpha=0.1,
+      loc=1, fontsize=colors_and_globals.legendSize,
+      bbox_to_anchor=(1.35, 1.12),
+      title="nT",
+      borderpad=1,
+      scatterpoints=1)
     # Format the Graph
     self.format_graph(pt_colors,smallest,largest)
 
