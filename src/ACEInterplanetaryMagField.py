@@ -9,6 +9,7 @@ from math import pi
 """
 from matplotlib.backends.qt_compat import QT_API
 from matplotlib.backends.qt_compat import QT_API_PYSIDE
+from matplotlib import colors as mcolors
 """
   Branch using PyQt or PySide based on MatPlotLib values.
 """
@@ -105,6 +106,17 @@ class MyInterplanetaryMagField(MyMplCanvas):
       title="nT",
       borderpad=1,
       scatterpoints=1)
+    self.axes.add_artist(leg)
+    # Annotate the range of data
+    self.axes.text(
+      ((max(self.datas["Longitude"]) - min(self.datas["Longitude"]))/2 + min(self.datas["Longitude"])),
+      min(self.datas["Latitude"])-10,
+      ("%s - %s"%(self.stamp[0][1],self.stamp[-1][1])),
+      ha="center",
+      va="center",
+      size=6,
+      bbox=dict(boxstyle="round,pad=0.3", fc="w", ec="k", alpha=0.3)
+    )
     # Format the Graph
     self.format_graph()
 
