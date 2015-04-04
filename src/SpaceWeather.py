@@ -8,6 +8,8 @@
   your development of the embedding in Qt4 example.
 
   http://matplotlib.org/examples/index.html
+
+  !!!!CURRENTLY ONLY WORKS WITH PYTHON 3.X!!!!
 """
 ###########################################################################
 # Imports
