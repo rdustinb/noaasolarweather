@@ -38,6 +38,7 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     # the API call, store the API call data in an object-global data variable
     # to reduce the number of API calls required to initialize the plot
     timer.start(300000)
+    storeGOESRangeProtonFlux()
     self.compute_initial_figure()
 
   def update_figure(self):
@@ -78,9 +79,10 @@ class MyGOESRangeProtonFluxCanvas(MyMplCanvas):
     # Show all plot grids
     self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
     # Thin the number of x-axis labels and ticks, this works with the list of
-    # tuples that are the date/time stamps
+    # tuples that are the date/time stamps, thin to only 15 x points
+    thinner = int(len(self.stamp)/11)
     self.stamp = [x \
-      for x in self.stamp[0::2]
+      for x in self.stamp[0::thinner]
     ]
     # Set number of X-Axis ticks
     self.axes.set_xticks(linspace(0,1,len(self.stamp)))

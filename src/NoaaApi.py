@@ -1,6 +1,7 @@
 #!/Library/Frameworks/Python.framework/Versions/3.4/bin/python3
 import sys
 import re
+import colors_and_globals
 
 if int(sys.version[0]) == 3:
   # print("Version 3.x!")
@@ -79,12 +80,19 @@ def storeGOESRangeProtonFlux():
     Proton Flux, however GOES-15 also provides Proton Flux measurements as
     a secondary source.
   """
-  # Store the data locally
-  URL = 'http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt'
+  # Open the file handle
+  if(colors_and_globals.datasource == "Current"):
+    URL = 'http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt'
+  elif(colors_and_globals.datasource == "Today"):
+    URL = 'http://legacy-www.swpc.noaa.gov/ftpdir/lists/pchan/20150405_Gp_pchan_5m.txt'
   with openUrl(URL) as urlfh , open("../data/Gp_pchan_5m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
-      locfh.write(line)
+      # Strip out lines with missing data
+      if(("-1.00e+05" in line) or ("0.00e+00" in line)):
+        next
+      else:
+        locfh.write(line)
 
 def getGOESRangeProtonFlux():
   # Parse local data
@@ -146,11 +154,19 @@ def storeGOESGeomagFieldFlux():
     density around the earth. The three dimensions and the total field have
     units of nanotesla.
   """
-  URL = 'http://services.swpc.noaa.gov/text/goes-magnetometer-primary.txt'
+  # Open the file handle
+  if(colors_and_globals.datasource == "Current"):
+    URL = 'http://services.swpc.noaa.gov/text/goes-magnetometer-primary.txt'
+  elif(colors_and_globals.datasource == "Today"):
+    URL = 'http://legacy-www.swpc.noaa.gov/ftpdir/lists/geomag/20150405_Gp_mag_1m.txt'
   with openUrl(URL) as urlfh , open("../data/Gp_mag_1m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
-      locfh.write(line)
+      # Strip out lines with missing data
+      if("-1.00e+05" in line):
+        next
+      else:
+        locfh.write(line)
 
 def getGOESGeomagFieldFlux():
   # Parse local data
@@ -193,11 +209,16 @@ def storeGOESDiscreteParticleFlux():
     API returns a list of 10 data lists of as many distinct proton and electron
     energies.
   """
+  # Open the file handle
   URL = 'http://services.swpc.noaa.gov/text/goes-magnetospheric-particle-flux-ts1-primary.txt'
   with openUrl(URL) as urlfh , open("../data/Gp_magnetospheric_particles_ts1.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
-      locfh.write(line)
+      # Strip out lines with missing data
+      if("-1.00e+05" in line):
+        next
+      else:
+        locfh.write(line)
 
 def getGOESDiscreteParticleFlux():
   # Parse local data
@@ -265,11 +286,36 @@ def storeGOESIntegralParticleFlux():
     For instance the first set of data is of protons >1MeV, while the second is
     of protons >5MeV.
   """
-  URL = 'http://services.swpc.noaa.gov/text/goes-particle-flux-primary.txt'
+  # Open the file handle
+  if(colors_and_globals.datasource == "Current"):
+    URL = 'http://services.swpc.noaa.gov/text/goes-particle-flux-primary.txt'
+  elif(colors_and_globals.datasource == "Today"):
+    URL = 'http://legacy-www.swpc.noaa.gov/ftpdir/lists/particle/20150405_Gp_part_5m.txt'
   with openUrl(URL) as urlfh , open("../data/Gp_part_5m.txt", "w") as locfh:
+    # Copy the header
     for line in urlfh:
       line = line.decode('utf-8')
-      locfh.write(line)
+      if(line.startswith(':')):
+        locfh.write(line)
+      elif(line.startswith('#') and not(line.startswith('#-'))):
+        # The E > 4MeV sensor is broken, rip out the label
+        if("E>4.0" in line):
+          next
+        else:
+          locfh.write(line)
+      else:
+        locfh.write(line)
+        break
+    for line in urlfh:
+      line = line.decode('utf-8')
+      line = line.split()
+      # The E > 4MeV sensor is broken, parse out the farthest-right column
+      line = ' '.join(line[0:-1])
+      # Strip out lines with missing data
+      if("-1.00e+05" in line):
+        next
+      else:
+        locfh.write("%s\n"%line)
 
 def getGOESIntegralParticleFlux():
   # Parse local data
@@ -332,11 +378,19 @@ def storeGOESXrayFlux():
     why I was having issues accessing data when I first started writing
     this script/application.
   """
-  URL = 'http://services.swpc.noaa.gov/text/goes-xray-flux-primary.txt'
+  # Open the file handle
+  if(colors_and_globals.datasource == "Current"):
+    URL = 'http://services.swpc.noaa.gov/text/goes-xray-flux-primary.txt'
+  elif(colors_and_globals.datasource == "Today"):
+    URL = 'http://legacy-www.swpc.noaa.gov/ftpdir/lists/xray/20150405_Gp_xr_1m.txt'
   with openUrl(URL) as urlfh , open("../data/Gp_xr_1m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
-      locfh.write(line)
+      # Strip out lines with missing data
+      if("-1.00e+05" in line):
+        next
+      else:
+        locfh.write(line)
 
 def getGOESXrayFlux():
   # Parse local data
@@ -406,11 +460,16 @@ def storeDiffElecProtFlux():
       ster - measurement of incidental angle, steradians
       MeV - unit of energy, Mega Electrov-Volt
   """
+  # Open the file handle
   URL = 'http://services.swpc.noaa.gov/text/ace-epam.txt'
   with openUrl(URL) as urlfh , open("../data/ace_epam_5m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
-      locfh.write(line)
+      # Strip out lines with missing data
+      if("-1.00e+05" in line):
+        next
+      else:
+        locfh.write(line)
 
 def getDiffElecProtFlux():
   # Parse local data
@@ -467,11 +526,16 @@ def storeIntegralProtonFlux():
 
     Measurements are taken every 5 minutes.
   """
+  # Open the file handle
   URL = 'http://services.swpc.noaa.gov/text/ace-sis.txt'
   with openUrl(URL) as urlfh , open("../data/ace_sis_5m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
-      locfh.write(line)
+      # Strip out lines with missing data
+      if("-1.00e+05" in line):
+        next
+      else:
+        locfh.write(line)
 
 def getIntegralProtonFlux():
   # Parse local data
@@ -528,7 +592,11 @@ def storeInterplanetMagField():
   with openUrl(URL) as urlfh , open("../data/ace_mag_1m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
-      locfh.write(line)
+      # Strip out lines with missing data
+      if("-999.9" in line):
+        next
+      else:
+        locfh.write(line)
 
 def getInterplanetMagField():
   # Parse local data
@@ -576,11 +644,18 @@ def storeSolarPlasma():
     Measurements are updated once a minute.
   """
   # Open the file handle
-  URL = 'http://services.swpc.noaa.gov/text/ace-swepam.txt'
+  if(colors_and_globals.datasource == "Current"):
+    URL = 'http://services.swpc.noaa.gov/text/ace-swepam.txt'
+  elif(colors_and_globals.datasource == "Today"):
+    URL = 'http://legacy-www.swpc.noaa.gov/ftpdir/lists/ace/20150405_ace_swepam_1m.txt'
   with openUrl(URL) as urlfh , open("../data/ace_swepam_1m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
-      locfh.write(line)
+      # Strip out lines with missing data
+      if("-9999.9" in line):
+        next
+      else:
+        locfh.write(line)
 
 def getSolarPlasma():
   # Parse local data
@@ -620,107 +695,108 @@ def getSolarPlasma():
   return(label_list,datas,stamp,units,particles)
 
 if __name__ == '__main__':
-  # Get Proton Flux Data
-  print("")
-  print("------------------------------------")
-  print("           Range Proton Flux")
-  print("------------------------------------")
-  (label_list,datas,stamp,units,particles) = getGOESRangeProtonFlux()
-  print(label_list)
-  print(datas)
-  print(stamp)
-  print(units)
-  print(particles)
+  # # Get Proton Flux Data
+  # print("")
+  # print("------------------------------------")
+  # print("           Range Proton Flux")
+  # print("------------------------------------")
+  # (label_list,datas,stamp,units,particles) = getGOESRangeProtonFlux()
+  # print(label_list)
+  # print(datas)
+  # print(stamp)
+  # print(units)
+  # print(particles)
 
-  # Get Geomagnetic Flux Data
-  print("")
-  print("------------------------------------")
-  print("          Geomagnetic Flux")
-  print("------------------------------------")
-  (label_list,datas,stamp,units) = getGOESGeomagFieldFlux()
-  print(label_list)
-  print(datas)
-  print(stamp)
-  print(units)
+  # # Get Geomagnetic Flux Data
+  # print("")
+  # print("------------------------------------")
+  # print("          Geomagnetic Flux")
+  # print("------------------------------------")
+  # (label_list,datas,stamp,units) = getGOESGeomagFieldFlux()
+  # print(label_list)
+  # print(datas)
+  # print(stamp)
+  # print(units)
 
-  # Get Discrete Energetic Particle Flux Data
-  print("")
-  print("------------------------------------")
-  print("  Discrete Energetic Particle Flux")
-  print("------------------------------------")
-  (label_list,datas,stamp,units,particles) = getGOESDiscreteParticleFlux()
-  print(label_list)
-  print(datas)
-  print(stamp)
-  print(units)
-  print(particles)
+  # # Get Discrete Energetic Particle Flux Data
+  # print("")
+  # print("------------------------------------")
+  # print("  Discrete Energetic Particle Flux")
+  # print("------------------------------------")
+  # (label_list,datas,stamp,units,particles) = getGOESDiscreteParticleFlux()
+  # print(label_list)
+  # print(datas)
+  # print(stamp)
+  # print(units)
+  # print(particles)
 
-  # # Get Integral Energetic Particle Flux Data
-  print("")
-  print("------------------------------------")
-  print("   Integral Energetic Particle Flux")
-  print("------------------------------------")
-  (label_list,datas,stamp,units,particles) = getGOESIntegralParticleFlux()
-  print(label_list)
-  print(datas)
-  print(stamp)
-  print(units)
-  print(particles)
+  # # # Get Integral Energetic Particle Flux Data
+  # print("")
+  # print("------------------------------------")
+  # print("   Integral Energetic Particle Flux")
+  # print("------------------------------------")
+  # (label_list,datas,stamp,units,particles) = getGOESIntegralParticleFlux()
+  # print(label_list)
+  # print(datas)
+  # print(stamp)
+  # print(units)
+  # print(particles)
 
-  # Get XRay Flux Data
-  print("")
-  print("------------------------------------")
-  print("           XRay Flux")
-  print("------------------------------------")
-  (label_list,datas,stamp,units,particles) = getGOESXrayFlux()
-  print(label_list)
-  print(datas)
-  print(stamp)
-  print(units)
-  print(particles)
+  # # Get XRay Flux Data
+  # print("")
+  # print("------------------------------------")
+  # print("           XRay Flux")
+  # print("------------------------------------")
+  # (label_list,datas,stamp,units,particles) = getGOESXrayFlux()
+  # print(label_list)
+  # print(datas)
+  # print(stamp)
+  # print(units)
+  # print(particles)
 
-  # Get Differential Flux Data
-  print("")
-  print("------------------------------------")
-  print("          Differential Flux")
-  print("------------------------------------")
-  (label_list,datas,stamp,units,particles) = getDiffElecProtFlux()
-  print(label_list)
-  print(datas)
-  print(stamp)
-  print(units)
-  print(particles)
+  # # Get Differential Flux Data
+  # print("")
+  # print("------------------------------------")
+  # print("          Differential Flux")
+  # print("------------------------------------")
+  # (label_list,datas,stamp,units,particles) = getDiffElecProtFlux()
+  # print(label_list)
+  # print(datas)
+  # print(stamp)
+  # print(units)
+  # print(particles)
 
-  # Get Integral Proton Flux Data
-  print("")
-  print("------------------------------------")
-  print("  Integral High Energy Proton Flux")
-  print("------------------------------------")
-  (label_list,datas,stamp,units,particles) = getIntegralProtonFlux()
-  print(label_list)
-  print(datas)
-  print(stamp)
-  print(units)
-  print(particles)
+  # # Get Integral Proton Flux Data
+  # print("")
+  # print("------------------------------------")
+  # print("  Integral High Energy Proton Flux")
+  # print("------------------------------------")
+  # (label_list,datas,stamp,units,particles) = getIntegralProtonFlux()
+  # print(label_list)
+  # print(datas)
+  # print(stamp)
+  # print(units)
+  # print(particles)
 
-  # Get Interplanetary Magnetic Field Flux
-  print("")
-  print("------------------------------------")
-  print("   Interplanetary Magnetic Field")
-  print("------------------------------------")
-  (label_list,datas,stamp) = getInterplanetMagField()
-  print(label_list)
-  print(datas)
-  print(stamp)
+  # # Get Interplanetary Magnetic Field Flux
+  # print("")
+  # print("------------------------------------")
+  # print("   Interplanetary Magnetic Field")
+  # print("------------------------------------")
+  # (label_list,datas,stamp) = getInterplanetMagField()
+  # print(label_list)
+  # print(datas)
+  # print(stamp)
 
-  # Get Solar Wind Plasma
-  print("")
-  print("------------------------------------")
-  print("         Solar Wind Plasma")
-  print("------------------------------------")
-  (label_list,datas,stamp,units,particles) = getSolarPlasma()
-  print(label_list)
-  print(datas)
-  print(stamp)
-  print(units)
-  print(particles)
+  # # Get Solar Wind Plasma
+  # print("")
+  # print("------------------------------------")
+  # print("         Solar Wind Plasma")
+  # print("------------------------------------")
+  # (label_list,datas,stamp,units,particles) = getSolarPlasma()
+  # print(label_list)
+  # print(datas)
+  # print(stamp)
+  # print(units)
+  # print(particles)
+  storeGOESIntegralParticleFlux()

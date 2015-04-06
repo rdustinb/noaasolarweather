@@ -38,6 +38,7 @@ class MyGOESXrayFlux(MyMplCanvas):
     # the API call, store the API call data in an object-global data variable
     # to reduce the number of API calls required to initialize the plot
     timer.start(60000)
+    storeGOESXrayFlux()
     self.compute_initial_figure()
 
   def update_figure(self):
@@ -79,7 +80,7 @@ class MyGOESXrayFlux(MyMplCanvas):
     # R3 = repeat(array(10e-9), len(self.stamp))
     # R4 = repeat(array(50e-9), len(self.stamp))
     # R5 = repeat(array(10e-8), len(self.stamp))
-    # Fill Flares if present
+    # Fill Short Flares if present
     self.axes.fill_between(linspace(0,1,len(self.stamp)), R1, \
       self.datas["Short"], where=self.datas["Short"]>R1, \
       color=colors_and_globals.GOESXrayFlare['R1'])
@@ -95,6 +96,33 @@ class MyGOESXrayFlux(MyMplCanvas):
     self.axes.fill_between(linspace(0,1,len(self.stamp)), R5, \
       self.datas["Short"], where=self.datas["Short"]>R5, \
       color=colors_and_globals.GOESXrayFlare['R5'])
+    # Fill Long Flares if present
+    self.axes.fill_between(linspace(0,1,len(self.stamp)), R1, \
+      self.datas["Long"], where=self.datas["Long"]>R1, \
+      color=colors_and_globals.GOESXrayFlare['R1'])
+    self.axes.fill_between(linspace(0,1,len(self.stamp)), R2, \
+      self.datas["Long"], where=self.datas["Long"]>R2, \
+      color=colors_and_globals.GOESXrayFlare['R2'])
+    self.axes.fill_between(linspace(0,1,len(self.stamp)), R3, \
+      self.datas["Long"], where=self.datas["Long"]>R3, \
+      color=colors_and_globals.GOESXrayFlare['R3'])
+    self.axes.fill_between(linspace(0,1,len(self.stamp)), R4, \
+      self.datas["Long"], where=self.datas["Long"]>R4, \
+      color=colors_and_globals.GOESXrayFlare['R4'])
+    self.axes.fill_between(linspace(0,1,len(self.stamp)), R5, \
+      self.datas["Long"], where=self.datas["Long"]>R5, \
+      color=colors_and_globals.GOESXrayFlare['R5'])
+    # Add Text Where Flare Occurs
+    # if((max(self.datas["Short"]) >= R5) or (max(self.datas["Long"]) >= R5)):
+      # self.axes.text(
+      #   ((max(self.datas["Longitude"]) - min(self.datas["Longitude"]))/2 + min(self.datas["Longitude"])),
+      #   min(self.datas["Latitude"])-10,
+      #   ("%s - %s"%(self.stamp[0][1],self.stamp[-1][1])),
+      #   ha="center",
+      #   va="center",
+      #   size=6,
+      #   bbox=dict(boxstyle="round,pad=0.3", fc="w", ec="k", alpha=0.3)
+      # )
     # Format the Graph
     self.format_graph()
 
@@ -107,8 +135,9 @@ class MyGOESXrayFlux(MyMplCanvas):
     self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
     # Thin the number of x-axis labels and ticks, this works with the list of
     # tuples that are the date/time stamps
+    thinner = int(len(self.stamp)/11)
     self.stamp = [x \
-      for x in self.stamp[0::9]
+      for x in self.stamp[0::thinner]
     ]
     # Set number of X-Axis ticks
     self.axes.set_xticks(linspace(0,1,len(self.stamp)))

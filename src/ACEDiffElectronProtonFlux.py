@@ -38,6 +38,7 @@ class MyDiffElecProtFlux(MyMplCanvas):
     # the API call, store the API call data in an object-global data variable
     # to reduce the number of API calls required to initialize the plot
     timer.start(300000)
+    storeDiffElecProtFlux()
     self.compute_initial_figure()
 
   def update_figure(self):

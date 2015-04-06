@@ -4,10 +4,10 @@
   concatenating the actual data into a single text file.
 
   The date format for the files is:
-    YYYMMDD_<Gp/Gs/ace>_<xr/pchan/part/swepam/sis/mag/epam>_<5m/1m>.txt
+    YYYYMMDD_<Gp/Gs/ace>_<xr/pchan/part/swepam/sis/mag/epam>_<5m/1m>.txt
 
-    Where Gp is for GOES-15 at location 134 West.
-    Where Gs is for GOES-13 at location 75 West.
+    Where Gp is for GOES-13 at location 75 West.
+    Where Gs is for GOES-15 at location 134 West.
     Where ace is for ACE which has a variable location.
 
     Where xr is for the X-Ray Flux data.
@@ -31,7 +31,7 @@
   To find a specific date of data, remove the <foo>.html file and utilize the
   file format mentioned above for that particular folder. For instance:
 
-    http://legacy-www.swpc.noaa.gov/ftpmenu/lists/20150105_Gp_xr_5m.txt
+    http://legacy-www.swpc.noaa.gov/ftpmenu/lists/xray/20150105_Gp_xr_5m.txt
 
   Will access the GOES-15 X-Ray Flux satellite data from 2015/01/05.
 """

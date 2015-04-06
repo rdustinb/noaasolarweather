@@ -38,6 +38,8 @@ class MyInterplanetaryMagField(MyMplCanvas):
     # the API call, store the API call data in an object-global data variable
     # to reduce the number of API calls required to initialize the plot
     timer.start(60000)
+    storeInterplanetMagField()
+    self.compute_initial_figure()
 
   def update_figure(self):
     """
@@ -109,9 +111,9 @@ class MyInterplanetaryMagField(MyMplCanvas):
     self.axes.add_artist(leg)
     # Annotate the range of data
     self.axes.text(
-      ((max(self.datas["Longitude"]) - min(self.datas["Longitude"]))/2 + min(self.datas["Longitude"])),
-      min(self.datas["Latitude"])-10,
-      ("%s - %s"%(self.stamp[0][1],self.stamp[-1][1])),
+      min(self.datas["Longitude"])-40,
+      (max(self.datas["Latitude"])-min(self.datas["Latitude"]))/2+min(self.datas["Latitude"]),
+      ("UTC\n%s - %s"%(self.stamp[0][1],self.stamp[-1][1])),
       ha="center",
       va="center",
       size=6,
