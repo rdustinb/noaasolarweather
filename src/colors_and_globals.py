@@ -10,8 +10,8 @@ colorMode = "Light"
 # Version of the application
 ###########################################################################
 progversion = "2.0.7"
-progbuild = "1"
-progdate = "20150406"
+progbuild = "2"
+progdate = "20150407"
 
 ###########################################################################
 # Data source of the application
@@ -21,6 +21,8 @@ progdate = "20150406"
 # 'S=<YYYY/MM/DD-HH:MM>, E=<YYYY/MM/DD-HH:MM>'
 ###########################################################################
 datasource = "Current"
+# datasource = "Today"
+# datasource = "Yesterday"
 
 ###########################################################################
 # Application Globals

@@ -67,7 +67,11 @@ class MyDiffElecProtFlux(MyMplCanvas):
     plot1 = [self.axes.plot(linspace(0,1,len(self.stamp)), self.datas[key],
       colors_and_globals.ACEDiffElecProtFluxColors[key],
       label=self.particles[key][1]
-      ) for key in self.label_list]
+      ) for key in self.label_list if "e" in self.particles[key][1]]
+    plot2 = [self.axes.plot(linspace(0,1,len(self.stamp)), self.datas[key],
+      colors_and_globals.ACEDiffElecProtFluxColors[key],
+      label=self.particles[key][1]
+      ) for key in self.label_list if "p" in self.particles[key][1]]
     # Format the Graph
     self.format_graph()
 
@@ -80,8 +84,9 @@ class MyDiffElecProtFlux(MyMplCanvas):
     self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
     # Thin the number of x-axis labels and ticks, this works with the list of
     # tuples that are the date/time stamps
+    thinner = int(len(self.stamp)/11)
     self.stamp = [x \
-      for x in self.stamp[0::2]
+      for x in self.stamp[0::thinner]
     ]
     # Set number of X-Axis ticks
     self.axes.set_xticks(linspace(0,1,len(self.stamp)))
@@ -116,8 +121,16 @@ class MyDiffElecProtFlux(MyMplCanvas):
     # bbox_to_anchor=None, bbox_transform=None, frameon=None, handler_map=None)
     # Create the legends
     legend1 = self.axes.legend(
+      [self.particles[key][1] for key in self.label_list if "e" in self.particles[key][1]],
       framealpha=0,
       loc=1, fontsize=colors_and_globals.legendSize,
-      bbox_to_anchor=(1.46, 1.12),
+      bbox_to_anchor=(1.40, 1.12),
       title="MeV")
+    legend2 = self.axes.legend(
+      [self.particles[key][1] for key in self.label_list if "p" in self.particles[key][1]],
+      framealpha=0,
+      loc=1, fontsize=colors_and_globals.legendSize,
+      bbox_to_anchor=(1.46, 0.80),
+      title="keV")
     self.axes.add_artist(legend1)
+    self.axes.add_artist(legend2)

@@ -32,7 +32,6 @@ class MyMplCanvas(FigureCanvasQTAgg):
     fig.patch.set_alpha(colors_and_globals.canvas_alpha)
     # This may need to be parameterized to control layout
     self.axes = fig.add_subplot(subplot)
-    self.compute_initial_figure()
     # Call Parent canvas init
     FigureCanvasQTAgg.__init__(self, fig)
     self.setParent(parent)

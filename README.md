@@ -1,7 +1,14 @@
+Outages
+===
+Possible outages between 1500 and 2100 UTC on April 7-8 2015.
+
+**http://www.swpc.noaa.gov/news/swpc-backup-system-testing-continues-tuesday-thursday-april-7-9**
+
+---
+
 This Python application pulls data from the NOAA Satellite near real-time server files located here:
 
 **http://services.swpc.noaa.gov/text/**
-
 
 
 The application parses the data from the NOAA servers and initializes a timer for each plot,

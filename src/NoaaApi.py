@@ -2,6 +2,7 @@
 import sys
 import re
 import colors_and_globals
+from datetime import datetime, timezone
 
 if int(sys.version[0]) == 3:
   # print("Version 3.x!")
@@ -84,7 +85,7 @@ def storeGOESRangeProtonFlux():
   if(colors_and_globals.datasource == "Current"):
     URL = 'http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt'
   elif(colors_and_globals.datasource == "Today"):
-    URL = 'http://legacy-www.swpc.noaa.gov/ftpdir/lists/pchan/20150405_Gp_pchan_5m.txt'
+    URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/pchan/%s_Gp_pchan_5m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
   with openUrl(URL) as urlfh , open("../data/Gp_pchan_5m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
@@ -158,7 +159,7 @@ def storeGOESGeomagFieldFlux():
   if(colors_and_globals.datasource == "Current"):
     URL = 'http://services.swpc.noaa.gov/text/goes-magnetometer-primary.txt'
   elif(colors_and_globals.datasource == "Today"):
-    URL = 'http://legacy-www.swpc.noaa.gov/ftpdir/lists/geomag/20150405_Gp_mag_1m.txt'
+    URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/geomag/%s_Gp_mag_1m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
   with openUrl(URL) as urlfh , open("../data/Gp_mag_1m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
@@ -290,7 +291,7 @@ def storeGOESIntegralParticleFlux():
   if(colors_and_globals.datasource == "Current"):
     URL = 'http://services.swpc.noaa.gov/text/goes-particle-flux-primary.txt'
   elif(colors_and_globals.datasource == "Today"):
-    URL = 'http://legacy-www.swpc.noaa.gov/ftpdir/lists/particle/20150405_Gp_part_5m.txt'
+    URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/particle/%s_Gp_part_5m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
   with openUrl(URL) as urlfh , open("../data/Gp_part_5m.txt", "w") as locfh:
     # Copy the header
     for line in urlfh:
@@ -382,7 +383,7 @@ def storeGOESXrayFlux():
   if(colors_and_globals.datasource == "Current"):
     URL = 'http://services.swpc.noaa.gov/text/goes-xray-flux-primary.txt'
   elif(colors_and_globals.datasource == "Today"):
-    URL = 'http://legacy-www.swpc.noaa.gov/ftpdir/lists/xray/20150405_Gp_xr_1m.txt'
+    URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/xray/%s_Gp_xr_1m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
   with openUrl(URL) as urlfh , open("../data/Gp_xr_1m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
@@ -461,7 +462,10 @@ def storeDiffElecProtFlux():
       MeV - unit of energy, Mega Electrov-Volt
   """
   # Open the file handle
-  URL = 'http://services.swpc.noaa.gov/text/ace-epam.txt'
+  if(colors_and_globals.datasource == "Current"):
+    URL = 'http://services.swpc.noaa.gov/text/ace-epam.txt'
+  elif(colors_and_globals.datasource == "Today"):
+    URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/ace/%s_ace_epam_5m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
   with openUrl(URL) as urlfh , open("../data/ace_epam_5m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
@@ -475,7 +479,7 @@ def getDiffElecProtFlux():
   # Parse local data
   with open("../data/ace_epam_5m.txt", "r") as fh:
     datas = {}
-    units = "Particles/cm2*s*sr*MeV"
+    units = "Particles/cm2*s*sr*(Power)"
     particles = {}
     label_list = ['38-53','175-315','47-68','115-195','310-580','795-1193','1060-1900']
     stamp = []
@@ -527,7 +531,10 @@ def storeIntegralProtonFlux():
     Measurements are taken every 5 minutes.
   """
   # Open the file handle
-  URL = 'http://services.swpc.noaa.gov/text/ace-sis.txt'
+  if(colors_and_globals.datasource == "Current"):
+    URL = 'http://services.swpc.noaa.gov/text/ace-sis.txt'
+  elif(colors_and_globals.datasource == "Today"):
+    URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/ace/%s_ace_sis_5m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
   with openUrl(URL) as urlfh , open("../data/ace_sis_5m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
@@ -647,12 +654,12 @@ def storeSolarPlasma():
   if(colors_and_globals.datasource == "Current"):
     URL = 'http://services.swpc.noaa.gov/text/ace-swepam.txt'
   elif(colors_and_globals.datasource == "Today"):
-    URL = 'http://legacy-www.swpc.noaa.gov/ftpdir/lists/ace/20150405_ace_swepam_1m.txt'
+    URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/ace/%s_ace_swepam_1m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
   with openUrl(URL) as urlfh , open("../data/ace_swepam_1m.txt", "w") as locfh:
     for line in urlfh:
       line = line.decode('utf-8')
       # Strip out lines with missing data
-      if("-9999.9" in line):
+      if(("-9999.9" in line) or ("-1.00e+05" in line)):
         next
       else:
         locfh.write(line)
@@ -800,3 +807,4 @@ if __name__ == '__main__':
   # print(units)
   # print(particles)
   storeGOESIntegralParticleFlux()
+  print(datetime.now(timezone.utc).strftime("%Y%m%d"))
