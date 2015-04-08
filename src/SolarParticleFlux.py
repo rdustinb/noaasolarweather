@@ -21,16 +21,11 @@ else:
 # Specific Plot Canvas Objects
 ###########################################################################
 class MyGOESIntegralParticleFlux(MyMplCanvas):
-  datas = {}
-  units = {}
-  particles = {}
-  label_list = []
-  stamp = []
   def __init__(self, *args, **kwargs):
     """
       Initialize the updating object.
     """
-    MyMplCanvas.__init__(self, right_edge=0.81, *args, **kwargs)
+    MyMplCanvas.__init__(self, *args, **kwargs)
     timer = QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
@@ -57,21 +52,20 @@ class MyGOESIntegralParticleFlux(MyMplCanvas):
       Initial data plot.
     """
     # Get the new data
-    (self.label_list,self.datas,self.stamp,self.units,self.particles) = \
-      getGOESIntegralParticleFlux()
+    (label_list,datas,stamp,units,particles) = getGOESIntegralParticleFlux()
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     self.axes.plot(0)
     self.axes.hold(True)
     # Plot all data sets
-    plot1 = [self.axes.plot(linspace(0,1,len(self.stamp)), self.datas[key],
+    plot1 = [self.axes.plot(linspace(0,1,len(stamp)), datas[key],
       colors_and_globals.GOESIntegralParticleFluxColors[key],
-      label=self.particles[key][1]
-      ) for key in self.label_list]
+      label=particles[key][1]
+      ) for key in label_list]
     # Format the Graph
-    self.format_graph()
+    self.format_graph(stamp)
 
-  def format_graph(self):
+  def format_graph(self,stamp):
     # Set the graph background color
     self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
     # Change Plot to logarithmic
@@ -80,14 +74,17 @@ class MyGOESIntegralParticleFlux(MyMplCanvas):
     self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
     # Thin the number of x-axis labels and ticks, this works with the list of
     # tuples that are the date/time stamps
-    thinner = int(len(self.stamp)/11)
-    self.stamp = [x \
-      for x in self.stamp[0::thinner]
+    if(len(stamp) > 11):
+      thinner = int(len(stamp)/11)
+    else:
+      thinner = 1
+    stamp = [x \
+      for x in stamp[0::thinner]
     ]
     # Set number of X-Axis ticks
-    self.axes.set_xticks(linspace(0,1,len(self.stamp)))
+    self.axes.set_xticks(linspace(0,1,len(stamp)))
     # Separate dates and times
-    (dates,times) = zip(*self.stamp)
+    (dates,times) = zip(*stamp)
     # Change the plot tick labels
     if(colors_and_globals.plot_angle.find("-") != -1):
       self.axes.set_xticklabels(times,
@@ -116,9 +113,7 @@ class MyGOESIntegralParticleFlux(MyMplCanvas):
     # ncol=1, mode=None, fancybox=None, shadow=None, title=None, framealpha=None,
     # bbox_to_anchor=None, bbox_transform=None, frameon=None, handler_map=None)
     # Create the legends
-    legend1 = self.axes.legend(
-      framealpha=0,
-      loc=1, fontsize=colors_and_globals.legendSize,
-      bbox_to_anchor=(1.30, 1.12),
-      title="MeV")
-    self.axes.add_artist(legend1)
+    self.axes.legend(
+      framealpha=0, title="MeV",
+      bbox_to_anchor=(1.24, 1.12), loc=1,
+      fontsize=colors_and_globals.legendSize)

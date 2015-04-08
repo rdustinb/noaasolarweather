@@ -21,16 +21,11 @@ else:
 # Specific Plot Canvas Objects
 ###########################################################################
 class MyIntegralProtonFlux(MyMplCanvas):
-  datas = {}
-  units = ""
-  particles = {}
-  label_list = []
-  stamp = []
   """
     Initialize the updating object.
   """
   def __init__(self, *args, **kwargs):
-    MyMplCanvas.__init__(self, right_edge=0.85, *args, **kwargs)
+    MyMplCanvas.__init__(self, *args, **kwargs)
     timer = QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
@@ -57,21 +52,21 @@ class MyIntegralProtonFlux(MyMplCanvas):
       Initial data plot.
     """
     # Get the new data
-    (self.label_list,self.datas,self.stamp,self.units,self.particles) = \
+    (label_list,datas,stamp,units,particles) = \
       getIntegralProtonFlux()
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     self.axes.plot(0)
     self.axes.hold(True)
     # Plot all data sets
-    plot1 = [self.axes.plot(linspace(0,1,len(self.stamp)), self.datas[key],
+    plot1 = [self.axes.plot(linspace(0,1,len(stamp)), datas[key],
       colors_and_globals.ACEIntegralProtonFluxColors[key],
-      label=self.particles[key][1]
-      ) for key in self.label_list]
+      label=particles[key][1]
+      ) for key in label_list]
     # Format the Graph
-    self.format_graph()
+    self.format_graph(stamp,units)
 
-  def format_graph(self):
+  def format_graph(self,stamp,units):
     # Set the graph background color
     self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
     # Change Plot to logarithmic
@@ -80,14 +75,17 @@ class MyIntegralProtonFlux(MyMplCanvas):
     self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
     # Thin the number of x-axis labels and ticks, this works with the list of
     # tuples that are the date/time stamps
-    thinner = int(len(self.stamp)/11)
-    self.stamp = [x \
-      for x in self.stamp[0::thinner]
+    if(len(stamp) > 11):
+      thinner = int(len(stamp)/11)
+    else:
+      thinner = 1
+    stamp = [x \
+      for x in stamp[0::thinner]
     ]
     # Set number of X-Axis ticks
-    self.axes.set_xticks(linspace(0,1,len(self.stamp)))
+    self.axes.set_xticks(linspace(0,1,len(stamp)))
     # Separate dates and times
-    (dates,times) = zip(*self.stamp)
+    (dates,times) = zip(*stamp)
     # Change the plot tick labels
     if(colors_and_globals.plot_angle.find("-") != -1):
       self.axes.set_xticklabels(times,
@@ -98,7 +96,7 @@ class MyIntegralProtonFlux(MyMplCanvas):
         rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
         horizontalalignment='right', fontsize=colors_and_globals.plotLabelSize)
     # Show Units of y-axis
-    self.axes.set_ylabel(self.units, rotation='vertical',
+    self.axes.set_ylabel(units, rotation='vertical',
       fontsize=colors_and_globals.plotLabelSize)
     # Show Units of x-axis
     if(dates[0] != dates[-1]):

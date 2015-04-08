@@ -21,16 +21,11 @@ else:
 # Specific Plot Canvas Objects
 ###########################################################################
 class MyDiffElecProtFlux(MyMplCanvas):
-  datas = {}
-  units = ""
-  particles = {}
-  label_list = []
-  stamp = []
   def __init__(self, *args, **kwargs):
     """
       Initialize the updating object.
     """
-    MyMplCanvas.__init__(self, right_edge=0.74, *args, **kwargs)
+    MyMplCanvas.__init__(self, *args, **kwargs)
     timer = QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
@@ -57,25 +52,24 @@ class MyDiffElecProtFlux(MyMplCanvas):
       Initial data plot.
     """
     # Get the new data
-    (self.label_list,self.datas,self.stamp,self.units,self.particles) = \
-      getDiffElecProtFlux()
+    (label_list,datas,stamp,units,particles) = getDiffElecProtFlux()
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     self.axes.plot(0)
     self.axes.hold(True)
     # Plot all data sets
-    plot1 = [self.axes.plot(linspace(0,1,len(self.stamp)), self.datas[key],
+    plot1 = [self.axes.plot(linspace(0,1,len(stamp)), datas[key],
       colors_and_globals.ACEDiffElecProtFluxColors[key],
-      label=self.particles[key][1]
-      ) for key in self.label_list if "e" in self.particles[key][1]]
-    plot2 = [self.axes.plot(linspace(0,1,len(self.stamp)), self.datas[key],
+      label=particles[key][1]
+      ) for key in label_list if "e" in particles[key][1]]
+    plot2 = [self.axes.plot(linspace(0,1,len(stamp)), datas[key],
       colors_and_globals.ACEDiffElecProtFluxColors[key],
-      label=self.particles[key][1]
-      ) for key in self.label_list if "p" in self.particles[key][1]]
+      label=particles[key][1]
+      ) for key in label_list if "p" in particles[key][1]]
     # Format the Graph
-    self.format_graph()
+    self.format_graph(label_list,stamp,units,particles)
 
-  def format_graph(self):
+  def format_graph(self, label_list, stamp, units, particles):
     # Set the graph background color
     self.axes.set_axis_bgcolor(colors_and_globals.graph_bgcolor)
     # Change Plot to logarithmic
@@ -84,14 +78,17 @@ class MyDiffElecProtFlux(MyMplCanvas):
     self.axes.grid(True, which="both", color=colors_and_globals.grid_color)
     # Thin the number of x-axis labels and ticks, this works with the list of
     # tuples that are the date/time stamps
-    thinner = int(len(self.stamp)/11)
-    self.stamp = [x \
-      for x in self.stamp[0::thinner]
+    if(len(stamp) > 11):
+      thinner = int(len(stamp)/11)
+    else:
+      thinner = 1
+    stamp = [x \
+      for x in stamp[0::thinner]
     ]
     # Set number of X-Axis ticks
-    self.axes.set_xticks(linspace(0,1,len(self.stamp)))
+    self.axes.set_xticks(linspace(0,1,len(stamp)))
     # Separate dates and times
-    (dates,times) = zip(*self.stamp)
+    (dates,times) = zip(*stamp)
     # Change the plot tick labels
     if(colors_and_globals.plot_angle.find("-") != -1):
       self.axes.set_xticklabels(times,
@@ -102,7 +99,7 @@ class MyDiffElecProtFlux(MyMplCanvas):
         rotation=colors_and_globals.plot_angle, rotation_mode='anchor',
         horizontalalignment='right', fontsize=colors_and_globals.plotLabelSize)
     # Show Units of y-axis
-    self.axes.set_ylabel(self.units, rotation='vertical',
+    self.axes.set_ylabel(units, rotation='vertical',
       fontsize=colors_and_globals.plotLabelSize)
     # Show Units of x-axis
     if(dates[0] != dates[-1]):
@@ -121,13 +118,13 @@ class MyDiffElecProtFlux(MyMplCanvas):
     # bbox_to_anchor=None, bbox_transform=None, frameon=None, handler_map=None)
     # Create the legends
     legend1 = self.axes.legend(
-      [self.particles[key][1] for key in self.label_list if "e" in self.particles[key][1]],
+      [particles[key][1] for key in label_list if "e" in particles[key][1]],
       framealpha=0,
       loc=1, fontsize=colors_and_globals.legendSize,
       bbox_to_anchor=(1.40, 1.12),
       title="MeV")
     legend2 = self.axes.legend(
-      [self.particles[key][1] for key in self.label_list if "p" in self.particles[key][1]],
+      [particles[key][1] for key in label_list if "p" in particles[key][1]],
       framealpha=0,
       loc=1, fontsize=colors_and_globals.legendSize,
       bbox_to_anchor=(1.46, 0.80),

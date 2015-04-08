@@ -18,20 +18,18 @@ else:
 
 # Generic Canvas Object
 class MyMplCanvas(FigureCanvasQTAgg):
-  def __init__(self, parent=None, width=5, height=4, dpi=100, subplot=111,
-    left_edge=0.15, right_edge=0.82, top_edge=0.9, bottom_edge=0.22):
+  def __init__(self, parent=None, width=5, height=4, dpi=100, subplot=111):
     """
       class matplotlib.figure.Figure(figsize=None, dpi=None, facecolor=None,
         edgecolor=None, linewidth=0.0, frameon=None, subplotpars=None,
         tight_layout=None)
     """
     fig = Figure(figsize=(width, height), dpi=dpi)
-    # Adjust the layout
-    fig.subplots_adjust(left=left_edge,right=right_edge,top=top_edge,bottom=bottom_edge)
     # Make Figure Canvas transparent
     fig.patch.set_alpha(colors_and_globals.canvas_alpha)
     # This may need to be parameterized to control layout
     self.axes = fig.add_subplot(subplot)
+    fig.tight_layout(rect=[0.07,0.15,0.85,0.90])
     # Call Parent canvas init
     FigureCanvasQTAgg.__init__(self, fig)
     self.setParent(parent)

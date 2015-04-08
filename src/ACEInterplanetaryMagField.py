@@ -22,15 +22,11 @@ else:
 # Specific Plot Canvas Objects
 ###########################################################################
 class MyInterplanetaryMagField(MyMplCanvas):
-  datas = {}
-  label_list = []
-  stamp = []
   """
     Initialize the updating object.
   """
   def __init__(self, *args, **kwargs):
-    MyMplCanvas.__init__(self, right_edge=0.84, top_edge=0.9,
-        bottom_edge=0.18, *args, **kwargs)
+    MyMplCanvas.__init__(self, *args, **kwargs)
     timer = QTimer(self)
     # Tie the "update_figure" function to the timer
     timer.timeout.connect(self.update_figure)
@@ -57,39 +53,38 @@ class MyInterplanetaryMagField(MyMplCanvas):
       Initial data plot.
     """
     # Get the new data
-    (self.label_list,self.datas,self.stamp) = \
-      getInterplanetMagField()
+    (label_list,datas,stamp) = getInterplanetMagField()
     # Next plot overwrites all previous plots
     self.axes.hold(False)
     self.axes.plot(0)
     self.axes.hold(True)
     # Remove data that is missing
-    self.datas["Total"],self.datas["Latitude"],   \
-    self.datas["Longitude"],self.stamp =          \
-    zip(*[i for i in zip(                         \
-        self.datas["Total"],                      \
-        self.datas["Latitude"],                   \
-        self.datas["Longitude"],                  \
-        self.stamp                                \
-      )                                           \
+    datas["Total"],datas["Latitude"],   \
+    datas["Longitude"],stamp =          \
+    zip(*[i for i in zip(               \
+        datas["Total"],                 \
+        datas["Latitude"],              \
+        datas["Longitude"],             \
+        stamp                           \
+      )                                 \
       if i[0] != -999.9])
     # Only used for legend labelling
-    smallest = min(self.datas["Total"])
-    middle = "%.1f"%((max(self.datas["Total"]) - min(self.datas["Total"]))/2 + min(self.datas["Total"]))
-    largest = max(self.datas["Total"])
-    leg_smallest = pi*(min(self.datas["Total"]))**2/2.5
-    leg_mid = pi*(((max(self.datas["Total"]) - min(self.datas["Total"]))/2 + min(self.datas["Total"])))**2/2.5
-    leg_largest = pi*(max(self.datas["Total"]))**2/2.5
+    smallest = min(datas["Total"])
+    middle = "%.1f"%((max(datas["Total"]) - min(datas["Total"]))/2 + min(datas["Total"]))
+    largest = max(datas["Total"])
+    leg_smallest = pi*(min(datas["Total"]))**2/2.5
+    leg_mid = pi*(((max(datas["Total"]) - min(datas["Total"]))/2 + min(datas["Total"])))**2/2.5
+    leg_largest = pi*(max(datas["Total"]))**2/2.5
     # Normalize values
-    self.datas["Total"] = \
-      [pi*(t**2)/2.5 for t in self.datas["Total"]]
-    pt_colors = [x*(256/len(self.datas["Total"])) for x in range(len(self.datas["Total"]))]
+    datas["Total"] = \
+      [pi*(t**2)/2.5 for t in datas["Total"]]
+    pt_colors = [x*(256/len(datas["Total"])) for x in range(len(datas["Total"]))]
     # Scatter Plot by Latitude/Longitude
     self.axes.scatter(
-      self.datas["Longitude"],
-      self.datas["Latitude"],
-      s=self.datas["Total"],
-      c=pt_colors, label=self.datas["Total"], alpha=0.4
+      datas["Longitude"],
+      datas["Latitude"],
+      s=datas["Total"],
+      c=pt_colors, label=datas["Total"], alpha=0.4
     )
     # Draw False Values for size legend
     small = self.axes.scatter([], [], s=leg_smallest, facecolors='none', edgecolors='k')
@@ -102,18 +97,34 @@ class MyInterplanetaryMagField(MyMplCanvas):
     # Legend
     leg = self.axes.legend(
       [small, blank1, mid, blank2, large], leg_labels,
-      framealpha=0,
+      framealpha=0, title="nT",
       loc=1, fontsize=colors_and_globals.legendSize,
       bbox_to_anchor=(1.27, 1.12),
-      title="nT",
       borderpad=1,
       scatterpoints=1)
     self.axes.add_artist(leg)
     # Annotate the range of data
+    # Where to put the x-axis range of data text
+    if(max(datas["Longitude"])-min(datas["Longitude"]) < 150):
+      if(min(datas["Longitude"]) < 100):
+        x_place = min(datas["Longitude"]) - 25
+      elif(max(datas["Longitude"]) > 260):
+        x_place = max(datas["Longitude"]) + 25
+      else:
+        x_place = 175
+    else:
+      if((min(datas["Longitude"]) < 100) and not(max(datas["Longitude"]) > 250)):
+        x_place = max(datas["Longitude"])
+      elif(not(min(datas["Longitude"]) < 100) and (max(datas["Longitude"]) > 250)):
+        x_place = min(datas["Longitude"]) - 100
+      else:
+        x_place = 175
+    # Where to put the y-axis range of data text
+    y_place = (max(datas["Latitude"])-min(datas["Latitude"]))/2+min(datas["Latitude"])
     self.axes.text(
-      min(self.datas["Longitude"])-40,
-      (max(self.datas["Latitude"])-min(self.datas["Latitude"]))/2+min(self.datas["Latitude"]),
-      ("UTC\n%s - %s"%(self.stamp[0][1],self.stamp[-1][1])),
+      x_place,
+      y_place,
+      ("UTC\n%s - %s"%(stamp[0][1],stamp[-1][1])),
       ha="center",
       va="center",
       size=6,
