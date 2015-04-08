@@ -81,19 +81,26 @@ def storeGOESRangeProtonFlux():
     Proton Flux, however GOES-15 also provides Proton Flux measurements as
     a secondary source.
   """
+  storage_file = "../data/Gp_pchan_5m.txt"
   # Open the file handle
   if(colors_and_globals.datasource == "Current"):
     URL = 'http://services.swpc.noaa.gov/text/goes-energetic-proton-flux-primary.txt'
   elif(colors_and_globals.datasource == "Today"):
     URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/pchan/%s_Gp_pchan_5m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
-  with openUrl(URL) as urlfh , open("../data/Gp_pchan_5m.txt", "w") as locfh:
-    for line in urlfh:
-      line = line.decode('utf-8')
-      # Strip out lines with missing data
-      if(("-1.00e+05" in line) or ("0.00e+00" in line)):
-        next
-      else:
-        locfh.write(line)
+  try:
+    with openUrl(URL) as urlfh , open(storage_file, "w") as locfh:
+      for line in urlfh:
+        line = line.decode('utf-8')
+        # Strip out lines with missing data
+        if(("-1.00e+05" in line) or ("0.00e+00" in line)):
+          next
+        else:
+          locfh.write(line)
+  except HTTPError:
+    if(os.path.exists(storage_file)):
+      print("Opening stale data until the next sample period, URL is down.")
+    else:
+      print("Data file does not exist and URL is down, no data will show.")
 
 def getGOESRangeProtonFlux():
   # Parse local data
@@ -155,19 +162,26 @@ def storeGOESGeomagFieldFlux():
     density around the earth. The three dimensions and the total field have
     units of nanotesla.
   """
+  storage_file = "../data/Gp_mag_1m.txt"
   # Open the file handle
   if(colors_and_globals.datasource == "Current"):
     URL = 'http://services.swpc.noaa.gov/text/goes-magnetometer-primary.txt'
   elif(colors_and_globals.datasource == "Today"):
     URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/geomag/%s_Gp_mag_1m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
-  with openUrl(URL) as urlfh , open("../data/Gp_mag_1m.txt", "w") as locfh:
-    for line in urlfh:
-      line = line.decode('utf-8')
-      # Strip out lines with missing data
-      if("-1.00e+05" in line):
-        next
-      else:
-        locfh.write(line)
+  try:
+    with openUrl(URL) as urlfh , open(storage_file, "w") as locfh:
+      for line in urlfh:
+        line = line.decode('utf-8')
+        # Strip out lines with missing data
+        if("-1.00e+05" in line):
+          next
+        else:
+          locfh.write(line)
+  except HTTPError:
+    if(os.path.exists(storage_file)):
+      print("Opening stale data until the next sample period, URL is down.")
+    else:
+      print("Data file does not exist and URL is down, no data will show.")
 
 def getGOESGeomagFieldFlux():
   # Parse local data
@@ -210,16 +224,23 @@ def storeGOESDiscreteParticleFlux():
     API returns a list of 10 data lists of as many distinct proton and electron
     energies.
   """
+  storage_file = "../data/Gp_magnetospheric_particles_ts1.txt"
   # Open the file handle
   URL = 'http://services.swpc.noaa.gov/text/goes-magnetospheric-particle-flux-ts1-primary.txt'
-  with openUrl(URL) as urlfh , open("../data/Gp_magnetospheric_particles_ts1.txt", "w") as locfh:
-    for line in urlfh:
-      line = line.decode('utf-8')
-      # Strip out lines with missing data
-      if("-1.00e+05" in line):
-        next
-      else:
-        locfh.write(line)
+  try:
+    with openUrl(URL) as urlfh , open(storage_file, "w") as locfh:
+      for line in urlfh:
+        line = line.decode('utf-8')
+        # Strip out lines with missing data
+        if("-1.00e+05" in line):
+          next
+        else:
+          locfh.write(line)
+  except HTTPError:
+    if(os.path.exists(storage_file)):
+      print("Opening stale data until the next sample period, URL is down.")
+    else:
+      print("Data file does not exist and URL is down, no data will show.")
 
 def getGOESDiscreteParticleFlux():
   # Parse local data
@@ -287,36 +308,43 @@ def storeGOESIntegralParticleFlux():
     For instance the first set of data is of protons >1MeV, while the second is
     of protons >5MeV.
   """
+  storage_file = "../data/Gp_part_5m.txt"
   # Open the file handle
   if(colors_and_globals.datasource == "Current"):
     URL = 'http://services.swpc.noaa.gov/text/goes-particle-flux-primary.txt'
   elif(colors_and_globals.datasource == "Today"):
     URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/particle/%s_Gp_part_5m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
-  with openUrl(URL) as urlfh , open("../data/Gp_part_5m.txt", "w") as locfh:
-    # Copy the header
-    for line in urlfh:
-      line = line.decode('utf-8')
-      if(line.startswith(':')):
-        locfh.write(line)
-      elif(line.startswith('#') and not(line.startswith('#-'))):
-        # The E > 4MeV sensor is broken, rip out the label
-        if("E>4.0" in line):
-          next
+  try:
+    with openUrl(URL) as urlfh , open(storage_file, "w") as locfh:
+      # Copy the header
+      for line in urlfh:
+        line = line.decode('utf-8')
+        if(line.startswith(':')):
+          locfh.write(line)
+        elif(line.startswith('#') and not(line.startswith('#-'))):
+          # The E > 4MeV sensor is broken, rip out the label
+          if("E>4.0" in line):
+            next
+          else:
+            locfh.write(line)
         else:
           locfh.write(line)
-      else:
-        locfh.write(line)
-        break
-    for line in urlfh:
-      line = line.decode('utf-8')
-      line = line.split()
-      # The E > 4MeV sensor is broken, parse out the farthest-right column
-      line = ' '.join(line[0:-1])
-      # Strip out lines with missing data
-      if("-1.00e+05" in line):
-        next
-      else:
-        locfh.write("%s\n"%line)
+          break
+      for line in urlfh:
+        line = line.decode('utf-8')
+        line = line.split()
+        # The E > 4MeV sensor is broken, parse out the farthest-right column
+        line = ' '.join(line[0:-1])
+        # Strip out lines with missing data
+        if("-1.00e+05" in line):
+          next
+        else:
+          locfh.write("%s\n"%line)
+  except HTTPError:
+    if(os.path.exists(storage_file)):
+      print("Opening stale data until the next sample period, URL is down.")
+    else:
+      print("Data file does not exist and URL is down, no data will show.")
 
 def getGOESIntegralParticleFlux():
   # Parse local data
@@ -379,19 +407,26 @@ def storeGOESXrayFlux():
     why I was having issues accessing data when I first started writing
     this script/application.
   """
+  storage_file = "../data/Gp_xr_1m.txt"
   # Open the file handle
   if(colors_and_globals.datasource == "Current"):
     URL = 'http://services.swpc.noaa.gov/text/goes-xray-flux-primary.txt'
   elif(colors_and_globals.datasource == "Today"):
     URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/xray/%s_Gp_xr_1m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
-  with openUrl(URL) as urlfh , open("../data/Gp_xr_1m.txt", "w") as locfh:
-    for line in urlfh:
-      line = line.decode('utf-8')
-      # Strip out lines with missing data
-      if("-1.00e+05" in line):
-        next
-      else:
-        locfh.write(line)
+  try:
+    with openUrl(URL) as urlfh , open(storage_file, "w") as locfh:
+      for line in urlfh:
+        line = line.decode('utf-8')
+        # Strip out lines with missing data
+        if("-1.00e+05" in line):
+          next
+        else:
+          locfh.write(line)
+  except HTTPError:
+    if(os.path.exists(storage_file)):
+      print("Opening stale data until the next sample period, URL is down.")
+    else:
+      print("Data file does not exist and URL is down, no data will show.")
 
 def getGOESXrayFlux():
   # Parse local data
@@ -461,19 +496,26 @@ def storeDiffElecProtFlux():
       ster - measurement of incidental angle, steradians
       MeV - unit of energy, Mega Electrov-Volt
   """
+  storage_file = "../data/ace_epam_5m.txt"
   # Open the file handle
   if(colors_and_globals.datasource == "Current"):
     URL = 'http://services.swpc.noaa.gov/text/ace-epam.txt'
   elif(colors_and_globals.datasource == "Today"):
     URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/ace/%s_ace_epam_5m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
-  with openUrl(URL) as urlfh , open("../data/ace_epam_5m.txt", "w") as locfh:
-    for line in urlfh:
-      line = line.decode('utf-8')
-      # Strip out lines with missing data
-      if("-1.00e+05" in line):
-        next
-      else:
-        locfh.write(line)
+  try:
+    with openUrl(URL) as urlfh , open(storage_file, "w") as locfh:
+      for line in urlfh:
+        line = line.decode('utf-8')
+        # Strip out lines with missing data
+        if("-1.00e+05" in line):
+          next
+        else:
+          locfh.write(line)
+  except HTTPError:
+    if(os.path.exists(storage_file)):
+      print("Opening stale data until the next sample period, URL is down.")
+    else:
+      print("Data file does not exist and URL is down, no data will show.")
 
 def getDiffElecProtFlux():
   # Parse local data
@@ -530,19 +572,26 @@ def storeIntegralProtonFlux():
 
     Measurements are taken every 5 minutes.
   """
+  storage_file = "../data/ace_sis_5m.txt"
   # Open the file handle
   if(colors_and_globals.datasource == "Current"):
     URL = 'http://services.swpc.noaa.gov/text/ace-sis.txt'
   elif(colors_and_globals.datasource == "Today"):
     URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/ace/%s_ace_sis_5m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
-  with openUrl(URL) as urlfh , open("../data/ace_sis_5m.txt", "w") as locfh:
-    for line in urlfh:
-      line = line.decode('utf-8')
-      # Strip out lines with missing data
-      if("-1.00e+05" in line):
-        next
-      else:
-        locfh.write(line)
+  try:
+    with openUrl(URL) as urlfh , open(storage_file, "w") as locfh:
+      for line in urlfh:
+        line = line.decode('utf-8')
+        # Strip out lines with missing data
+        if("-1.00e+05" in line):
+          next
+        else:
+          locfh.write(line)
+  except HTTPError:
+    if(os.path.exists(storage_file)):
+      print("Opening stale data until the next sample period, URL is down.")
+    else:
+      print("Data file does not exist and URL is down, no data will show.")
 
 def getIntegralProtonFlux():
   # Parse local data
@@ -594,16 +643,23 @@ def storeInterplanetMagField():
 
     Measurements are taken every minute.
   """
+  storage_file = "../data/ace_mag_1m.txt"
   # Open the file handle
   URL = 'http://services.swpc.noaa.gov/text/ace-magnetometer.txt'
-  with openUrl(URL) as urlfh , open("../data/ace_mag_1m.txt", "w") as locfh:
-    for line in urlfh:
-      line = line.decode('utf-8')
-      # Strip out lines with missing data
-      if("-999.9" in line):
-        next
-      else:
-        locfh.write(line)
+  try:
+    with openUrl(URL) as urlfh , open(storage_file, "w") as locfh:
+      for line in urlfh:
+        line = line.decode('utf-8')
+        # Strip out lines with missing data
+        if("-999.9" in line):
+          next
+        else:
+          locfh.write(line)
+  except HTTPError:
+    if(os.path.exists(storage_file)):
+      print("Opening stale data until the next sample period, URL is down.")
+    else:
+      print("Data file does not exist and URL is down, no data will show.")
 
 def getInterplanetMagField():
   # Parse local data
@@ -650,19 +706,26 @@ def storeSolarPlasma():
 
     Measurements are updated once a minute.
   """
+  storage_file = "../data/ace_swepam_1m.txt"
   # Open the file handle
   if(colors_and_globals.datasource == "Current"):
     URL = 'http://services.swpc.noaa.gov/text/ace-swepam.txt'
   elif(colors_and_globals.datasource == "Today"):
     URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/ace/%s_ace_swepam_1m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
-  with openUrl(URL) as urlfh , open("../data/ace_swepam_1m.txt", "w") as locfh:
-    for line in urlfh:
-      line = line.decode('utf-8')
-      # Strip out lines with missing data
-      if(("-9999.9" in line) or ("-1.00e+05" in line)):
-        next
-      else:
-        locfh.write(line)
+  try:
+    with openUrl(URL) as urlfh , open(storage_file, "w") as locfh:
+      for line in urlfh:
+        line = line.decode('utf-8')
+        # Strip out lines with missing data
+        if(("-9999.9" in line) or ("-1.00e+05" in line)):
+          next
+        else:
+          locfh.write(line)
+  except HTTPError:
+    if(os.path.exists(storage_file)):
+      print("Opening stale data until the next sample period, URL is down.")
+    else:
+      print("Data file does not exist and URL is down, no data will show.")
 
 def getSolarPlasma():
   # Parse local data
