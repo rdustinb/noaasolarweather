@@ -126,11 +126,11 @@ class ApplicationWindow(QMainWindow):
 
     GOESGoemagFieldFlux = MyGOESGoemagFieldFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
     h3.addWidget(GOESGoemagFieldFlux)
-    ACEIntegralProtonFlux = MyIntegralProtonFlux(self.main_widget, width=5, height=4, dpi=100)
-    h3.addWidget(ACEIntegralProtonFlux)
     ACEInterplanetaryMagField = MyInterplanetaryMagField(self.main_widget, width=5, height=4, dpi=100)
     h3.addWidget(ACEInterplanetaryMagField)
 
+    # ACEIntegralProtonFlux = MyIntegralProtonFlux(self.main_widget, width=5, height=4, dpi=100)
+    # h3.addWidget(ACEIntegralProtonFlux)
     # GOESDiscreteParticleFlux = MyGOESDiscreteParticleFlux(self.main_widget, width=5, height=4, dpi=100)
     # h3.addWidget(GOESDiscreteParticleFlux)
     # ACEDiffElecProtFlux = MyDiffElecProtFlux(self.main_widget, width=5, height=4, dpi=100)
