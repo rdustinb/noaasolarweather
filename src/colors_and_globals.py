@@ -4,14 +4,14 @@
 # the interface, but that would require creating a type of HEX calculating
 # algorithm for each plot trace, etc
 ###########################################################################
-colorMode = "Light"
+colorMode = "Dark"
 
 ###########################################################################
 # Version of the application
 ###########################################################################
-progversion = "2.0.7"
-progbuild = "2"
-progdate = "20150407"
+progversion = "2.1.0"
+progbuild = "1"
+progdate = "20150408"
 
 ###########################################################################
 # Data source of the application
@@ -20,8 +20,8 @@ progdate = "20150407"
 # 'Yesterday'
 # 'S=<YYYY/MM/DD-HH:MM>, E=<YYYY/MM/DD-HH:MM>'
 ###########################################################################
-datasource = "Current"
-# datasource = "Today"
+# datasource = "Current"
+datasource = "Today"
 # datasource = "Yesterday"
 
 ###########################################################################
