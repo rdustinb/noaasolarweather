@@ -114,26 +114,27 @@ class ApplicationWindow(QMainWindow):
 
     # Add each individual Plot Widget to the horizontal layout objects in a
     # circular fashion will result in a nicely laid out set of plots
-    GOESRangeProtonFlux = MyGOESRangeProtonFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
-    h1.addWidget(GOESRangeProtonFlux)
     GOESXrayFlux = MyGOESXrayFlux(self.main_widget, width=5, height=4, dpi=100)
     h1.addWidget(GOESXrayFlux)
     ACESolarWindPlasma = MySolarWindPlasma(self.main_widget, width=5, height=4, dpi=100)
     h1.addWidget(ACESolarWindPlasma)
 
-    GOESGoemagFieldFlux = MyGOESGoemagFieldFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
-    h2.addWidget(GOESGoemagFieldFlux)
-    ACEIntegralProtonFlux = MyIntegralProtonFlux(self.main_widget, width=5, height=4, dpi=100)
-    h2.addWidget(ACEIntegralProtonFlux)
-    ACEInterplanetaryMagField = MyInterplanetaryMagField(self.main_widget, width=5, height=4, dpi=100)
-    h2.addWidget(ACEInterplanetaryMagField)
-
-    GOESDiscreteParticleFlux = MyGOESDiscreteParticleFlux(self.main_widget, width=5, height=4, dpi=100)
-    h3.addWidget(GOESDiscreteParticleFlux)
-    ACEDiffElecProtFlux = MyDiffElecProtFlux(self.main_widget, width=5, height=4, dpi=100)
-    h3.addWidget(ACEDiffElecProtFlux)
+    GOESRangeProtonFlux = MyGOESRangeProtonFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
+    h2.addWidget(GOESRangeProtonFlux)
     GOESRangeParticleFlux = MyGOESIntegralParticleFlux(self.main_widget, width=5, height=4, dpi=100)
-    h3.addWidget(GOESRangeParticleFlux)
+    h2.addWidget(GOESRangeParticleFlux)
+
+    GOESGoemagFieldFlux = MyGOESGoemagFieldFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
+    h3.addWidget(GOESGoemagFieldFlux)
+    ACEIntegralProtonFlux = MyIntegralProtonFlux(self.main_widget, width=5, height=4, dpi=100)
+    h3.addWidget(ACEIntegralProtonFlux)
+    ACEInterplanetaryMagField = MyInterplanetaryMagField(self.main_widget, width=5, height=4, dpi=100)
+    h3.addWidget(ACEInterplanetaryMagField)
+
+    # GOESDiscreteParticleFlux = MyGOESDiscreteParticleFlux(self.main_widget, width=5, height=4, dpi=100)
+    # h3.addWidget(GOESDiscreteParticleFlux)
+    # ACEDiffElecProtFlux = MyDiffElecProtFlux(self.main_widget, width=5, height=4, dpi=100)
+    # h3.addWidget(ACEDiffElecProtFlux)
 
   def fileQuit(self):
     self.close()
