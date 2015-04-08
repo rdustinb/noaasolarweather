@@ -1,8 +1,8 @@
 Outages
 ===
-Possible outages between 1500 and 2100 UTC on April 7-8 2015.
+Possible outages between 1500 and 2100 UTC on April 8-9 2015.
 
-**http://www.swpc.noaa.gov/news/swpc-backup-system-testing-continues-tuesday-thursday-april-7-9**
+**http://www.swpc.noaa.gov/news/swpc-backup-system-testing-continues-wednesday-thursday-april-8-9**
 
 ---
 
