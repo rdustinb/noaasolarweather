@@ -35,7 +35,20 @@ class MyInterplanetaryMagField(MyMplCanvas):
     # to reduce the number of API calls required to initialize the plot
     timer.start(60000)
     storeInterplanetMagField()
+    self.set_name_string("Interplanetary Magnetic Field")
     self.compute_initial_figure()
+
+  def set_name_string(self, name):
+    self.name_string = name
+
+  def get_name_string(self):
+    return self.name_string
+
+  def set_stamp(self, stamp):
+    self.stamp = stamp
+
+  def get_stamp(self):
+    return self.stamp
 
   def update_figure(self):
     """
@@ -58,16 +71,6 @@ class MyInterplanetaryMagField(MyMplCanvas):
     self.axes.hold(False)
     self.axes.plot(0)
     self.axes.hold(True)
-    # Remove data that is missing
-    datas["Total"],datas["Latitude"],   \
-    datas["Longitude"],stamp =          \
-    zip(*[i for i in zip(               \
-        datas["Total"],                 \
-        datas["Latitude"],              \
-        datas["Longitude"],             \
-        stamp                           \
-      )                                 \
-      if i[0] != -999.9])
     # Only used for legend labelling
     smallest = min(datas["Total"])
     middle = "%.1f"%((max(datas["Total"]) - min(datas["Total"]))/2 + min(datas["Total"]))
@@ -130,6 +133,8 @@ class MyInterplanetaryMagField(MyMplCanvas):
       size=6,
       bbox=dict(boxstyle="round,pad=0.3", fc="w", ec="k", alpha=0.3)
     )
+    # Update the global stamp value
+    self.set_stamp(stamp)
     # Format the Graph
     self.format_graph()
 

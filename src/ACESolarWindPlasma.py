@@ -34,7 +34,20 @@ class MySolarWindPlasma(MyMplCanvas):
     # to reduce the number of API calls required to initialize the plot
     timer.start(60000)
     storeSolarPlasma()
+    self.set_name_string("Solar Wind Plasma")
     self.compute_initial_figure()
+
+  def set_name_string(self, name):
+    self.name_string = name
+
+  def get_name_string(self):
+    return self.name_string
+
+  def set_stamp(self, stamp):
+    self.stamp = stamp
+
+  def get_stamp(self):
+    return self.stamp
 
   def update_figure(self):
     """
@@ -62,6 +75,8 @@ class MySolarWindPlasma(MyMplCanvas):
       colors_and_globals.ACESolarWindPlasmaColors[key],
       label=particles[key][1]
       ) for key in label_list]
+    # Update the global stamp value
+    self.set_stamp(stamp)
     # Format the Graph
     self.format_graph(stamp,units)
 

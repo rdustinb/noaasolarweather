@@ -4,7 +4,7 @@
 # the interface, but that would require creating a type of HEX calculating
 # algorithm for each plot trace, etc
 ###########################################################################
-colorMode = "Dark"
+colorMode = "Light"
 
 ###########################################################################
 # Version of the application

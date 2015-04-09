@@ -34,7 +34,20 @@ class MyGOESXrayFlux(MyMplCanvas):
     # to reduce the number of API calls required to initialize the plot
     timer.start(60000)
     storeGOESXrayFlux()
+    self.set_name_string("X-Ray Flux")
     self.compute_initial_figure()
+
+  def set_name_string(self, name):
+    self.name_string = name
+
+  def get_name_string(self):
+    return self.name_string
+
+  def set_stamp(self, stamp):
+    self.stamp = stamp
+
+  def get_stamp(self):
+    return self.stamp
 
   def update_figure(self):
     """
@@ -118,6 +131,8 @@ class MyGOESXrayFlux(MyMplCanvas):
       #   size=6,
       #   bbox=dict(boxstyle="round,pad=0.3", fc="w", ec="k", alpha=0.3)
       # )
+    # Update the global stamp value
+    self.set_stamp(stamp)
     # Format the Graph
     self.format_graph(stamp,units)
 

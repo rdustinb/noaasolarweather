@@ -218,84 +218,84 @@ def getGOESGeomagFieldFlux():
 #################################################
 #         GOES Discrete Particle Flux           #
 #################################################
-def storeGOESDiscreteParticleFlux():
-  """
-    This call will collect the data from the energetic Proton/Electron Flux. This
-    API returns a list of 10 data lists of as many distinct proton and electron
-    energies.
-  """
-  storage_file = "../data/Gp_magnetospheric_particles_ts1.txt"
-  # Open the file handle
-  URL = 'http://services.swpc.noaa.gov/text/goes-magnetospheric-particle-flux-ts1-primary.txt'
-  try:
-    with openUrl(URL) as urlfh , open(storage_file, "w") as locfh:
-      for line in urlfh:
-        line = line.decode('utf-8')
-        # Strip out lines with missing data
-        if("-1.00e+05" in line):
-          next
-        else:
-          locfh.write(line)
-  except HTTPError:
-    if(os.path.exists(storage_file)):
-      print("Opening stale data until the next sample period, URL is down.")
-    else:
-      print("Data file does not exist and URL is down, no data will show.")
+# def storeGOESDiscreteParticleFlux():
+#   """
+#     This call will collect the data from the energetic Proton/Electron Flux. This
+#     API returns a list of 10 data lists of as many distinct proton and electron
+#     energies.
+#   """
+#   storage_file = "../data/Gp_magnetospheric_particles_ts1.txt"
+#   # Open the file handle
+#   URL = 'http://services.swpc.noaa.gov/text/goes-magnetospheric-particle-flux-ts1-primary.txt'
+#   try:
+#     with openUrl(URL) as urlfh , open(storage_file, "w") as locfh:
+#       for line in urlfh:
+#         line = line.decode('utf-8')
+#         # Strip out lines with missing data
+#         if("-1.00e+05" in line):
+#           next
+#         else:
+#           locfh.write(line)
+#   except HTTPError:
+#     if(os.path.exists(storage_file)):
+#       print("Opening stale data until the next sample period, URL is down.")
+#     else:
+#       print("Data file does not exist and URL is down, no data will show.")
 
-def getGOESDiscreteParticleFlux():
-  # Parse local data
-  with open("../data/Gp_magnetospheric_particles_ts1.txt", "r") as fh:
-    datas = {}
-    units = {}
-    particles = {}
-    label_list = []
-    stamp = []
-    # Skip the first two lines, just boiler plate stuff
-    next(fh)
-    next(fh)
-    # Iterator of Header
-    for line in fh:
-      if(line.startswith('#') and not(line.startswith('#-'))):
-        if(line.find('Label') != -1):
-          (blah,label) = line.split('Label:')
-          (label,energy) = label.split('=')
-          (blah,energy) = energy.split('from')
-          (energy,particle) = energy.split(' keV ')
-          (particle,unit) = particle.split('units #/')
-          # Remove leading and trailing whitespace
-          label = label.strip()
-          particle = particle.strip()
-          energy = energy.strip()
-          unit = unit.strip()
-          # Now remove excess whitespace
-          label = re.sub(" ", "", label)
-          particle = re.sub(" {2,}", " ", particle)
-          energy = re.sub(" {2,}", " ", energy)
-          unit = re.sub(" {2,}", " ", unit)
-          # Append either 'p' or 'e'
-          if(particle == "Protons"):
-            energy = " ".join(['p',energy])
-          elif(particle == "Electrons"):
-            energy = " ".join(['e',energy])
-          # Add the label to the data structure
-          datas[label] = []
-          units[label] = unit
-          particles[label] = (particle, energy)
-          label_list.append(label)
-      else:
-        # Stop decoding header
-        break
-    # Iterator of Data
-    for line in fh:
-      # Map out each data line to yr, mo, dy, hhmm, skip, skip, d0, d1, ... , dn
-      # Zipping up the original sequence of labels with the remainder data
-      # lines allows the for loop to then iterate through the new list
-      (yr,mo,dy,time,blah1,blah2,*datarow) = line.split()
-      stamp.append((str.join("",(yr,mo,dy)), time))
-      for (key, value) in zip(label_list, datarow):
-        datas[key].append(float(value))
-  # Now return the data
-  return(label_list,datas,stamp,units,particles)
+# def getGOESDiscreteParticleFlux():
+#   # Parse local data
+#   with open("../data/Gp_magnetospheric_particles_ts1.txt", "r") as fh:
+#     datas = {}
+#     units = {}
+#     particles = {}
+#     label_list = []
+#     stamp = []
+#     # Skip the first two lines, just boiler plate stuff
+#     next(fh)
+#     next(fh)
+#     # Iterator of Header
+#     for line in fh:
+#       if(line.startswith('#') and not(line.startswith('#-'))):
+#         if(line.find('Label') != -1):
+#           (blah,label) = line.split('Label:')
+#           (label,energy) = label.split('=')
+#           (blah,energy) = energy.split('from')
+#           (energy,particle) = energy.split(' keV ')
+#           (particle,unit) = particle.split('units #/')
+#           # Remove leading and trailing whitespace
+#           label = label.strip()
+#           particle = particle.strip()
+#           energy = energy.strip()
+#           unit = unit.strip()
+#           # Now remove excess whitespace
+#           label = re.sub(" ", "", label)
+#           particle = re.sub(" {2,}", " ", particle)
+#           energy = re.sub(" {2,}", " ", energy)
+#           unit = re.sub(" {2,}", " ", unit)
+#           # Append either 'p' or 'e'
+#           if(particle == "Protons"):
+#             energy = " ".join(['p',energy])
+#           elif(particle == "Electrons"):
+#             energy = " ".join(['e',energy])
+#           # Add the label to the data structure
+#           datas[label] = []
+#           units[label] = unit
+#           particles[label] = (particle, energy)
+#           label_list.append(label)
+#       else:
+#         # Stop decoding header
+#         break
+#     # Iterator of Data
+#     for line in fh:
+#       # Map out each data line to yr, mo, dy, hhmm, skip, skip, d0, d1, ... , dn
+#       # Zipping up the original sequence of labels with the remainder data
+#       # lines allows the for loop to then iterate through the new list
+#       (yr,mo,dy,time,blah1,blah2,*datarow) = line.split()
+#       stamp.append((str.join("",(yr,mo,dy)), time))
+#       for (key, value) in zip(label_list, datarow):
+#         datas[key].append(float(value))
+#   # Now return the data
+#   return(label_list,datas,stamp,units,particles)
 
 #################################################
 #         GOES Integral Particle Flux           #
@@ -340,7 +340,7 @@ def storeGOESIntegralParticleFlux():
           next
         else:
           locfh.write("%s\n"%line)
-  except HTTPError:
+  except urllib.error.HTTPError:
     if(os.path.exists(storage_file)):
       print("Opening stale data until the next sample period, URL is down.")
     else:
@@ -477,158 +477,158 @@ def getGOESXrayFlux():
 #################################################
 #         ACE Differential Particle Flux        #
 #################################################
-def storeDiffElecProtFlux():
-  """
-    This API call will pull data from the ACE Satellite for real-time averaged
-    electron and proton flux. The units of measure are for differential flux
-    particles.
+# def storeDiffElecProtFlux():
+#   """
+#     This API call will pull data from the ACE Satellite for real-time averaged
+#     electron and proton flux. The units of measure are for differential flux
+#     particles.
 
-    Differential Flux as defined by JEDEC:
-      'The particle flux density per unit energy incident on a surface; i.e.,
-      the number of radiant-energy particles incident on a surface during a given
-      period of time divided by the product of the area of that surface, the
-      characteristic energy of the incident particles, and the given period of
-      time.'
+#     Differential Flux as defined by JEDEC:
+#       'The particle flux density per unit energy incident on a surface; i.e.,
+#       the number of radiant-energy particles incident on a surface during a given
+#       period of time divided by the product of the area of that surface, the
+#       characteristic energy of the incident particles, and the given period of
+#       time.'
 
-    The units provided by NOAA are 'particles/cm2-s-ster-MeV' where:
-      cm2 - area, centimeters squared
-      s - unit of time, seconds
-      ster - measurement of incidental angle, steradians
-      MeV - unit of energy, Mega Electrov-Volt
-  """
-  storage_file = "../data/ace_epam_5m.txt"
-  # Open the file handle
-  if(colors_and_globals.datasource == "Current"):
-    URL = 'http://services.swpc.noaa.gov/text/ace-epam.txt'
-  elif(colors_and_globals.datasource == "Today"):
-    URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/ace/%s_ace_epam_5m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
-  try:
-    with openUrl(URL) as urlfh , open(storage_file, "w") as locfh:
-      for line in urlfh:
-        line = line.decode('utf-8')
-        # Strip out lines with missing data
-        if("-1.00e+05" in line):
-          next
-        else:
-          locfh.write(line)
-  except HTTPError:
-    if(os.path.exists(storage_file)):
-      print("Opening stale data until the next sample period, URL is down.")
-    else:
-      print("Data file does not exist and URL is down, no data will show.")
+#     The units provided by NOAA are 'particles/cm2-s-ster-MeV' where:
+#       cm2 - area, centimeters squared
+#       s - unit of time, seconds
+#       ster - measurement of incidental angle, steradians
+#       MeV - unit of energy, Mega Electrov-Volt
+#   """
+#   storage_file = "../data/ace_epam_5m.txt"
+#   # Open the file handle
+#   if(colors_and_globals.datasource == "Current"):
+#     URL = 'http://services.swpc.noaa.gov/text/ace-epam.txt'
+#   elif(colors_and_globals.datasource == "Today"):
+#     URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/ace/%s_ace_epam_5m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
+#   try:
+#     with openUrl(URL) as urlfh , open(storage_file, "w") as locfh:
+#       for line in urlfh:
+#         line = line.decode('utf-8')
+#         # Strip out lines with missing data
+#         if("-1.00e+05" in line):
+#           next
+#         else:
+#           locfh.write(line)
+#   except HTTPError:
+#     if(os.path.exists(storage_file)):
+#       print("Opening stale data until the next sample period, URL is down.")
+#     else:
+#       print("Data file does not exist and URL is down, no data will show.")
 
-def getDiffElecProtFlux():
-  # Parse local data
-  with open("../data/ace_epam_5m.txt", "r") as fh:
-    datas = {}
-    units = "Particles/cm2*s*sr*(Power)"
-    particles = {}
-    label_list = ['38-53','175-315','47-68','115-195','310-580','795-1193','1060-1900']
-    stamp = []
-    # Skip the first two lines, just boiler plate stuff
-    next(fh)
-    next(fh)
-    # Iterator of Header
-    for line in fh:
-      if(line.startswith('#') and not(line.startswith('#-'))):
-        pass
-      else:
-        # Stop decoding header
-        break
-    # Iterator of Data
-    for line in fh:
-      # Map out each data line to yr, mo, dy, hhmm, skip, skip, d0, d1, ... , dn
-      # Zipping up the original sequence of labels with the remainder data
-      # lines allows the for loop to then iterate through the new list
-      (yr,mo,dy,time,blah1,blah2,blah3,datarow1,datarow2,blah4,*datarow) = line.split()
-      stamp.append((str.join("",(yr,mo,dy)), time))
-      for (key, value) in zip(label_list[0:2], [datarow1,datarow2]):
-        if(key in datas):
-          datas[key].append(float(value))
-        else:
-          datas[key] = [float(value)]
-      for (key, value) in zip(label_list[2:], datarow):
-        if(key in datas):
-          datas[key].append(float(value))
-        else:
-          datas[key] = [float(value)]
-  # Format the Particles
-  particle_tuple = zip(['Electron','Electron','Proton','Proton','Proton','Proton','Proton'], label_list)
-  for (particle, key) in particle_tuple:
-    if(particle == 'Electron'):
-      particles[key] = (particle, " ".join(['e',key]))
-    elif(particle == 'Proton'):
-      particles[key] = (particle, " ".join(['p',key]))
-  # Now return the data
-  return(label_list,datas,stamp,units,particles)
+# def getDiffElecProtFlux():
+#   # Parse local data
+#   with open("../data/ace_epam_5m.txt", "r") as fh:
+#     datas = {}
+#     units = "Particles/cm2*s*sr*(Power)"
+#     particles = {}
+#     label_list = ['38-53','175-315','47-68','115-195','310-580','795-1193','1060-1900']
+#     stamp = []
+#     # Skip the first two lines, just boiler plate stuff
+#     next(fh)
+#     next(fh)
+#     # Iterator of Header
+#     for line in fh:
+#       if(line.startswith('#') and not(line.startswith('#-'))):
+#         pass
+#       else:
+#         # Stop decoding header
+#         break
+#     # Iterator of Data
+#     for line in fh:
+#       # Map out each data line to yr, mo, dy, hhmm, skip, skip, d0, d1, ... , dn
+#       # Zipping up the original sequence of labels with the remainder data
+#       # lines allows the for loop to then iterate through the new list
+#       (yr,mo,dy,time,blah1,blah2,blah3,datarow1,datarow2,blah4,*datarow) = line.split()
+#       stamp.append((str.join("",(yr,mo,dy)), time))
+#       for (key, value) in zip(label_list[0:2], [datarow1,datarow2]):
+#         if(key in datas):
+#           datas[key].append(float(value))
+#         else:
+#           datas[key] = [float(value)]
+#       for (key, value) in zip(label_list[2:], datarow):
+#         if(key in datas):
+#           datas[key].append(float(value))
+#         else:
+#           datas[key] = [float(value)]
+#   # Format the Particles
+#   particle_tuple = zip(['Electron','Electron','Proton','Proton','Proton','Proton','Proton'], label_list)
+#   for (particle, key) in particle_tuple:
+#     if(particle == 'Electron'):
+#       particles[key] = (particle, " ".join(['e',key]))
+#     elif(particle == 'Proton'):
+#       particles[key] = (particle, " ".join(['p',key]))
+#   # Now return the data
+#   return(label_list,datas,stamp,units,particles)
 
 #################################################
 #           ACE Integral Proton Flux            #
 #################################################
-def storeIntegralProtonFlux():
-  """
-    This API call only measures the integral of high energy protons above two
-    specific energy levels: 10MeV and 30MeV.
+# def storeIntegralProtonFlux():
+#   """
+#     This API call only measures the integral of high energy protons above two
+#     specific energy levels: 10MeV and 30MeV.
 
-    Measurements are taken every 5 minutes.
-  """
-  storage_file = "../data/ace_sis_5m.txt"
-  # Open the file handle
-  if(colors_and_globals.datasource == "Current"):
-    URL = 'http://services.swpc.noaa.gov/text/ace-sis.txt'
-  elif(colors_and_globals.datasource == "Today"):
-    URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/ace/%s_ace_sis_5m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
-  try:
-    with openUrl(URL) as urlfh , open(storage_file, "w") as locfh:
-      for line in urlfh:
-        line = line.decode('utf-8')
-        # Strip out lines with missing data
-        if("-1.00e+05" in line):
-          next
-        else:
-          locfh.write(line)
-  except HTTPError:
-    if(os.path.exists(storage_file)):
-      print("Opening stale data until the next sample period, URL is down.")
-    else:
-      print("Data file does not exist and URL is down, no data will show.")
+#     Measurements are taken every 5 minutes.
+#   """
+#   storage_file = "../data/ace_sis_5m.txt"
+#   # Open the file handle
+#   if(colors_and_globals.datasource == "Current"):
+#     URL = 'http://services.swpc.noaa.gov/text/ace-sis.txt'
+#   elif(colors_and_globals.datasource == "Today"):
+#     URL = "http://legacy-www.swpc.noaa.gov/ftpdir/lists/ace/%s_ace_sis_5m.txt"%(datetime.now(timezone.utc).strftime("%Y%m%d"))
+#   try:
+#     with openUrl(URL) as urlfh , open(storage_file, "w") as locfh:
+#       for line in urlfh:
+#         line = line.decode('utf-8')
+#         # Strip out lines with missing data
+#         if("-1.00e+05" in line):
+#           next
+#         else:
+#           locfh.write(line)
+#   except HTTPError:
+#     if(os.path.exists(storage_file)):
+#       print("Opening stale data until the next sample period, URL is down.")
+#     else:
+#       print("Data file does not exist and URL is down, no data will show.")
 
-def getIntegralProtonFlux():
-  # Parse local data
-  with open("../data/ace_sis_5m.txt", "r") as fh:
-    datas = {}
-    units = "Protons/cm2*s*sr*MeV"
-    particles = {}
-    label_list = ['>10','>30']
-    stamp = []
-    # Skip the first two lines, just boiler plate stuff
-    next(fh)
-    next(fh)
-    # Iterator of Header
-    for line in fh:
-      if(line.startswith('#') and not(line.startswith('#-'))):
-        pass
-      else:
-        # Stop decoding header
-        break
-    # Iterator of Data
-    for line in fh:
-      # Map out each data line to yr, mo, dy, hhmm, skip, skip, d0, d1, ... , dn
-      # Zipping up the original sequence of labels with the remainder data
-      # lines allows the for loop to then iterate through the new list
-      (yr,mo,dy,time,blah1,blah2,blah3,datarow1,blah4,datarow2) = line.split()
-      stamp.append((str.join("",(yr,mo,dy)), time))
-      for (key, value) in zip(label_list, [datarow1,datarow2]):
-        if(key in datas):
-          datas[key].append(float(value))
-        else:
-          datas[key] = [float(value)]
-  # Format the Particles
-  particle_tuple = zip(['Proton','Proton'], label_list)
-  for (particle, key) in particle_tuple:
-    particles[key] = (particle, key)
-  # Now return the data
-  return(label_list,datas,stamp,units,particles)
+# def getIntegralProtonFlux():
+#   # Parse local data
+#   with open("../data/ace_sis_5m.txt", "r") as fh:
+#     datas = {}
+#     units = "Protons/cm2*s*sr*MeV"
+#     particles = {}
+#     label_list = ['>10','>30']
+#     stamp = []
+#     # Skip the first two lines, just boiler plate stuff
+#     next(fh)
+#     next(fh)
+#     # Iterator of Header
+#     for line in fh:
+#       if(line.startswith('#') and not(line.startswith('#-'))):
+#         pass
+#       else:
+#         # Stop decoding header
+#         break
+#     # Iterator of Data
+#     for line in fh:
+#       # Map out each data line to yr, mo, dy, hhmm, skip, skip, d0, d1, ... , dn
+#       # Zipping up the original sequence of labels with the remainder data
+#       # lines allows the for loop to then iterate through the new list
+#       (yr,mo,dy,time,blah1,blah2,blah3,datarow1,blah4,datarow2) = line.split()
+#       stamp.append((str.join("",(yr,mo,dy)), time))
+#       for (key, value) in zip(label_list, [datarow1,datarow2]):
+#         if(key in datas):
+#           datas[key].append(float(value))
+#         else:
+#           datas[key] = [float(value)]
+#   # Format the Particles
+#   particle_tuple = zip(['Proton','Proton'], label_list)
+#   for (particle, key) in particle_tuple:
+#     particles[key] = (particle, key)
+#   # Now return the data
+#   return(label_list,datas,stamp,units,particles)
 
 #################################################
 #       ACE Interplanetary Magnetic Field       #

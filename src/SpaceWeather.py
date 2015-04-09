@@ -21,11 +21,11 @@ import colors_and_globals
 ###########################################################################
 from DifferentialEnergeticProtonFlux import MyGOESRangeProtonFluxCanvas
 from GeomagneticField import MyGOESGoemagFieldFluxCanvas
-from DiscreteParticleFlux import MyGOESDiscreteParticleFlux
+# from DiscreteParticleFlux import MyGOESDiscreteParticleFlux
 from SolarParticleFlux import MyGOESIntegralParticleFlux
 from DualXRayFlux import MyGOESXrayFlux
-from ACEDiffElectronProtonFlux import MyDiffElecProtFlux
-from ACEIntegralProtonFlux import MyIntegralProtonFlux
+# from ACEDiffElectronProtonFlux import MyDiffElecProtFlux
+# from ACEIntegralProtonFlux import MyIntegralProtonFlux
 from ACEInterplanetaryMagField import MyInterplanetaryMagField
 from ACESolarWindPlasma import MySolarWindPlasma
 """
@@ -50,6 +50,7 @@ if(qt_compat.QT_API == qt_compat.QT_API_PYSIDE):
   from PySide.QtGui import QMessageBox
   from PySide.QtGui import QApplication
   from PySide import QtCore
+  from PySide.QtCore import QTimer
 else:
   from PySide.QtGui import QMainWindow
   from PySide.QtGui import QMenu
@@ -59,6 +60,7 @@ else:
   from Pyside.QtGui import QMessageBox
   from PySide.QtGui import QApplication
   from PySide import QtCore
+  from PyQt4.QtCore import QTimer
 
 ###########################################################################
 # Main Application Object
@@ -114,20 +116,20 @@ class ApplicationWindow(QMainWindow):
 
     # Add each individual Plot Widget to the horizontal layout objects in a
     # circular fashion will result in a nicely laid out set of plots
-    GOESXrayFlux = MyGOESXrayFlux(self.main_widget, width=5, height=4, dpi=100)
-    h1.addWidget(GOESXrayFlux)
-    ACESolarWindPlasma = MySolarWindPlasma(self.main_widget, width=5, height=4, dpi=100)
-    h1.addWidget(ACESolarWindPlasma)
+    self.GOESXrayFlux = MyGOESXrayFlux(self.main_widget, width=5, height=4, dpi=100)
+    h1.addWidget(self.GOESXrayFlux)
+    self.ACESolarWindPlasma = MySolarWindPlasma(self.main_widget, width=5, height=4, dpi=100)
+    h1.addWidget(self.ACESolarWindPlasma)
 
-    GOESRangeProtonFlux = MyGOESRangeProtonFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
-    h2.addWidget(GOESRangeProtonFlux)
-    GOESRangeParticleFlux = MyGOESIntegralParticleFlux(self.main_widget, width=5, height=4, dpi=100)
-    h2.addWidget(GOESRangeParticleFlux)
+    self.GOESRangeProtonFlux = MyGOESRangeProtonFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
+    h2.addWidget(self.GOESRangeProtonFlux)
+    self.GOESRangeParticleFlux = MyGOESIntegralParticleFlux(self.main_widget, width=5, height=4, dpi=100)
+    h2.addWidget(self.GOESRangeParticleFlux)
 
-    GOESGoemagFieldFlux = MyGOESGoemagFieldFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
-    h3.addWidget(GOESGoemagFieldFlux)
-    ACEInterplanetaryMagField = MyInterplanetaryMagField(self.main_widget, width=5, height=4, dpi=100)
-    h3.addWidget(ACEInterplanetaryMagField)
+    self.GOESGoemagFieldFlux = MyGOESGoemagFieldFluxCanvas(self.main_widget, width=5, height=4, dpi=100)
+    h3.addWidget(self.GOESGoemagFieldFlux)
+    self.ACEInterplanetaryMagField = MyInterplanetaryMagField(self.main_widget, width=5, height=4, dpi=100)
+    h3.addWidget(self.ACEInterplanetaryMagField)
 
     # ACEIntegralProtonFlux = MyIntegralProtonFlux(self.main_widget, width=5, height=4, dpi=100)
     # h3.addWidget(ACEIntegralProtonFlux)
@@ -135,6 +137,44 @@ class ApplicationWindow(QMainWindow):
     # h3.addWidget(GOESDiscreteParticleFlux)
     # ACEDiffElecProtFlux = MyDiffElecProtFlux(self.main_widget, width=5, height=4, dpi=100)
     # h3.addWidget(ACEDiffElecProtFlux)
+
+    # Setup the Notification Bar Updater
+    self.update_pos = 0
+    timer = QTimer(self)
+    timer.timeout.connect(self.update_notifier)
+    timer.start(5000)
+
+  def update_notifier(self):
+    if(self.update_pos == 0):
+      last_time = self.GOESXrayFlux.get_stamp()
+      last_string = self.GOESXrayFlux.get_name_string()
+      self.statusBar().showMessage("%s last data available: %s"%(last_string, last_time[-1][1]))
+      self.update_pos = 1
+    elif(self.update_pos == 1):
+      last_time = self.ACESolarWindPlasma.get_stamp()
+      last_string = self.ACESolarWindPlasma.get_name_string()
+      self.statusBar().showMessage("%s last data available: %s"%(last_string, last_time[-1][1]))
+      self.update_pos = 2
+    elif(self.update_pos == 2):
+      last_time = self.GOESRangeProtonFlux.get_stamp()
+      last_string = self.GOESRangeProtonFlux.get_name_string()
+      self.statusBar().showMessage("%s last data available: %s"%(last_string, last_time[-1][1]))
+      self.update_pos = 3
+    elif(self.update_pos == 3):
+      last_time = self.GOESRangeParticleFlux.get_stamp()
+      last_string = self.GOESRangeParticleFlux.get_name_string()
+      self.statusBar().showMessage("%s last data available: %s"%(last_string, last_time[-1][1]))
+      self.update_pos = 4
+    elif(self.update_pos == 4):
+      last_time = self.GOESGoemagFieldFlux.get_stamp()
+      last_string = self.GOESGoemagFieldFlux.get_name_string()
+      self.statusBar().showMessage("%s last data available: %s"%(last_string, last_time[-1][1]))
+      self.update_pos = 5
+    elif(self.update_pos == 5):
+      last_time = self.ACEInterplanetaryMagField.get_stamp()
+      last_string = self.ACEInterplanetaryMagField.get_name_string()
+      self.statusBar().showMessage("%s last data available: %s"%(last_string, last_time[-1][1]))
+      self.update_pos = 0
 
   def fileQuit(self):
     self.close()
@@ -155,7 +195,6 @@ rc('font', **colors_and_globals.font)
 qApp = QApplication(argv)
 aw = ApplicationWindow()
 # Notify user that initial data has been populater
-# aw.statusBar().showMessage("Initial data sets have been downloaded.", 15000)
 aw.setWindowTitle("Space Weather Grapher")
 exit(qApp.exec_())
 #qApp.exec_()
