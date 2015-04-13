@@ -109,10 +109,10 @@ class MyInterplanetaryMagField(MyMplCanvas):
     # Annotate the range of data
     # Where to put the x-axis range of data text
     if(max(datas["Longitude"])-min(datas["Longitude"]) < 150):
-      if(min(datas["Longitude"]) < 100):
-        x_place = min(datas["Longitude"]) - 25
-      elif(max(datas["Longitude"]) > 260):
-        x_place = max(datas["Longitude"]) + 25
+      if(max(datas["Longitude"]) > 260):
+        x_place = min(datas["Longitude"]) - 75
+      elif(min(datas["Longitude"]) < 100):
+        x_place = max(datas["Longitude"]) + 75
       else:
         x_place = 175
     else:
