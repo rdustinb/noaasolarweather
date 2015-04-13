@@ -2,6 +2,7 @@
 import sys
 import re
 import colors_and_globals
+import os
 from datetime import datetime, timezone
 
 if int(sys.version[0]) == 3:
@@ -96,7 +97,7 @@ def storeGOESRangeProtonFlux():
           next
         else:
           locfh.write(line)
-  except HTTPError:
+  except urllib.error.HTTPError:
     if(os.path.exists(storage_file)):
       print("Opening stale data until the next sample period, URL is down.")
     else:
@@ -177,7 +178,7 @@ def storeGOESGeomagFieldFlux():
           next
         else:
           locfh.write(line)
-  except HTTPError:
+  except urllib.error.HTTPError:
     if(os.path.exists(storage_file)):
       print("Opening stale data until the next sample period, URL is down.")
     else:
@@ -422,7 +423,7 @@ def storeGOESXrayFlux():
           next
         else:
           locfh.write(line)
-  except HTTPError:
+  except urllib.error.HTTPError:
     if(os.path.exists(storage_file)):
       print("Opening stale data until the next sample period, URL is down.")
     else:
@@ -655,7 +656,7 @@ def storeInterplanetMagField():
           next
         else:
           locfh.write(line)
-  except HTTPError:
+  except urllib.error.HTTPError:
     if(os.path.exists(storage_file)):
       print("Opening stale data until the next sample period, URL is down.")
     else:
@@ -721,7 +722,7 @@ def storeSolarPlasma():
           next
         else:
           locfh.write(line)
-  except HTTPError:
+  except urllib.error.HTTPError:
     if(os.path.exists(storage_file)):
       print("Opening stale data until the next sample period, URL is down.")
     else:
