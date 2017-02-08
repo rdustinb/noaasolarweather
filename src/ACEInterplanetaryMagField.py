@@ -16,7 +16,7 @@ from matplotlib import colors as mcolors
 if(QT_API == QT_API_PYSIDE):
   from PySide.QtCore import QTimer
 else:
-  from PyQt4.QtCore import QTimer
+  from PyQt5.QtCore import QTimer
 
 ###########################################################################
 # Specific Plot Canvas Objects

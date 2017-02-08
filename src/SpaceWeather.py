@@ -59,15 +59,10 @@ if int(version[0]) == 3:
     from PySide import QtCore
     from PySide.QtCore import QTimer
   else:
-    from PySide.QtGui import QMainWindow
-    from PySide.QtGui import QMenu
-    from Pyside.QtGui import QWidget
-    from Pyside.QtGui import QVBoxLayout
-    from Pyside.QtGui import QHBoxLayout
-    from Pyside.QtGui import QMessageBox
-    from PySide.QtGui import QApplication
-    from PySide import QtCore
-    from PyQt4.QtCore import QTimer
+    from PyQt5.QtWidgets import (QMessageBox,QHBoxLayout,QMenu,QApplication,
+      QMainWindow,QVBoxLayout,QWidget)
+    from PyQt5 import QtCore
+    from PyQt5.QtCore import QTimer
 
   ###########################################################################
   # Main Application Object

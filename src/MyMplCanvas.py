@@ -1,4 +1,4 @@
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 import colors_and_globals
 from numpy import linspace
@@ -14,7 +14,7 @@ from matplotlib.backends.qt_compat import QT_API_PYSIDE
 if(QT_API == QT_API_PYSIDE):
   from PySide.QtGui import QSizePolicy
 else:
-  from PyQt4.QtGui import QSizePolicy
+  from PyQt5.QtWidgets import QSizePolicy
 
 # Generic Canvas Object
 class MyMplCanvas(FigureCanvasQTAgg):
