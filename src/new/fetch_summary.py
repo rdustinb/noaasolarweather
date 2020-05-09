@@ -90,6 +90,29 @@ def get_measurement_differential_protons(period):
   
   return data # This is an array of dictionaries
 
+def get_measurement_integral_electrons(period):
+  # "time_tag"
+  # "satellite"
+  # "flux"
+  # "energy"
+  if DEBUG: print("get_measurement_integral_electrons(%s)"%(period))
+  if period == "6h": url = "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json"
+  if period == "1d": url = "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json"
+  if period == "3d": url = "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-3-day.json"
+  if period == "7d": url = "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-7-day.json"
+
+  with urllib.request.urlopen(url) as thisurl:
+    data = json.loads(thisurl.read().decode())
+  
+  if DEBUG: print("Example satellite    : %s"%(data[0]["satellite"]))
+  if DEBUG: print("Example flux         : %s"%(data[0]["flux"]))
+  if DEBUG: print("Example energy       : %s"%(data[0]["energy"]))
+  if DEBUG: print("Example time_tag[0]  : %s"%(data[0]["time_tag"]))
+  if DEBUG: print("Example time_tag[-1] : %s"%(data[-1]["time_tag"]))
+  if DEBUG: print("\n")
+  
+  return data # This is an array of dictionaries
+
 ###############################################################################
 # The Sun Itself
 ###############################################################################
@@ -230,20 +253,26 @@ def get_sunspot_report():
 
 if __name__ == "__main__":
   data = list()
-  DEBUG              = True
-  ENINDICES          = False
-  ENWEATHERMEASURESe = False
-  ENWEATHERMEASURESp = True
-  ENSUNMEASURES      = False
-  if ENINDICES:          data = get_kp_index_1m()
-  if ENINDICES:          data = get_k_index_1m()
-  if ENWEATHERMEASURESe: data = get_measurement_differential_electrons("6h")
-  if ENWEATHERMEASURESe: data = get_measurement_differential_electrons("1d")
-  if ENWEATHERMEASURESe: data = get_measurement_differential_electrons("3d")
-  if ENWEATHERMEASURESe: data = get_measurement_differential_electrons("7d")
-  if ENWEATHERMEASURESp: data = get_measurement_differential_protons("6h")
-  if ENWEATHERMEASURESp: data = get_measurement_differential_protons("1d")
-  if ENWEATHERMEASURESp: data = get_measurement_differential_protons("3d")
-  if ENWEATHERMEASURESp: data = get_measurement_differential_protons("7d")
-  if ENSUNMEASURES:      data = get_solar_regions()
-  if ENSUNMEASURES:      data = get_sunspot_report()
+  DEBUG               = True
+  ENINDICES           = False
+  ENWEATHERMEASURESde = False
+  ENWEATHERMEASURESdp = False
+  ENWEATHERMEASURESie = True
+  ENWEATHERMEASURESip = False
+  ENSUNMEASURES       = False
+  if ENINDICES:           data = get_kp_index_1m()
+  if ENINDICES:           data = get_k_index_1m()
+  if ENWEATHERMEASURESde: data = get_measurement_differential_electrons("6h")
+  if ENWEATHERMEASURESde: data = get_measurement_differential_electrons("1d")
+  if ENWEATHERMEASURESde: data = get_measurement_differential_electrons("3d")
+  if ENWEATHERMEASURESde: data = get_measurement_differential_electrons("7d")
+  if ENWEATHERMEASURESdp: data = get_measurement_differential_protons("6h")
+  if ENWEATHERMEASURESdp: data = get_measurement_differential_protons("1d")
+  if ENWEATHERMEASURESdp: data = get_measurement_differential_protons("3d")
+  if ENWEATHERMEASURESdp: data = get_measurement_differential_protons("7d")
+  if ENWEATHERMEASURESie: data = get_measurement_integral_electrons("6h")
+  if ENWEATHERMEASURESie: data = get_measurement_integral_electrons("1d")
+  if ENWEATHERMEASURESie: data = get_measurement_integral_electrons("3d")
+  if ENWEATHERMEASURESie: data = get_measurement_integral_electrons("7d")
+  if ENSUNMEASURES:       data = get_solar_regions()
+  if ENSUNMEASURES:       data = get_sunspot_report()
