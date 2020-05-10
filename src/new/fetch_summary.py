@@ -113,6 +113,81 @@ def get_measurement_integral_electrons(period):
   
   return data # This is an array of dictionaries
 
+def get_measurement_integral_protons(period):
+  # "time_tag"
+  # "satellite"
+  # "flux"
+  # "energy"
+  if DEBUG: print("get_measurement_integral_protons(%s)"%(period))
+  if period == "6h": url = "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json"
+  if period == "1d": url = "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json"
+  if period == "3d": url = "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-3-day.json"
+  if period == "7d": url = "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-7-day.json"
+
+  with urllib.request.urlopen(url) as thisurl:
+    data = json.loads(thisurl.read().decode())
+  
+  if DEBUG: print("Example satellite    : %s"%(data[0]["satellite"]))
+  if DEBUG: print("Example flux         : %s"%(data[0]["flux"]))
+  if DEBUG: print("Example energy       : %s"%(data[0]["energy"]))
+  if DEBUG: print("Example time_tag[0]  : %s"%(data[0]["time_tag"]))
+  if DEBUG: print("Example time_tag[-1] : %s"%(data[-1]["time_tag"]))
+  if DEBUG: print("\n")
+  
+  return data # This is an array of dictionaries
+
+def get_measurement_magnetometers(period):
+  # "time_tag"
+  # "satellite"
+  # "He"
+  # "Hp"
+  # "Hn"
+  # "total"
+  # "arcjet_flag"
+  if DEBUG: print("get_measurement_magnetometers(%s)"%(period))
+  if period == "6h": url = "https://services.swpc.noaa.gov/json/goes/primary/magnetometers-6-hour.json"
+  if period == "1d": url = "https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json"
+  if period == "3d": url = "https://services.swpc.noaa.gov/json/goes/primary/magnetometers-3-day.json"
+  if period == "7d": url = "https://services.swpc.noaa.gov/json/goes/primary/magnetometers-7-day.json"
+
+  with urllib.request.urlopen(url) as thisurl:
+    data = json.loads(thisurl.read().decode())
+  
+  if DEBUG: print("Example satellite    : %s"%(data[0]["satellite"]))
+  if DEBUG: print("Example He           : %s"%(data[0]["He"]))
+  if DEBUG: print("Example Hp           : %s"%(data[0]["Hp"]))
+  if DEBUG: print("Example Hn           : %s"%(data[0]["Hn"]))
+  if DEBUG: print("Example total        : %s"%(data[0]["total"]))
+  if DEBUG: print("Example arcjet_flag  : %s"%(data[0]["arcjet_flag"]))
+  if DEBUG: print("Example time_tag[0]  : %s"%(data[0]["time_tag"]))
+  if DEBUG: print("Example time_tag[-1] : %s"%(data[-1]["time_tag"]))
+  if DEBUG: print("\n")
+  
+  return data # This is an array of dictionaries
+
+def get_measurement_xrays(period):
+  # "time_tag"
+  # "satellite"
+  # "flux"
+  # "energy"
+  if DEBUG: print("get_measurement_xrays(%s)"%(period))
+  if period == "6h": url = "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json"
+  if period == "1d": url = "https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json"
+  if period == "3d": url = "https://services.swpc.noaa.gov/json/goes/primary/xrays-3-day.json"
+  if period == "7d": url = "https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json"
+
+  with urllib.request.urlopen(url) as thisurl:
+    data = json.loads(thisurl.read().decode())
+  
+  if DEBUG: print("Example satellite    : %s"%(data[0]["satellite"]))
+  if DEBUG: print("Example flux         : %s"%(data[0]["flux"]))
+  if DEBUG: print("Example energy       : %s"%(data[0]["energy"]))
+  if DEBUG: print("Example time_tag[0]  : %s"%(data[0]["time_tag"]))
+  if DEBUG: print("Example time_tag[-1] : %s"%(data[-1]["time_tag"]))
+  if DEBUG: print("\n")
+  
+  return data # This is an array of dictionaries
+
 ###############################################################################
 # The Sun Itself
 ###############################################################################
@@ -257,8 +332,10 @@ if __name__ == "__main__":
   ENINDICES           = False
   ENWEATHERMEASURESde = False
   ENWEATHERMEASURESdp = False
-  ENWEATHERMEASURESie = True
+  ENWEATHERMEASURESie = False
   ENWEATHERMEASURESip = False
+  ENWEATHERMEASURESm  = False
+  ENWEATHERMEASURESx  = True
   ENSUNMEASURES       = False
   if ENINDICES:           data = get_kp_index_1m()
   if ENINDICES:           data = get_k_index_1m()
@@ -274,5 +351,17 @@ if __name__ == "__main__":
   if ENWEATHERMEASURESie: data = get_measurement_integral_electrons("1d")
   if ENWEATHERMEASURESie: data = get_measurement_integral_electrons("3d")
   if ENWEATHERMEASURESie: data = get_measurement_integral_electrons("7d")
+  if ENWEATHERMEASURESip: data = get_measurement_integral_protons("6h")
+  if ENWEATHERMEASURESip: data = get_measurement_integral_protons("1d")
+  if ENWEATHERMEASURESip: data = get_measurement_integral_protons("3d")
+  if ENWEATHERMEASURESip: data = get_measurement_integral_protons("7d")
+  if ENWEATHERMEASURESm:  data = get_measurement_magnetometers("6h")
+  if ENWEATHERMEASURESm:  data = get_measurement_magnetometers("1d")
+  if ENWEATHERMEASURESm:  data = get_measurement_magnetometers("3d")
+  if ENWEATHERMEASURESm:  data = get_measurement_magnetometers("7d")
+  if ENWEATHERMEASURESx:  data = get_measurement_xrays("6h")
+  if ENWEATHERMEASURESx:  data = get_measurement_xrays("1d")
+  if ENWEATHERMEASURESx:  data = get_measurement_xrays("3d")
+  if ENWEATHERMEASURESx:  data = get_measurement_xrays("7d")
   if ENSUNMEASURES:       data = get_solar_regions()
   if ENSUNMEASURES:       data = get_sunspot_report()
