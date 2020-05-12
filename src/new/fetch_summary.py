@@ -348,53 +348,68 @@ def listOfDicts_to_dictOfLists(dataI):
   return dataO
 
 if __name__ == "__main__":
-  data = list()
-  DEBUG                = True
+  data = dict()
+
+  DEBUG                = False
+  ENFILEWRITES         = True
+
   ENINDICES            = True
-  ENWEATHERMEASURESd6e = False
+  ENWEATHERMEASURESd6e = True
   ENWEATHERMEASURESd1e = False
   ENWEATHERMEASURESd3e = False
   ENWEATHERMEASURESd7e = False
-  ENWEATHERMEASURESd6p = False
+  ENWEATHERMEASURESd6p = True
   ENWEATHERMEASURESd1p = False
   ENWEATHERMEASURESd3p = False
   ENWEATHERMEASURESd7p = False
-  ENWEATHERMEASURESi6e = False
+  ENWEATHERMEASURESi6e = True
   ENWEATHERMEASURESi1e = False
   ENWEATHERMEASURESi3e = False
   ENWEATHERMEASURESi7e = False
-  ENWEATHERMEASURESi6p = False
+  ENWEATHERMEASURESi6p = True
   ENWEATHERMEASURESi1p = False
   ENWEATHERMEASURESi3p = False
   ENWEATHERMEASURESi7p = False
-  ENWEATHERMEASURESm   = False
-  ENWEATHERMEASURESx   = False
-  ENSUNMEASURES        = False
-  if ENINDICES:            data = listOfDicts_to_dictOfLists(get_kp_index_1m())
-  if ENINDICES:            data = listOfDicts_to_dictOfLists(get_k_index_1m())
-  if ENWEATHERMEASURESd6e: data = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("6h"))
-  if ENWEATHERMEASURESd1e: data = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("1d"))
-  if ENWEATHERMEASURESd3e: data = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("3d"))
-  if ENWEATHERMEASURESd7e: data = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("7d"))
-  if ENWEATHERMEASURESd6p: data = listOfDicts_to_dictOfLists(get_measurement_differential_protons("6h"))
-  if ENWEATHERMEASURESd1p: data = listOfDicts_to_dictOfLists(get_measurement_differential_protons("1d"))
-  if ENWEATHERMEASURESd3p: data = listOfDicts_to_dictOfLists(get_measurement_differential_protons("3d"))
-  if ENWEATHERMEASURESd7p: data = listOfDicts_to_dictOfLists(get_measurement_differential_protons("7d"))
-  if ENWEATHERMEASURESi6e: data = listOfDicts_to_dictOfLists(get_measurement_integral_electrons("6h"))
-  if ENWEATHERMEASURESi1e: data = listOfDicts_to_dictOfLists(get_measurement_integral_electrons("1d"))
-  if ENWEATHERMEASURESi3e: data = listOfDicts_to_dictOfLists(get_measurement_integral_electrons("3d"))
-  if ENWEATHERMEASURESi7e: data = listOfDicts_to_dictOfLists(get_measurement_integral_electrons("7d"))
-  if ENWEATHERMEASURESi6p: data = listOfDicts_to_dictOfLists(get_measurement_integral_protons("6h"))
-  if ENWEATHERMEASURESi1p: data = listOfDicts_to_dictOfLists(get_measurement_integral_protons("1d"))
-  if ENWEATHERMEASURESi3p: data = listOfDicts_to_dictOfLists(get_measurement_integral_protons("3d"))
-  if ENWEATHERMEASURESi7p: data = listOfDicts_to_dictOfLists(get_measurement_integral_protons("7d"))
-  if ENWEATHERMEASURESm:   data = listOfDicts_to_dictOfLists(get_measurement_magnetometers("6h"))
-  if ENWEATHERMEASURESm:   data = listOfDicts_to_dictOfLists(get_measurement_magnetometers("1d"))
-  if ENWEATHERMEASURESm:   data = listOfDicts_to_dictOfLists(get_measurement_magnetometers("3d"))
-  if ENWEATHERMEASURESm:   data = listOfDicts_to_dictOfLists(get_measurement_magnetometers("7d"))
-  if ENWEATHERMEASURESx:   data = listOfDicts_to_dictOfLists(get_measurement_xrays("6h"))
-  if ENWEATHERMEASURESx:   data = listOfDicts_to_dictOfLists(get_measurement_xrays("1d"))
-  if ENWEATHERMEASURESx:   data = listOfDicts_to_dictOfLists(get_measurement_xrays("3d"))
-  if ENWEATHERMEASURESx:   data = listOfDicts_to_dictOfLists(get_measurement_xrays("7d"))
-  if ENSUNMEASURES:        data = listOfDicts_to_dictOfLists(get_solar_regions())
-  if ENSUNMEASURES:        data = listOfDicts_to_dictOfLists(get_sunspot_report())
+  ENWEATHERMEASURES6m  = True
+  ENWEATHERMEASURES1m  = False
+  ENWEATHERMEASURES3m  = False
+  ENWEATHERMEASURES7m  = False
+  ENWEATHERMEASURES6x  = True
+  ENWEATHERMEASURES1x  = False
+  ENWEATHERMEASURES3x  = False
+  ENWEATHERMEASURES7x  = False
+  ENSUNMEASURES        = True
+
+  if ENINDICES:            data["get_kp_index_1m()"]                          = listOfDicts_to_dictOfLists(get_kp_index_1m())
+  if ENINDICES:            data["get_k_index_1m()"]                           = listOfDicts_to_dictOfLists(get_k_index_1m())
+  if ENWEATHERMEASURESd6e: data["get_measurement_differential_electrons(6h)"] = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("6h"))
+  if ENWEATHERMEASURESd1e: data["get_measurement_differential_electrons(1d)"] = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("1d"))
+  if ENWEATHERMEASURESd3e: data["get_measurement_differential_electrons(3d)"] = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("3d"))
+  if ENWEATHERMEASURESd7e: data["get_measurement_differential_electrons(7d)"] = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("7d"))
+  if ENWEATHERMEASURESd6p: data["get_measurement_differential_protons(6h)"]   = listOfDicts_to_dictOfLists(get_measurement_differential_protons("6h"))
+  if ENWEATHERMEASURESd1p: data["get_measurement_differential_protons(1d)"]   = listOfDicts_to_dictOfLists(get_measurement_differential_protons("1d"))
+  if ENWEATHERMEASURESd3p: data["get_measurement_differential_protons(3d)"]   = listOfDicts_to_dictOfLists(get_measurement_differential_protons("3d"))
+  if ENWEATHERMEASURESd7p: data["get_measurement_differential_protons(7d)"]   = listOfDicts_to_dictOfLists(get_measurement_differential_protons("7d"))
+  if ENWEATHERMEASURESi6e: data["get_measurement_integral_electrons(6h)"]     = listOfDicts_to_dictOfLists(get_measurement_integral_electrons("6h"))
+  if ENWEATHERMEASURESi1e: data["get_measurement_integral_electrons(1d)"]     = listOfDicts_to_dictOfLists(get_measurement_integral_electrons("1d"))
+  if ENWEATHERMEASURESi3e: data["get_measurement_integral_electrons(3d)"]     = listOfDicts_to_dictOfLists(get_measurement_integral_electrons("3d"))
+  if ENWEATHERMEASURESi7e: data["get_measurement_integral_electrons(7d)"]     = listOfDicts_to_dictOfLists(get_measurement_integral_electrons("7d"))
+  if ENWEATHERMEASURESi6p: data["get_measurement_integral_protons(6h)"]       = listOfDicts_to_dictOfLists(get_measurement_integral_protons("6h"))
+  if ENWEATHERMEASURESi1p: data["get_measurement_integral_protons(1d)"]       = listOfDicts_to_dictOfLists(get_measurement_integral_protons("1d"))
+  if ENWEATHERMEASURESi3p: data["get_measurement_integral_protons(3d)"]       = listOfDicts_to_dictOfLists(get_measurement_integral_protons("3d"))
+  if ENWEATHERMEASURESi7p: data["get_measurement_integral_protons(7d)"]       = listOfDicts_to_dictOfLists(get_measurement_integral_protons("7d"))
+  if ENWEATHERMEASURES6m:  data["get_measurement_magnetometers(6h)"]          = listOfDicts_to_dictOfLists(get_measurement_magnetometers("6h"))
+  if ENWEATHERMEASURES1m:  data["get_measurement_magnetometers(1d)"]          = listOfDicts_to_dictOfLists(get_measurement_magnetometers("1d"))
+  if ENWEATHERMEASURES3m:  data["get_measurement_magnetometers(3d)"]          = listOfDicts_to_dictOfLists(get_measurement_magnetometers("3d"))
+  if ENWEATHERMEASURES7m:  data["get_measurement_magnetometers(7d)"]          = listOfDicts_to_dictOfLists(get_measurement_magnetometers("7d"))
+  if ENWEATHERMEASURES6x:  data["get_measurement_xrays(6h)"]                  = listOfDicts_to_dictOfLists(get_measurement_xrays("6h"))
+  if ENWEATHERMEASURES1x:  data["get_measurement_xrays(1d)"]                  = listOfDicts_to_dictOfLists(get_measurement_xrays("1d"))
+  if ENWEATHERMEASURES3x:  data["get_measurement_xrays(3d)"]                  = listOfDicts_to_dictOfLists(get_measurement_xrays("3d"))
+  if ENWEATHERMEASURES7x:  data["get_measurement_xrays(7d)"]                  = listOfDicts_to_dictOfLists(get_measurement_xrays("7d"))
+  if ENSUNMEASURES:        data["get_solar_regions()"]                        = listOfDicts_to_dictOfLists(get_solar_regions())
+  if ENSUNMEASURES:        data["get_sunspot_report()"]                       = listOfDicts_to_dictOfLists(get_sunspot_report())
+
+  # Write to the file, overwrite what is there
+  if ENFILEWRITES:
+    with open('data.json', 'w') as fh:
+      json.dump(data, fh)
