@@ -2,6 +2,30 @@ import urllib.request, json
 
 global DEBUG
 
+# TODO
+# 1) Add Remote Server URL Pull error handling
+#   - This happens if the remote URL or Server is inaccessible
+#   - This fetch daemon script should NOT overwrite the json archive if this
+#   occurs.
+# 2) Add Remote Server Data corruption error handling
+#   - This happens if the remote Server is updating data at the same time I am
+#   pulling the data, a file-based race condition
+#   - This fetch daemon script should NOT overwrite the specific data structure
+#   where this error occurs, instead rewriting the data that was already in the
+#   archive.
+# 3) Add error logging in a way that it can be graphed.
+#   - JSON archive
+#   - Dictionary of keys that are named according to the error
+#   - The Error name dictionary will itself be a list of date stamps
+#   - The graphing function can simply count the occurences of date stamps for
+#   calculating the error rate and frequency
+# 4) Add a "new data" status bit to the JSON archive
+#   - The GUI will read to check if the data has been updated by this fetching
+#   daemon script.
+#   - The GUI will clear the bit once it has updated the graphs.
+#   - This bit should not be set if ALL of the data happens to fail to fetch from
+#   the error conditions in #1 and #2 above.
+
 ###############################################################################
 # Solar Weather Indices
 ###############################################################################
@@ -353,6 +377,7 @@ if __name__ == "__main__":
   DEBUG                = False
   ENFILEWRITES         = True
 
+  # Determine what data to collect
   ENINDICES            = True
   ENWEATHERMEASURESd6e = True
   ENWEATHERMEASURESd1e = False
@@ -380,6 +405,7 @@ if __name__ == "__main__":
   ENWEATHERMEASURES7x  = False
   ENSUNMEASURES        = True
 
+  # Collect the Data
   if ENINDICES:            data["get_kp_index_1m()"]                          = listOfDicts_to_dictOfLists(get_kp_index_1m())
   if ENINDICES:            data["get_k_index_1m()"]                           = listOfDicts_to_dictOfLists(get_k_index_1m())
   if ENWEATHERMEASURESd6e: data["get_measurement_differential_electrons(6h)"] = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("6h"))
