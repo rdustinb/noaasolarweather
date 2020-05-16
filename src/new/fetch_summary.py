@@ -1,7 +1,16 @@
-import urllib.request, json
+import urllib.request, json, datetime
 
 global DEBUG
 
+# Error Log Structure
+#   dict{
+#       "sample name as key" : {
+#           "time_tag" : [ list of dates that are logged every time this script is called ]
+#           "url_failure_flags" : [ list of booleans for whether a data type server access failed ]
+#           "corrupt_flags" : [ list of booleans for whether a data type failed corruption tests ]
+
+###############################################################################
+###############################################################################
 # TODO
 # 1) Add Remote Server URL Pull error handling
 #   - This happens if the remote URL or Server is inaccessible
@@ -25,25 +34,68 @@ global DEBUG
 #   - The GUI will clear the bit once it has updated the graphs.
 #   - This bit should not be set if ALL of the data happens to fail to fetch from
 #   the error conditions in #1 and #2 above.
+###############################################################################
+###############################################################################
+# Completed
+###############################################################################
+###############################################################################
 
 ###############################################################################
 # Solar Weather Indices
 ###############################################################################
-def get_kp_index_1m():
+def get_kp_index_1m(error_log_in, data_in, date):
+  # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
+  # simply passing back the data that was in the json archive previously, keeping the stored data
+  error_log = error_log_in
+  data = data_in
   # Get the Kp Index
   if DEBUG: print("get_kp_index_1m()")
   url = "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json"
+
+  # Create the error dict if necessary
+  if "get_kp_index_1m()" not in error_log:
+    error_log["get_kp_index_1m()"] = dict()
+    error_log["get_kp_index_1m()"]["urlopen"] = list()
+    error_log["get_kp_index_1m()"]["corrupt"] = list()
+    error_log["get_kp_index_1m()"]["time_tag"] = list()
+
+  # Update the datestamp list
+  error_log["get_kp_index_1m()"]["time_tag"].append(date)
   
-  with urllib.request.urlopen(url) as thisurl:
-    data = json.loads(thisurl.read().decode())
+  # Make sure we access the server cleanly
+  try:
+    with urllib.request.urlopen(url) as thisurl:
+      tmp_data = json.loads(thisurl.read().decode())
+    error_log["get_kp_index_1m()"]["urlopen"].append(False)
+  except:
+    # If Opening the URL is an issue, then append a False flag for the data corruption since it isn't being tested
+    error_log["get_kp_index_1m()"]["urlopen"].append(True)
+    error_log["get_kp_index_1m()"]["corrupt"].append(False)
+    # If we cannot even fetch the data, just return what was passed to us....
+    return (error_log, data_in)
   
-  if DEBUG: print("Example kp_index:         %s"%(data[0]["kp_index"]))
-  if DEBUG: print("Example time_tag[0]:      %s"%(data[0]["time_tag"]))
-  if DEBUG: print("Example time_tag[-1]:     %s"%(data[-1]["time_tag"]))
-  if DEBUG: print("Total data points: %d"%(len(data)))
-  if DEBUG: print("\n")
-  
-  return data # This is an array of dictionaries
+  # Test that the data looks valid before passing
+  try:
+    if DEBUG: print("Example kp_index:         %s"%(tmp_data[0]["kp_index"]))
+    if DEBUG: print("Example time_tag[0]:      %s"%(tmp_data[0]["time_tag"]))
+    if DEBUG: print("Example time_tag[-1]:     %s"%(tmp_data[-1]["time_tag"]))
+    if DEBUG: print("Total data points: %d"%(len(tmp_data)))
+    if DEBUG: print("\n")
+
+    # If this doesn't throw an exception but doesn't meet these conditions, the data is corrupt
+    if (len(tmp_data[0]) is not 2) or (len(tmp_data[-1]) is not 2) or (len(tmp_data) is not 118):
+      error_log["get_kp_index_1m()"]["corrupt"].append(True)
+      return (error_log, data_in)
+
+    # Format this data key
+    data["get_kp_index_1m()"] = listOfDicts_to_dictOfLists(tmp_data)
+
+    error_log["get_kp_index_1m()"]["corrupt"].append(False)
+    return (error_log, data)
+  except:
+    error_log["get_kp_index_1m()"]["corrupt"].append(True)
+    # If we cannot even fetch the data, just return what was passed to us....
+    return (error_log, data_in)
 
 def get_k_index_1m():
   # Get the Boulder K Index
@@ -350,7 +402,9 @@ def get_sunspot_report():
   
   return data
 
+###############################################################################
 # Support Functions
+###############################################################################
 def listOfDicts_to_dictOfLists(dataI):
   # The purpose of this function is directly tied to the returned data from the NOAA servers
   # The data from NOAA is a list of dictionaries, where one element in the list is a specific
@@ -371,43 +425,81 @@ def listOfDicts_to_dictOfLists(dataI):
 
   return dataO
 
+###############################################################################
+# File Accesses
+###############################################################################
+def fetch_archive(file_to_read):
+  try:
+    with open(file_to_read, 'r') as fh:
+      data = json.load(fh)
+  except:
+    if DEBUG: print("No file %s detected, returning empty dictionary"%(file_to_read))
+    data = dict()
+  return data
+
+def store_archive(file_to_write, data):
+  with open(file_to_write, 'w') as fh:
+    if DEBUG: print("Storing to file %s"%(file_to_write))
+    json.dump(data, fh)
+
+###############################################################################
+# MAIN
+###############################################################################
 if __name__ == "__main__":
-  data = dict()
+  # Get the current sample datestamp for errors
+  now = str(datetime.datetime.now())
 
   DEBUG                = False
   ENFILEWRITES         = True
+  RECORDERRORS         = True
+
+  #data = dict()
 
   # Determine what data to collect
-  ENINDICES            = True
-  ENWEATHERMEASURESd6e = True
+  ENINDICESkp          = True
+  ENINDICESk           = False
+  ENWEATHERMEASURESd6e = False
   ENWEATHERMEASURESd1e = False
   ENWEATHERMEASURESd3e = False
   ENWEATHERMEASURESd7e = False
-  ENWEATHERMEASURESd6p = True
+  ENWEATHERMEASURESd6p = False
   ENWEATHERMEASURESd1p = False
   ENWEATHERMEASURESd3p = False
   ENWEATHERMEASURESd7p = False
-  ENWEATHERMEASURESi6e = True
+  ENWEATHERMEASURESi6e = False
   ENWEATHERMEASURESi1e = False
   ENWEATHERMEASURESi3e = False
   ENWEATHERMEASURESi7e = False
-  ENWEATHERMEASURESi6p = True
+  ENWEATHERMEASURESi6p = False
   ENWEATHERMEASURESi1p = False
   ENWEATHERMEASURESi3p = False
   ENWEATHERMEASURESi7p = False
-  ENWEATHERMEASURES6m  = True
+  ENWEATHERMEASURES6m  = False
   ENWEATHERMEASURES1m  = False
   ENWEATHERMEASURES3m  = False
   ENWEATHERMEASURES7m  = False
-  ENWEATHERMEASURES6x  = True
+  ENWEATHERMEASURES6x  = False
   ENWEATHERMEASURES1x  = False
   ENWEATHERMEASURES3x  = False
   ENWEATHERMEASURES7x  = False
-  ENSUNMEASURES        = True
+  ENSUNMEASURES        = False
 
-  # Collect the Data
-  if ENINDICES:            data["get_kp_index_1m()"]                          = listOfDicts_to_dictOfLists(get_kp_index_1m())
-  if ENINDICES:            data["get_k_index_1m()"]                           = listOfDicts_to_dictOfLists(get_k_index_1m())
+  # Fetch the current data and error log
+  if ENFILEWRITES:         data = fetch_archive('data.json')
+  if RECORDERRORS:         error_log = fetch_archive('errors.json')
+
+  # New Data and Error Collection Framework
+  # Collect the Data and Errors, if the previous run was logging a type of data and the current run does not contain
+  # that type of data, remove it from the error log as it has persistence
+  if ENINDICESkp:          # Catch the data and the error log
+                           all_info                                           = get_kp_index_1m(error_log, data, now)
+                           error_log                                          = all_info[0]
+                           data                                               = all_info[1]
+  elif RECORDERRORS:       # Strip the error log if this data type is no longer being sampled
+                           error_log.pop["get_kp_index_1m()", None]
+
+  # Old Data and Error Collection Framework
+  if ENINDICESk:           data["get_k_index_1m()"]                           = listOfDicts_to_dictOfLists(get_k_index_1m())
   if ENWEATHERMEASURESd6e: data["get_measurement_differential_electrons(6h)"] = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("6h"))
   if ENWEATHERMEASURESd1e: data["get_measurement_differential_electrons(1d)"] = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("1d"))
   if ENWEATHERMEASURESd3e: data["get_measurement_differential_electrons(3d)"] = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("3d"))
@@ -435,7 +527,6 @@ if __name__ == "__main__":
   if ENSUNMEASURES:        data["get_solar_regions()"]                        = listOfDicts_to_dictOfLists(get_solar_regions())
   if ENSUNMEASURES:        data["get_sunspot_report()"]                       = listOfDicts_to_dictOfLists(get_sunspot_report())
 
-  # Write to the file, overwrite what is there
-  if ENFILEWRITES:
-    with open('data.json', 'w') as fh:
-      json.dump(data, fh)
+  # Store the updated data and error_log
+  if ENFILEWRITES:         store_archive('data.json', data)
+  if RECORDERRORS:         store_archive('errors.json', error_log)
