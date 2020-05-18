@@ -61,7 +61,7 @@ def get_kp_index_1m(error_log_in, data_in, date):
 
   # Update the datestamp list
   error_log["get_kp_index_1m()"]["time_tag"].append(date)
-  
+
   # Make sure we access the server cleanly
   try:
     with urllib.request.urlopen(url) as thisurl:
@@ -79,11 +79,13 @@ def get_kp_index_1m(error_log_in, data_in, date):
     if DEBUG: print("Example kp_index:         %s"%(tmp_data[0]["kp_index"]))
     if DEBUG: print("Example time_tag[0]:      %s"%(tmp_data[0]["time_tag"]))
     if DEBUG: print("Example time_tag[-1]:     %s"%(tmp_data[-1]["time_tag"]))
+    if DEBUG: print("Example data[0]:          %s"%(tmp_data[0]))
+    if DEBUG: print("Example data[-1]:         %s"%(tmp_data[-1]))
     if DEBUG: print("Total data points: %d"%(len(tmp_data)))
     if DEBUG: print("\n")
 
     # If this doesn't throw an exception but doesn't meet these conditions, the data is corrupt
-    if (len(tmp_data[0]) is not 2) or (len(tmp_data[-1]) is not 2) or (len(tmp_data) is not 118):
+    if (len(tmp_data[0]) is not 2) or (len(tmp_data[-1]) is not 2):
       error_log["get_kp_index_1m()"]["corrupt"].append(True)
       return (error_log, data_in)
 
@@ -97,22 +99,63 @@ def get_kp_index_1m(error_log_in, data_in, date):
     # If we cannot even fetch the data, just return what was passed to us....
     return (error_log, data_in)
 
-def get_k_index_1m():
+def get_k_index_1m(error_log_in, data_in, date):
+  # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
+  # simply passing back the data that was in the json archive previously, keeping the stored data
+  error_log = error_log_in
+  data = data_in
   # Get the Boulder K Index
   if DEBUG: print("get_k_index_1m()")
   url = "https://services.swpc.noaa.gov/json/boulder_k_index_1m.json"
 
-  with urllib.request.urlopen(url) as thisurl:
-    data = json.loads(thisurl.read().decode())
-  
-  if DEBUG: print("Example k_index:          %s"%(data[0]["k_index"]))
-  if DEBUG: print("Example time_tag[0]:      %s"%(data[0]["time_tag"]))
-  if DEBUG: print("Example time_tag[-1]:     %s"%(data[-1]["time_tag"]))
-  if DEBUG: print("Total data points: %d"%(len(data)))
-  if DEBUG: print("\n")
-  
-  return data # This is an array of dictionaries
+  # Create the error dict if necessary
+  if "get_k_index_1m()" not in error_log:
+    error_log["get_k_index_1m()"] = dict()
+    error_log["get_k_index_1m()"]["urlopen"] = list()
+    error_log["get_k_index_1m()"]["corrupt"] = list()
+    error_log["get_k_index_1m()"]["time_tag"] = list()
 
+  # Update the datestamp list
+  error_log["get_k_index_1m()"]["time_tag"].append(date)
+
+  # Make sure we access the server cleanly
+  try:
+    with urllib.request.urlopen(url) as thisurl:
+      tmp_data = json.loads(thisurl.read().decode())
+    error_log["get_k_index_1m()"]["urlopen"].append(False)
+  except:
+    # If Opening the URL is an issue, then append a False flag for the data corruption since it isn't being tested
+    error_log["get_k_index_1m()"]["urlopen"].append(True)
+    error_log["get_k_index_1m()"]["corrupt"].append(False)
+    # If we cannot even fetch the data, just return what was passed to us....
+    return (error_log, data_in)
+  
+  # Test that the data looks valid before passing
+  try:
+    if DEBUG: print("Example k_index:          %s"%(tmp_data[0]["k_index"]))
+    if DEBUG: print("Example time_tag[0]:      %s"%(tmp_data[0]["time_tag"]))
+    if DEBUG: print("Example time_tag[-1]:     %s"%(tmp_data[-1]["time_tag"]))
+    if DEBUG: print("Example data[0]:          %s"%(tmp_data[0]))
+    if DEBUG: print("Example data[-1]:         %s"%(tmp_data[-1]))
+    if DEBUG: print("Length of data[0]:        %d"%(len(tmp_data[0])))
+    if DEBUG: print("Total data points: %d"%(len(tmp_data)))
+    if DEBUG: print("\n")
+
+    # If this doesn't throw an exception but doesn't meet these conditions, the data is corrupt
+    if (len(tmp_data[0]) is not 2) or (len(tmp_data[-1]) is not 2):
+      error_log["get_k_index_1m()"]["corrupt"].append(True)
+      return (error_log, data_in)
+
+    # Format this data key
+    data["get_k_index_1m()"] = listOfDicts_to_dictOfLists(tmp_data)
+
+    error_log["get_k_index_1m()"]["corrupt"].append(False)
+    return (error_log, data)
+  except:
+    error_log["get_k_index_1m()"]["corrupt"].append(True)
+    # If we cannot even fetch the data, just return what was passed to us....
+    return (error_log, data_in)
+  
 ###############################################################################
 # Solar Weather Measurements
 ###############################################################################
@@ -449,7 +492,7 @@ if __name__ == "__main__":
   # Get the current sample datestamp for errors
   now = str(datetime.datetime.now())
 
-  DEBUG                = False
+  DEBUG                = True
   ENFILEWRITES         = True
   RECORDERRORS         = True
 
@@ -457,7 +500,7 @@ if __name__ == "__main__":
 
   # Determine what data to collect
   ENINDICESkp          = True
-  ENINDICESk           = False
+  ENINDICESk           = True
   ENWEATHERMEASURESd6e = False
   ENWEATHERMEASURESd1e = False
   ENWEATHERMEASURESd3e = False
@@ -497,9 +540,14 @@ if __name__ == "__main__":
                            data                                               = all_info[1]
   elif RECORDERRORS:       # Strip the error log if this data type is no longer being sampled
                            error_log.pop["get_kp_index_1m()", None]
+  if ENINDICESk:           # Catch the data and the error log
+                           all_info                                           = get_k_index_1m(error_log, data, now)
+                           error_log                                          = all_info[0]
+                           data                                               = all_info[1]
+  elif RECORDERRORS:       # Strip the error log if this data type is no longer being sampled
+                           error_log.pop["get_k_index_1m()", None]
 
   # Old Data and Error Collection Framework
-  if ENINDICESk:           data["get_k_index_1m()"]                           = listOfDicts_to_dictOfLists(get_k_index_1m())
   if ENWEATHERMEASURESd6e: data["get_measurement_differential_electrons(6h)"] = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("6h"))
   if ENWEATHERMEASURESd1e: data["get_measurement_differential_electrons(1d)"] = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("1d"))
   if ENWEATHERMEASURESd3e: data["get_measurement_differential_electrons(3d)"] = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("3d"))
