@@ -47,7 +47,6 @@ def get_kp_index_1m(error_log_in, data_in, date):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
-  data = data_in
   # Get the Kp Index
   if DEBUG: print("get_kp_index_1m()")
   url = "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json"
@@ -96,14 +95,13 @@ def get_kp_index_1m(error_log_in, data_in, date):
     return (error_log, data)
   except:
     error_log["get_kp_index_1m()"]["corrupt"].append(True)
-    # If we cannot even fetch the data, just return what was passed to us....
+    # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
 def get_k_index_1m(error_log_in, data_in, date):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
-  data = data_in
   # Get the Boulder K Index
   if DEBUG: print("get_k_index_1m()")
   url = "https://services.swpc.noaa.gov/json/boulder_k_index_1m.json"
@@ -153,13 +151,16 @@ def get_k_index_1m(error_log_in, data_in, date):
     return (error_log, data)
   except:
     error_log["get_k_index_1m()"]["corrupt"].append(True)
-    # If we cannot even fetch the data, just return what was passed to us....
+    # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
   
 ###############################################################################
 # Solar Weather Measurements
 ###############################################################################
-def get_measurement_differential_electrons(period):
+def get_measurement_differential_electrons(period, error_log_in, data_in, date):
+  # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
+  # simply passing back the data that was in the json archive previously, keeping the stored data
+  error_log = error_log_in
   # "time_tag"
   # "satellite"
   # "flux"
@@ -170,17 +171,52 @@ def get_measurement_differential_electrons(period):
   if period == "3d": url = "https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-3-day.json"
   if period == "7d": url = "https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-7-day.json"
 
-  with urllib.request.urlopen(url) as thisurl:
-    data = json.loads(thisurl.read().decode())
+  # Create the error dict if necessary
+  if "get_measurement_differential_electrons()" not in error_log:
+    error_log["get_measurement_differential_electrons()"] = dict()
+    error_log["get_measurement_differential_electrons()"]["urlopen"] = list()
+    error_log["get_measurement_differential_electrons()"]["corrupt"] = list()
+    error_log["get_measurement_differential_electrons()"]["time_tag"] = list()
+
+  # Update the datestamp list
+  error_log["get_measurement_differential_electrons()"]["time_tag"].append(date)
+
+  # Make sure we access the server cleanly
+  try:
+    with urllib.request.urlopen(url) as thisurl:
+      tmp_data = json.loads(thisurl.read().decode())
+    error_log["get_measurement_differential_electrons()"]["urlopen"].append(False)
+  except:
+    # If Opening the URL is an issue, then append a False flag for the data corruption since it isn't being tested
+    error_log["get_measurement_differential_electrons()"]["urlopen"].append(True)
+    error_log["get_measurement_differential_electrons()"]["corrupt"].append(False)
+    # If we cannot even fetch the data, just return what was passed to us....
+    return (error_log, data_in)
   
-  if DEBUG: print("Example satellite    : %s"%(data[0]["satellite"]))
-  if DEBUG: print("Example flux         : %s"%(data[0]["flux"]))
-  if DEBUG: print("Example energy       : %s"%(data[0]["energy"]))
-  if DEBUG: print("Example time_tag[0]  : %s"%(data[0]["time_tag"]))
-  if DEBUG: print("Example time_tag[-1] : %s"%(data[-1]["time_tag"]))
-  if DEBUG: print("\n")
+  # Test that the data looks valid before passing
+  try:
+    if DEBUG: print("Example satellite    : %s"%(tmp_data[0]["satellite"]))
+    if DEBUG: print("Example flux         : %s"%(tmp_data[0]["flux"]))
+    if DEBUG: print("Example energy       : %s"%(tmp_data[0]["energy"]))
+    if DEBUG: print("Example time_tag[0]  : %s"%(tmp_data[0]["time_tag"]))
+    if DEBUG: print("Example time_tag[-1] : %s"%(tmp_data[-1]["time_tag"]))
+    if DEBUG: print("Total data points: %d"%(len(tmp_data)))
+    if DEBUG: print("\n")
   
-  return data # This is an array of dictionaries
+    # If this doesn't throw an exception but doesn't meet these conditions, the data is corrupt
+    if (len(tmp_data[0]) is not 4) or (len(tmp_data[-1]) is not 4):
+      error_log["get_measurement_differential_electrons()"]["corrupt"].append(True)
+      return (error_log, data_in)
+
+    # Format this data key
+    data["get_measurement_differential_electrons()"] = listOfDicts_to_dictOfLists(tmp_data)
+
+    error_log["get_measurement_differential_electrons()"]["corrupt"].append(False)
+    return (error_log, data)
+  except:
+    error_log["get_measurement_differential_electrons()"]["corrupt"].append(True)
+    # If the data appears corrupt from some basic tests, return the original data
+    return (error_log, data_in)
 
 def get_measurement_differential_protons(period):
   # "time_tag"
@@ -499,11 +535,11 @@ if __name__ == "__main__":
   #data = dict()
 
   # Determine what data to collect
-  ENINDICESkp          = True
-  ENINDICESk           = True
+  ENINDICESkp          = False
+  ENINDICESk           = False
   ENWEATHERMEASURESd6e = False
   ENWEATHERMEASURESd1e = False
-  ENWEATHERMEASURESd3e = False
+  ENWEATHERMEASURESd3e = True
   ENWEATHERMEASURESd7e = False
   ENWEATHERMEASURESd6p = False
   ENWEATHERMEASURESd1p = False
@@ -538,20 +574,39 @@ if __name__ == "__main__":
                            all_info                                           = get_kp_index_1m(error_log, data, now)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif RECORDERRORS:       # Strip the error log if this data type is no longer being sampled
-                           error_log.pop["get_kp_index_1m()", None]
+  elif RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
+                           data.pop("get_kp_index_1m()", None)
+                           error_log.pop("get_kp_index_1m()", None)
+
   if ENINDICESk:           # Catch the data and the error log
                            all_info                                           = get_k_index_1m(error_log, data, now)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif RECORDERRORS:       # Strip the error log if this data type is no longer being sampled
-                           error_log.pop["get_k_index_1m()", None]
+  elif RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
+                           data.pop("get_k_index_1m()", None)
+                           error_log.pop("get_k_index_1m()", None)
+
+  if ENWEATHERMEASURESd6e: # Catch the data and the error log
+                           all_info                                           = get_measurement_differential_electrons("6h", error_log, data, now)
+                           error_log                                          = all_info[0]
+                           data                                               = all_info[1]
+  elif ENWEATHERMEASURESd1e: # Catch the data and the error log
+                           all_info                                           = get_measurement_differential_electrons("1d", error_log, data, now)
+                           error_log                                          = all_info[0]
+                           data                                               = all_info[1]
+  elif ENWEATHERMEASURESd3e: # Catch the data and the error log
+                           all_info                                           = get_measurement_differential_electrons("3d", error_log, data, now)
+                           error_log                                          = all_info[0]
+                           data                                               = all_info[1]
+  elif ENWEATHERMEASURESd7e: # Catch the data and the error log
+                           all_info                                           = get_measurement_differential_electrons("7d", error_log, data, now)
+                           error_log                                          = all_info[0]
+                           data                                               = all_info[1]
+  elif RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
+                           data.pop("get_measurement_differential_electrons()", None)
+                           error_log.pop("get_measurement_differential_electrons()", None)
 
   # Old Data and Error Collection Framework
-  if ENWEATHERMEASURESd6e: data["get_measurement_differential_electrons(6h)"] = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("6h"))
-  if ENWEATHERMEASURESd1e: data["get_measurement_differential_electrons(1d)"] = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("1d"))
-  if ENWEATHERMEASURESd3e: data["get_measurement_differential_electrons(3d)"] = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("3d"))
-  if ENWEATHERMEASURESd7e: data["get_measurement_differential_electrons(7d)"] = listOfDicts_to_dictOfLists(get_measurement_differential_electrons("7d"))
   if ENWEATHERMEASURESd6p: data["get_measurement_differential_protons(6h)"]   = listOfDicts_to_dictOfLists(get_measurement_differential_protons("6h"))
   if ENWEATHERMEASURESd1p: data["get_measurement_differential_protons(1d)"]   = listOfDicts_to_dictOfLists(get_measurement_differential_protons("1d"))
   if ENWEATHERMEASURESd3p: data["get_measurement_differential_protons(3d)"]   = listOfDicts_to_dictOfLists(get_measurement_differential_protons("3d"))
