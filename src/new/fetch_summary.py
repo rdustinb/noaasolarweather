@@ -344,7 +344,10 @@ def get_measurement_integral_electrons(period, error_log_in, data_in, date):
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
-def get_measurement_integral_protons(period):
+def get_measurement_integral_protons(period, error_log_in, data_in, date):
+  # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
+  # simply passing back the data that was in the json archive previously, keeping the stored data
+  error_log = error_log_in
   # "time_tag"
   # "satellite"
   # "flux"
@@ -355,17 +358,52 @@ def get_measurement_integral_protons(period):
   if period == "3d": url = "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-3-day.json"
   if period == "7d": url = "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-7-day.json"
 
-  with urllib.request.urlopen(url) as thisurl:
-    data = json.loads(thisurl.read().decode())
+  # Create the error dict if necessary
+  if "get_measurement_integral_protons()" not in error_log:
+    error_log["get_measurement_integral_protons()"] = dict()
+    error_log["get_measurement_integral_protons()"]["urlopen"] = list()
+    error_log["get_measurement_integral_protons()"]["corrupt"] = list()
+    error_log["get_measurement_integral_protons()"]["time_tag"] = list()
+
+  # Update the datestamp list
+  error_log["get_measurement_integral_protons()"]["time_tag"].append(date)
+
+  # Make sure we access the server cleanly
+  try:
+    with urllib.request.urlopen(url) as thisurl:
+      tmp_data = json.loads(thisurl.read().decode())
+    error_log["get_measurement_integral_protons()"]["urlopen"].append(False)
+  except:
+    # If Opening the URL is an issue, then append a False flag for the data corruption since it isn't being tested
+    error_log["get_measurement_integral_protons()"]["urlopen"].append(True)
+    error_log["get_measurement_integral_protons()"]["corrupt"].append(False)
+    # If we cannot even fetch the data, just return what was passed to us....
+    return (error_log, data_in)
   
-  if DEBUG: print("Example satellite    : %s"%(data[0]["satellite"]))
-  if DEBUG: print("Example flux         : %s"%(data[0]["flux"]))
-  if DEBUG: print("Example energy       : %s"%(data[0]["energy"]))
-  if DEBUG: print("Example time_tag[0]  : %s"%(data[0]["time_tag"]))
-  if DEBUG: print("Example time_tag[-1] : %s"%(data[-1]["time_tag"]))
-  if DEBUG: print("\n")
+  # Test that the data looks valid before passing
+  try:
+    if DEBUG: print("Example satellite    : %s"%(tmp_data[0]["satellite"]))
+    if DEBUG: print("Example flux         : %s"%(tmp_data[0]["flux"]))
+    if DEBUG: print("Example energy       : %s"%(tmp_data[0]["energy"]))
+    if DEBUG: print("Example time_tag[0]  : %s"%(tmp_data[0]["time_tag"]))
+    if DEBUG: print("Example time_tag[-1] : %s"%(tmp_data[-1]["time_tag"]))
+    if DEBUG: print("Total data points: %d"%(len(tmp_data)))
+    if DEBUG: print("\n")
   
-  return data # This is an array of dictionaries
+    # If this doesn't throw an exception but doesn't meet these conditions, the data is corrupt
+    if (len(tmp_data[0]) is not 4) or (len(tmp_data[-1]) is not 4):
+      error_log["get_measurement_integral_protons()"]["corrupt"].append(True)
+      return (error_log, data_in)
+
+    # Format this data key
+    data["get_measurement_integral_protons()"] = listOfDicts_to_dictOfLists(tmp_data)
+
+    error_log["get_measurement_integral_protons()"]["corrupt"].append(False)
+    return (error_log, data)
+  except:
+    error_log["get_measurement_integral_protons()"]["corrupt"].append(True)
+    # If the data appears corrupt from some basic tests, return the original data
+    return (error_log, data_in)
 
 def get_measurement_magnetometers(period):
   # "time_tag"
@@ -624,8 +662,8 @@ if __name__ == "__main__":
   ENWEATHERMEASURESi6e = False
   ENWEATHERMEASURESi1e = False
   ENWEATHERMEASURESi3e = False
-  ENWEATHERMEASURESi7e = True
-  ENWEATHERMEASURESi6p = False
+  ENWEATHERMEASURESi7e = False
+  ENWEATHERMEASURESi6p = True
   ENWEATHERMEASURESi1p = False
   ENWEATHERMEASURESi3p = False
   ENWEATHERMEASURESi7p = False
@@ -722,11 +760,27 @@ if __name__ == "__main__":
                            data.pop("get_measurement_integral_electrons()", None)
                            error_log.pop("get_measurement_integral_electrons()", None)
 
+  if ENWEATHERMEASURESi6p: # Catch the data and the error log
+                           all_info                                           = get_measurement_integral_protons("6h", error_log, data, now)
+                           error_log                                          = all_info[0]
+                           data                                               = all_info[1]
+  elif ENWEATHERMEASURESi1p: # Catch the data and the error log
+                           all_info                                           = get_measurement_integral_protons("1d", error_log, data, now)
+                           error_log                                          = all_info[0]
+                           data                                               = all_info[1]
+  elif ENWEATHERMEASURESi3p: # Catch the data and the error log
+                           all_info                                           = get_measurement_integral_protons("3d", error_log, data, now)
+                           error_log                                          = all_info[0]
+                           data                                               = all_info[1]
+  elif ENWEATHERMEASURESi7p: # Catch the data and the error log
+                           all_info                                           = get_measurement_integral_protons("7d", error_log, data, now)
+                           error_log                                          = all_info[0]
+                           data                                               = all_info[1]
+  elif RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
+                           data.pop("get_measurement_integral_protons()", None)
+                           error_log.pop("get_measurement_integral_protons()", None)
+
   # Old Data and Error Collection Framework
-  if ENWEATHERMEASURESi6p: data["get_measurement_integral_protons(6h)"]       = listOfDicts_to_dictOfLists(get_measurement_integral_protons("6h"))
-  if ENWEATHERMEASURESi1p: data["get_measurement_integral_protons(1d)"]       = listOfDicts_to_dictOfLists(get_measurement_integral_protons("1d"))
-  if ENWEATHERMEASURESi3p: data["get_measurement_integral_protons(3d)"]       = listOfDicts_to_dictOfLists(get_measurement_integral_protons("3d"))
-  if ENWEATHERMEASURESi7p: data["get_measurement_integral_protons(7d)"]       = listOfDicts_to_dictOfLists(get_measurement_integral_protons("7d"))
   if ENWEATHERMEASURES6m:  data["get_measurement_magnetometers(6h)"]          = listOfDicts_to_dictOfLists(get_measurement_magnetometers("6h"))
   if ENWEATHERMEASURES1m:  data["get_measurement_magnetometers(1d)"]          = listOfDicts_to_dictOfLists(get_measurement_magnetometers("1d"))
   if ENWEATHERMEASURES3m:  data["get_measurement_magnetometers(3d)"]          = listOfDicts_to_dictOfLists(get_measurement_magnetometers("3d"))
