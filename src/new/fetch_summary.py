@@ -405,7 +405,10 @@ def get_measurement_integral_protons(period, error_log_in, data_in, date):
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
-def get_measurement_magnetometers(period):
+def get_measurement_magnetometers(period, error_log_in, data_in, date):
+  # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
+  # simply passing back the data that was in the json archive previously, keeping the stored data
+  error_log = error_log_in
   # "time_tag"
   # "satellite"
   # "He"
@@ -419,20 +422,55 @@ def get_measurement_magnetometers(period):
   if period == "3d": url = "https://services.swpc.noaa.gov/json/goes/primary/magnetometers-3-day.json"
   if period == "7d": url = "https://services.swpc.noaa.gov/json/goes/primary/magnetometers-7-day.json"
 
-  with urllib.request.urlopen(url) as thisurl:
-    data = json.loads(thisurl.read().decode())
+  # Create the error dict if necessary
+  if "get_measurement_magnetometers()" not in error_log:
+    error_log["get_measurement_magnetometers()"] = dict()
+    error_log["get_measurement_magnetometers()"]["urlopen"] = list()
+    error_log["get_measurement_magnetometers()"]["corrupt"] = list()
+    error_log["get_measurement_magnetometers()"]["time_tag"] = list()
+
+  # Update the datestamp list
+  error_log["get_measurement_magnetometers()"]["time_tag"].append(date)
+
+  # Make sure we access the server cleanly
+  try:
+    with urllib.request.urlopen(url) as thisurl:
+      tmp_data = json.loads(thisurl.read().decode())
+    error_log["get_measurement_magnetometers()"]["urlopen"].append(False)
+  except:
+    # If Opening the URL is an issue, then append a False flag for the data corruption since it isn't being tested
+    error_log["get_measurement_magnetometers()"]["urlopen"].append(True)
+    error_log["get_measurement_magnetometers()"]["corrupt"].append(False)
+    # If we cannot even fetch the data, just return what was passed to us....
+    return (error_log, data_in)
   
-  if DEBUG: print("Example satellite    : %s"%(data[0]["satellite"]))
-  if DEBUG: print("Example He           : %s"%(data[0]["He"]))
-  if DEBUG: print("Example Hp           : %s"%(data[0]["Hp"]))
-  if DEBUG: print("Example Hn           : %s"%(data[0]["Hn"]))
-  if DEBUG: print("Example total        : %s"%(data[0]["total"]))
-  if DEBUG: print("Example arcjet_flag  : %s"%(data[0]["arcjet_flag"]))
-  if DEBUG: print("Example time_tag[0]  : %s"%(data[0]["time_tag"]))
-  if DEBUG: print("Example time_tag[-1] : %s"%(data[-1]["time_tag"]))
-  if DEBUG: print("\n")
+  # Test that the data looks valid before passing
+  try:
+    if DEBUG: print("Example satellite    : %s"%(tmp_data[0]["satellite"]))
+    if DEBUG: print("Example He           : %s"%(tmp_data[0]["He"]))
+    if DEBUG: print("Example Hp           : %s"%(tmp_data[0]["Hp"]))
+    if DEBUG: print("Example Hn           : %s"%(tmp_data[0]["Hn"]))
+    if DEBUG: print("Example total        : %s"%(tmp_data[0]["total"]))
+    if DEBUG: print("Example arcjet_flag  : %s"%(tmp_data[0]["arcjet_flag"]))
+    if DEBUG: print("Example time_tag[0]  : %s"%(tmp_data[0]["time_tag"]))
+    if DEBUG: print("Example time_tag[-1] : %s"%(tmp_data[-1]["time_tag"]))
+    if DEBUG: print("Total data points: %d"%(len(tmp_data)))
+    if DEBUG: print("\n")
   
-  return data # This is an array of dictionaries
+    # If this doesn't throw an exception but doesn't meet these conditions, the data is corrupt
+    if (len(tmp_data[0]) is not 7) or (len(tmp_data[-1]) is not 7):
+      error_log["get_measurement_magnetometers()"]["corrupt"].append(True)
+      return (error_log, data_in)
+
+    # Format this data key
+    data["get_measurement_magnetometers()"] = listOfDicts_to_dictOfLists(tmp_data)
+
+    error_log["get_measurement_magnetometers()"]["corrupt"].append(False)
+    return (error_log, data)
+  except:
+    error_log["get_measurement_magnetometers()"]["corrupt"].append(True)
+    # If the data appears corrupt from some basic tests, return the original data
+    return (error_log, data_in)
 
 def get_measurement_xrays(period):
   # "time_tag"
@@ -663,14 +701,14 @@ if __name__ == "__main__":
   ENWEATHERMEASURESi1e = False
   ENWEATHERMEASURESi3e = False
   ENWEATHERMEASURESi7e = False
-  ENWEATHERMEASURESi6p = True
+  ENWEATHERMEASURESi6p = False
   ENWEATHERMEASURESi1p = False
   ENWEATHERMEASURESi3p = False
   ENWEATHERMEASURESi7p = False
   ENWEATHERMEASURES6m  = False
   ENWEATHERMEASURES1m  = False
   ENWEATHERMEASURES3m  = False
-  ENWEATHERMEASURES7m  = False
+  ENWEATHERMEASURES7m  = True
   ENWEATHERMEASURES6x  = False
   ENWEATHERMEASURES1x  = False
   ENWEATHERMEASURES3x  = False
@@ -780,11 +818,27 @@ if __name__ == "__main__":
                            data.pop("get_measurement_integral_protons()", None)
                            error_log.pop("get_measurement_integral_protons()", None)
 
+  if ENWEATHERMEASURES6m: # Catch the data and the error log
+                           all_info                                           = get_measurement_magnetometers("6h", error_log, data, now)
+                           error_log                                          = all_info[0]
+                           data                                               = all_info[1]
+  elif ENWEATHERMEASURES1m: # Catch the data and the error log
+                           all_info                                           = get_measurement_magnetometers("1d", error_log, data, now)
+                           error_log                                          = all_info[0]
+                           data                                               = all_info[1]
+  elif ENWEATHERMEASURES3m: # Catch the data and the error log
+                           all_info                                           = get_measurement_magnetometers("3d", error_log, data, now)
+                           error_log                                          = all_info[0]
+                           data                                               = all_info[1]
+  elif ENWEATHERMEASURES7m: # Catch the data and the error log
+                           all_info                                           = get_measurement_magnetometers("7d", error_log, data, now)
+                           error_log                                          = all_info[0]
+                           data                                               = all_info[1]
+  elif RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
+                           data.pop("get_measurement_magnetometers()", None)
+                           error_log.pop("get_measurement_magnetometers()", None)
+
   # Old Data and Error Collection Framework
-  if ENWEATHERMEASURES6m:  data["get_measurement_magnetometers(6h)"]          = listOfDicts_to_dictOfLists(get_measurement_magnetometers("6h"))
-  if ENWEATHERMEASURES1m:  data["get_measurement_magnetometers(1d)"]          = listOfDicts_to_dictOfLists(get_measurement_magnetometers("1d"))
-  if ENWEATHERMEASURES3m:  data["get_measurement_magnetometers(3d)"]          = listOfDicts_to_dictOfLists(get_measurement_magnetometers("3d"))
-  if ENWEATHERMEASURES7m:  data["get_measurement_magnetometers(7d)"]          = listOfDicts_to_dictOfLists(get_measurement_magnetometers("7d"))
   if ENWEATHERMEASURES6x:  data["get_measurement_xrays(6h)"]                  = listOfDicts_to_dictOfLists(get_measurement_xrays("6h"))
   if ENWEATHERMEASURES1x:  data["get_measurement_xrays(1d)"]                  = listOfDicts_to_dictOfLists(get_measurement_xrays("1d"))
   if ENWEATHERMEASURES3x:  data["get_measurement_xrays(3d)"]                  = listOfDicts_to_dictOfLists(get_measurement_xrays("3d"))
