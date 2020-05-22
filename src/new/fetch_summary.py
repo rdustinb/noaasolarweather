@@ -12,6 +12,24 @@ global DEBUG
 ###############################################################################
 ###############################################################################
 # TODO
+# 1) Run this script with a daemon for a long time and calculate error rates
+#   - For the data sets that have different data lengths on the server, run this
+#   script for a few days targetting each archive period for errors.
+# 2) Add functionality configuration file.
+#   - This isn't required to be checked into the repo
+#   - It is user-specific
+#   - It is checked every time this script is run
+#   - If it is not present a default config file is made by this script
+# 3) Make the DEBUG parameter passable to all the functions.
+# 4) Add a "new data" status bit to the JSON archive
+#   - The GUI will read to check if the data has been updated by this fetching
+#   daemon script.
+#   - The GUI will clear the bit once it has updated the graphs.
+#   - This bit should not be set if ALL of the data happens to fail to fetch from
+#   the error conditions in #1 and #2 above.
+###############################################################################
+###############################################################################
+# Completed
 # 1) Add Remote Server URL Pull error handling
 #   - This happens if the remote URL or Server is inaccessible
 #   - This fetch daemon script should NOT overwrite the json archive if this
@@ -28,15 +46,6 @@ global DEBUG
 #   - The Error name dictionary will itself be a list of date stamps
 #   - The graphing function can simply count the occurences of date stamps for
 #   calculating the error rate and frequency
-# 4) Add a "new data" status bit to the JSON archive
-#   - The GUI will read to check if the data has been updated by this fetching
-#   daemon script.
-#   - The GUI will clear the bit once it has updated the graphs.
-#   - This bit should not be set if ALL of the data happens to fail to fetch from
-#   the error conditions in #1 and #2 above.
-###############################################################################
-###############################################################################
-# Completed
 ###############################################################################
 ###############################################################################
 
@@ -793,36 +802,36 @@ if __name__ == "__main__":
   # Get the current sample datestamp for errors
   now = str(datetime.datetime.now())
 
-  DEBUG                = True
+  DEBUG                = False
   ENFILEWRITES         = True
   RECORDERRORS         = True
 
   #data = dict()
 
   # Determine what data to collect
-  ENINDICESkp          = False
-  ENINDICESk           = False
-  ENWEATHERMEASURESd6e = False
+  ENINDICESkp          = True
+  ENINDICESk           = True
+  ENWEATHERMEASURESd6e = True
   ENWEATHERMEASURESd1e = False
   ENWEATHERMEASURESd3e = False
   ENWEATHERMEASURESd7e = False
-  ENWEATHERMEASURESd6p = False
+  ENWEATHERMEASURESd6p = True
   ENWEATHERMEASURESd1p = False
   ENWEATHERMEASURESd3p = False
   ENWEATHERMEASURESd7p = False
-  ENWEATHERMEASURESi6e = False
+  ENWEATHERMEASURESi6e = True
   ENWEATHERMEASURESi1e = False
   ENWEATHERMEASURESi3e = False
   ENWEATHERMEASURESi7e = False
-  ENWEATHERMEASURESi6p = False
+  ENWEATHERMEASURESi6p = True
   ENWEATHERMEASURESi1p = False
   ENWEATHERMEASURESi3p = False
   ENWEATHERMEASURESi7p = False
-  ENWEATHERMEASURES6m  = False
+  ENWEATHERMEASURES6m  = True
   ENWEATHERMEASURES1m  = False
   ENWEATHERMEASURES3m  = False
   ENWEATHERMEASURES7m  = False
-  ENWEATHERMEASURES6x  = False
+  ENWEATHERMEASURES6x  = True
   ENWEATHERMEASURES1x  = False
   ENWEATHERMEASURES3x  = False
   ENWEATHERMEASURES7x  = False
