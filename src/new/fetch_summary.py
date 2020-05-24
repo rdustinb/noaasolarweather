@@ -1,7 +1,5 @@
 import urllib.request, json, datetime
 
-global DEBUG
-
 # Error Log Structure
 #   dict{
 #       "sample name as key" : {
@@ -15,13 +13,7 @@ global DEBUG
 # 1) Run this script with a daemon for a long time and calculate error rates
 #   - For the data sets that have different data lengths on the server, run this
 #   script for a few days targetting each archive period for errors.
-# 2) Add functionality configuration file.
-#   - This isn't required to be checked into the repo
-#   - It is user-specific
-#   - It is checked every time this script is run
-#   - If it is not present a default config file is made by this script
-# 3) Make the DEBUG parameter passable to all the functions.
-# 4) Add a "new data" status bit to the JSON archive
+# 2) Add a "new data" status bit to the JSON archive
 #   - The GUI will read to check if the data has been updated by this fetching
 #   daemon script.
 #   - The GUI will clear the bit once it has updated the graphs.
@@ -46,13 +38,19 @@ global DEBUG
 #   - The Error name dictionary will itself be a list of date stamps
 #   - The graphing function can simply count the occurences of date stamps for
 #   calculating the error rate and frequency
+# 4) Add functionality configuration file.
+#   - It is not checked into the repo.
+#   - It is user-specific on the user's machine
+#   - It is checked every time this script is run
+#   - If it is not present a default config file is made by this script
+# 5) Make the DEBUG parameter passable to all the functions.
 ###############################################################################
 ###############################################################################
 
 ###############################################################################
 # Solar Weather Indices
 ###############################################################################
-def get_kp_index_1m(error_log_in, data_in, date):
+def get_kp_index_1m(error_log_in, data_in, date, DEBUG):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -107,7 +105,7 @@ def get_kp_index_1m(error_log_in, data_in, date):
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
-def get_k_index_1m(error_log_in, data_in, date):
+def get_k_index_1m(error_log_in, data_in, date, DEBUG):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -166,7 +164,7 @@ def get_k_index_1m(error_log_in, data_in, date):
 ###############################################################################
 # Solar Weather Measurements
 ###############################################################################
-def get_measurement_differential_electrons(period, error_log_in, data_in, date):
+def get_measurement_differential_electrons(period, error_log_in, data_in, date, DEBUG):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -227,7 +225,7 @@ def get_measurement_differential_electrons(period, error_log_in, data_in, date):
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
-def get_measurement_differential_protons(period, error_log_in, data_in, date):
+def get_measurement_differential_protons(period, error_log_in, data_in, date, DEBUG):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -292,7 +290,7 @@ def get_measurement_differential_protons(period, error_log_in, data_in, date):
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
-def get_measurement_integral_electrons(period, error_log_in, data_in, date):
+def get_measurement_integral_electrons(period, error_log_in, data_in, date, DEBUG):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -353,7 +351,7 @@ def get_measurement_integral_electrons(period, error_log_in, data_in, date):
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
-def get_measurement_integral_protons(period, error_log_in, data_in, date):
+def get_measurement_integral_protons(period, error_log_in, data_in, date, DEBUG):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -414,7 +412,7 @@ def get_measurement_integral_protons(period, error_log_in, data_in, date):
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
-def get_measurement_magnetometers(period, error_log_in, data_in, date):
+def get_measurement_magnetometers(period, error_log_in, data_in, date, DEBUG):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -481,7 +479,7 @@ def get_measurement_magnetometers(period, error_log_in, data_in, date):
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
-def get_measurement_xrays(period, error_log_in, data_in, date):
+def get_measurement_xrays(period, error_log_in, data_in, date, DEBUG):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -545,7 +543,7 @@ def get_measurement_xrays(period, error_log_in, data_in, date):
 ###############################################################################
 # The Sun Itself
 ###############################################################################
-def get_solar_regions(error_log_in, data_in, date):
+def get_solar_regions(error_log_in, data_in, date, DEBUG):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -653,7 +651,7 @@ def get_solar_regions(error_log_in, data_in, date):
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
-def get_sunspot_report(error_log_in, data_in, date):
+def get_sunspot_report(error_log_in, data_in, date, DEBUG):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -758,7 +756,7 @@ def get_sunspot_report(error_log_in, data_in, date):
 ###############################################################################
 # Support Functions
 ###############################################################################
-def listOfDicts_to_dictOfLists(dataI):
+def listOfDicts_to_dictOfLists(dataI, DEBUG):
   # The purpose of this function is directly tied to the returned data from the NOAA servers
   # The data from NOAA is a list of dictionaries, where one element in the list is a specific
   # sample point, and the list is the set of samples. This is somewhat annoyingly formatted
@@ -781,7 +779,7 @@ def listOfDicts_to_dictOfLists(dataI):
 ###############################################################################
 # File Accesses
 ###############################################################################
-def fetch_archive(file_to_read):
+def fetch_archive(file_to_read, DEBUG):
   try:
     with open(file_to_read, 'r') as fh:
       data = json.load(fh)
@@ -790,7 +788,7 @@ def fetch_archive(file_to_read):
     data = dict()
   return data
 
-def store_archive(file_to_write, data):
+def store_archive(file_to_write, data, DEBUG):
   with open(file_to_write, 'w') as fh:
     if DEBUG: print("Storing to file %s"%(file_to_write))
     json.dump(data, fh)
@@ -802,200 +800,203 @@ if __name__ == "__main__":
   # Get the current sample datestamp for errors
   now = str(datetime.datetime.now())
 
-  DEBUG                = False
-  ENFILEWRITES         = True
-  RECORDERRORS         = True
-
-  #data = dict()
-
-  # Determine what data to collect
-  ENINDICESkp          = True
-  ENINDICESk           = True
-  ENWEATHERMEASURESd6e = True
-  ENWEATHERMEASURESd1e = False
-  ENWEATHERMEASURESd3e = False
-  ENWEATHERMEASURESd7e = False
-  ENWEATHERMEASURESd6p = True
-  ENWEATHERMEASURESd1p = False
-  ENWEATHERMEASURESd3p = False
-  ENWEATHERMEASURESd7p = False
-  ENWEATHERMEASURESi6e = True
-  ENWEATHERMEASURESi1e = False
-  ENWEATHERMEASURESi3e = False
-  ENWEATHERMEASURESi7e = False
-  ENWEATHERMEASURESi6p = True
-  ENWEATHERMEASURESi1p = False
-  ENWEATHERMEASURESi3p = False
-  ENWEATHERMEASURESi7p = False
-  ENWEATHERMEASURES6m  = True
-  ENWEATHERMEASURES1m  = False
-  ENWEATHERMEASURES3m  = False
-  ENWEATHERMEASURES7m  = False
-  ENWEATHERMEASURES6x  = True
-  ENWEATHERMEASURES1x  = False
-  ENWEATHERMEASURES3x  = False
-  ENWEATHERMEASURES7x  = False
-  ENSUNMEASURES        = True
+  # Pull in the config file or create it if it doesn't exist
+  try:
+    import fetch_summary_config
+  except:
+    print("User config file not present, creating...")
+    with open("fetch_summary_config.py", "w") as fh:
+      fh.write("DEBUG                = False\n")
+      fh.write("ENFILEWRITES         = True\n")
+      fh.write("RECORDERRORS         = True\n")
+      fh.write("ENINDICESkp          = True\n")
+      fh.write("ENINDICESk           = True\n")
+      fh.write("ENWEATHERMEASURESd6e = True\n")
+      fh.write("ENWEATHERMEASURESd1e = False\n")
+      fh.write("ENWEATHERMEASURESd3e = False\n")
+      fh.write("ENWEATHERMEASURESd7e = False\n")
+      fh.write("ENWEATHERMEASURESd6p = True\n")
+      fh.write("ENWEATHERMEASURESd1p = False\n")
+      fh.write("ENWEATHERMEASURESd3p = False\n")
+      fh.write("ENWEATHERMEASURESd7p = False\n")
+      fh.write("ENWEATHERMEASURESi6e = True\n")
+      fh.write("ENWEATHERMEASURESi1e = False\n")
+      fh.write("ENWEATHERMEASURESi3e = False\n")
+      fh.write("ENWEATHERMEASURESi7e = False\n")
+      fh.write("ENWEATHERMEASURESi6p = True\n")
+      fh.write("ENWEATHERMEASURESi1p = False\n")
+      fh.write("ENWEATHERMEASURESi3p = False\n")
+      fh.write("ENWEATHERMEASURESi7p = False\n")
+      fh.write("ENWEATHERMEASURES6m  = True\n")
+      fh.write("ENWEATHERMEASURES1m  = False\n")
+      fh.write("ENWEATHERMEASURES3m  = False\n")
+      fh.write("ENWEATHERMEASURES7m  = False\n")
+      fh.write("ENWEATHERMEASURES6x  = True\n")
+      fh.write("ENWEATHERMEASURES1x  = False\n")
+      fh.write("ENWEATHERMEASURES3x  = False\n")
+      fh.write("ENWEATHERMEASURES7x  = False\n")
+      fh.write("ENSUNMEASURES        = True\n")
+    import fetch_summary_config
 
   # Fetch the current data and error log
-  if ENFILEWRITES:         data = fetch_archive('data.json')
-  if RECORDERRORS:         error_log = fetch_archive('errors.json')
+  if fetch_summary_config.ENFILEWRITES:         data = fetch_archive('data.json', fetch_summary_config.DEBUG)
+  if fetch_summary_config.RECORDERRORS:         error_log = fetch_archive('errors.json', fetch_summary_config.DEBUG)
 
   # New Data and Error Collection Framework
   # Collect the Data and Errors, if the previous run was logging a type of data and the current run does not contain
   # that type of data, remove it from the error log as it has persistence
-  if ENINDICESkp:          # Catch the data and the error log
-                           all_info                                           = get_kp_index_1m(error_log, data, now)
+  if fetch_summary_config.ENINDICESkp:          # Catch the data and the error log
+                           all_info                                           = get_kp_index_1m(error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
+  elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
                            data.pop("get_kp_index_1m()", None)
                            error_log.pop("get_kp_index_1m()", None)
 
-  if ENINDICESk:           # Catch the data and the error log
-                           all_info                                           = get_k_index_1m(error_log, data, now)
+  if fetch_summary_config.ENINDICESk:           # Catch the data and the error log
+                           all_info                                           = get_k_index_1m(error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
+  elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
                            data.pop("get_k_index_1m()", None)
                            error_log.pop("get_k_index_1m()", None)
 
-  if ENWEATHERMEASURESd6e: # Catch the data and the error log
-                           all_info                                           = get_measurement_differential_electrons("6h", error_log, data, now)
+  if fetch_summary_config.ENWEATHERMEASURESd6e: # Catch the data and the error log
+                           all_info                                           = get_measurement_differential_electrons("6h", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURESd1e: # Catch the data and the error log
-                           all_info                                           = get_measurement_differential_electrons("1d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURESd1e: # Catch the data and the error log
+                           all_info                                           = get_measurement_differential_electrons("1d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURESd3e: # Catch the data and the error log
-                           all_info                                           = get_measurement_differential_electrons("3d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURESd3e: # Catch the data and the error log
+                           all_info                                           = get_measurement_differential_electrons("3d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURESd7e: # Catch the data and the error log
-                           all_info                                           = get_measurement_differential_electrons("7d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURESd7e: # Catch the data and the error log
+                           all_info                                           = get_measurement_differential_electrons("7d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
+  elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
                            data.pop("get_measurement_differential_electrons()", None)
                            error_log.pop("get_measurement_differential_electrons()", None)
 
-  if ENWEATHERMEASURESd6p: # Catch the data and the error log
-                           all_info                                           = get_measurement_differential_protons("6h", error_log, data, now)
+  if fetch_summary_config.ENWEATHERMEASURESd6p: # Catch the data and the error log
+                           all_info                                           = get_measurement_differential_protons("6h", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURESd1p: # Catch the data and the error log
-                           all_info                                           = get_measurement_differential_protons("1d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURESd1p: # Catch the data and the error log
+                           all_info                                           = get_measurement_differential_protons("1d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURESd3p: # Catch the data and the error log
-                           all_info                                           = get_measurement_differential_protons("3d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURESd3p: # Catch the data and the error log
+                           all_info                                           = get_measurement_differential_protons("3d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURESd7p: # Catch the data and the error log
-                           all_info                                           = get_measurement_differential_protons("7d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURESd7p: # Catch the data and the error log
+                           all_info                                           = get_measurement_differential_protons("7d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
+  elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
                            data.pop("get_measurement_differential_protons()", None)
                            error_log.pop("get_measurement_differential_protons()", None)
 
-  if ENWEATHERMEASURESi6e: # Catch the data and the error log
-                           all_info                                           = get_measurement_integral_electrons("6h", error_log, data, now)
+  if fetch_summary_config.ENWEATHERMEASURESi6e: # Catch the data and the error log
+                           all_info                                           = get_measurement_integral_electrons("6h", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURESi1e: # Catch the data and the error log
-                           all_info                                           = get_measurement_integral_electrons("1d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURESi1e: # Catch the data and the error log
+                           all_info                                           = get_measurement_integral_electrons("1d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURESi3e: # Catch the data and the error log
-                           all_info                                           = get_measurement_integral_electrons("3d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURESi3e: # Catch the data and the error log
+                           all_info                                           = get_measurement_integral_electrons("3d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURESi7e: # Catch the data and the error log
-                           all_info                                           = get_measurement_integral_electrons("7d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURESi7e: # Catch the data and the error log
+                           all_info                                           = get_measurement_integral_electrons("7d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
+  elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
                            data.pop("get_measurement_integral_electrons()", None)
                            error_log.pop("get_measurement_integral_electrons()", None)
 
-  if ENWEATHERMEASURESi6p: # Catch the data and the error log
-                           all_info                                           = get_measurement_integral_protons("6h", error_log, data, now)
+  if fetch_summary_config.ENWEATHERMEASURESi6p: # Catch the data and the error log
+                           all_info                                           = get_measurement_integral_protons("6h", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURESi1p: # Catch the data and the error log
-                           all_info                                           = get_measurement_integral_protons("1d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURESi1p: # Catch the data and the error log
+                           all_info                                           = get_measurement_integral_protons("1d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURESi3p: # Catch the data and the error log
-                           all_info                                           = get_measurement_integral_protons("3d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURESi3p: # Catch the data and the error log
+                           all_info                                           = get_measurement_integral_protons("3d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURESi7p: # Catch the data and the error log
-                           all_info                                           = get_measurement_integral_protons("7d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURESi7p: # Catch the data and the error log
+                           all_info                                           = get_measurement_integral_protons("7d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
+  elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
                            data.pop("get_measurement_integral_protons()", None)
                            error_log.pop("get_measurement_integral_protons()", None)
 
-  if ENWEATHERMEASURES6m: # Catch the data and the error log
-                           all_info                                           = get_measurement_magnetometers("6h", error_log, data, now)
+  if fetch_summary_config.ENWEATHERMEASURES6m: # Catch the data and the error log
+                           all_info                                           = get_measurement_magnetometers("6h", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURES1m: # Catch the data and the error log
-                           all_info                                           = get_measurement_magnetometers("1d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURES1m: # Catch the data and the error log
+                           all_info                                           = get_measurement_magnetometers("1d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURES3m: # Catch the data and the error log
-                           all_info                                           = get_measurement_magnetometers("3d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURES3m: # Catch the data and the error log
+                           all_info                                           = get_measurement_magnetometers("3d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURES7m: # Catch the data and the error log
-                           all_info                                           = get_measurement_magnetometers("7d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURES7m: # Catch the data and the error log
+                           all_info                                           = get_measurement_magnetometers("7d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
+  elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
                            data.pop("get_measurement_magnetometers()", None)
                            error_log.pop("get_measurement_magnetometers()", None)
 
-  if ENWEATHERMEASURES6x: # Catch the data and the error log
-                           all_info                                           = get_measurement_xrays("6h", error_log, data, now)
+  if fetch_summary_config.ENWEATHERMEASURES6x: # Catch the data and the error log
+                           all_info                                           = get_measurement_xrays("6h", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURES1x: # Catch the data and the error log
-                           all_info                                           = get_measurement_xrays("1d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURES1x: # Catch the data and the error log
+                           all_info                                           = get_measurement_xrays("1d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURES3x: # Catch the data and the error log
-                           all_info                                           = get_measurement_xrays("3d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURES3x: # Catch the data and the error log
+                           all_info                                           = get_measurement_xrays("3d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif ENWEATHERMEASURES7x: # Catch the data and the error log
-                           all_info                                           = get_measurement_xrays("7d", error_log, data, now)
+  elif fetch_summary_config.ENWEATHERMEASURES7x: # Catch the data and the error log
+                           all_info                                           = get_measurement_xrays("7d", error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
+  elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
                            data.pop("get_measurement_xrays()", None)
                            error_log.pop("get_measurement_xrays()", None)
 
-  if ENSUNMEASURES: # Catch the data and the error log
-                           all_info                                           = get_solar_regions(error_log, data, now)
+  if fetch_summary_config.ENSUNMEASURES: # Catch the data and the error log
+                           all_info                                           = get_solar_regions(error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
+  elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
                            data.pop("get_solar_regions()", None)
                            error_log.pop("get_solar_regions()", None)
 
-  if ENSUNMEASURES: # Catch the data and the error log
-                           all_info                                           = get_sunspot_report(error_log, data, now)
+  if fetch_summary_config.ENSUNMEASURES: # Catch the data and the error log
+                           all_info                                           = get_sunspot_report(error_log, data, now, fetch_summary_config.DEBUG)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
-  elif RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
+  elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
                            data.pop("get_sunspot_report()", None)
                            error_log.pop("get_sunspot_report()", None)
 
   # Store the updated data and error_log
-  if ENFILEWRITES:         store_archive('data.json', data)
-  if RECORDERRORS:         store_archive('errors.json', error_log)
+  if fetch_summary_config.ENFILEWRITES:         store_archive('data.json', data, fetch_summary_config.DEBUG)
+  if fetch_summary_config.RECORDERRORS:         store_archive('errors.json', error_log, fetch_summary_config.DEBUG)
