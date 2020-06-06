@@ -50,12 +50,12 @@ import urllib.request, json, datetime
 ###############################################################################
 # Solar Weather Indices
 ###############################################################################
-def get_kp_index_1m(error_log_in, data_in, date, DEBUG):
+def get_kp_index_1m(error_log_in, data_in, date, DEBUGLEVEL):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
   # Get the Kp Index
-  if DEBUG: print("get_kp_index_1m()")
+  if DEBUGLEVEL != "none": print("get_kp_index_1m()")
   url = "https://services.swpc.noaa.gov/json/planetary_k_index_1m.json"
 
   # Create the error dict if necessary
@@ -73,44 +73,53 @@ def get_kp_index_1m(error_log_in, data_in, date, DEBUG):
     with urllib.request.urlopen(url) as thisurl:
       tmp_data = json.loads(thisurl.read().decode())
     error_log["get_kp_index_1m()"]["urlopen"].append(False)
-  except:
+  except Exception as e:
     # If Opening the URL is an issue, then append a False flag for the data corruption since it isn't being tested
     error_log["get_kp_index_1m()"]["urlopen"].append(True)
     error_log["get_kp_index_1m()"]["corrupt"].append(False)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If we cannot even fetch the data, just return what was passed to us....
     return (error_log, data_in)
   
   # Test that the data looks valid before passing
   try:
-    if DEBUG: print("Example kp_index:         %s"%(tmp_data[0]["kp_index"]))
-    if DEBUG: print("Example time_tag[0]:      %s"%(tmp_data[0]["time_tag"]))
-    if DEBUG: print("Example time_tag[-1]:     %s"%(tmp_data[-1]["time_tag"]))
-    if DEBUG: print("Example data[0]:          %s"%(tmp_data[0]))
-    if DEBUG: print("Example data[-1]:         %s"%(tmp_data[-1]))
-    if DEBUG: print("Total data points: %d"%(len(tmp_data)))
-    if DEBUG: print("\n")
+    if DEBUGLEVEL == "info": print("Example kp_index:         %s"%(tmp_data[0]["kp_index"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[0]:      %s"%(tmp_data[0]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[-1]:     %s"%(tmp_data[-1]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Example data[0]:          %s"%(tmp_data[0]))
+    if DEBUGLEVEL == "info": print("Example data[-1]:         %s"%(tmp_data[-1]))
+    if DEBUGLEVEL == "info": print("Total data points: %d"%(len(tmp_data)))
+    if DEBUGLEVEL == "info": print("\n")
 
     # If this doesn't throw an exception but doesn't meet these conditions, the data is corrupt
     if (len(tmp_data[0]) is not 2) or (len(tmp_data[-1]) is not 2):
       error_log["get_kp_index_1m()"]["corrupt"].append(True)
+      if DEBUGLEVEL == "error": print("Corrupt error:")
+      if DEBUGLEVEL == "error": print(tmp_data)
+      if DEBUGLEVEL == "error": print("\n")
       return (error_log, data_in)
 
     # Format this data key
-    data["get_kp_index_1m()"] = listOfDicts_to_dictOfLists(tmp_data)
+    data["get_kp_index_1m()"] = listOfDicts_to_dictOfLists(tmp_data, DEBUGLEVEL)
 
     error_log["get_kp_index_1m()"]["corrupt"].append(False)
     return (error_log, data)
-  except:
+  except Exception as e:
     error_log["get_kp_index_1m()"]["corrupt"].append(True)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
-def get_k_index_1m(error_log_in, data_in, date, DEBUG):
+def get_k_index_1m(error_log_in, data_in, date, DEBUGLEVEL):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
   # Get the Boulder K Index
-  if DEBUG: print("get_k_index_1m()")
+  if DEBUGLEVEL != "none": print("get_k_index_1m()")
   url = "https://services.swpc.noaa.gov/json/boulder_k_index_1m.json"
 
   # Create the error dict if necessary
@@ -128,43 +137,52 @@ def get_k_index_1m(error_log_in, data_in, date, DEBUG):
     with urllib.request.urlopen(url) as thisurl:
       tmp_data = json.loads(thisurl.read().decode())
     error_log["get_k_index_1m()"]["urlopen"].append(False)
-  except:
+  except Exception as e:
     # If Opening the URL is an issue, then append a False flag for the data corruption since it isn't being tested
     error_log["get_k_index_1m()"]["urlopen"].append(True)
     error_log["get_k_index_1m()"]["corrupt"].append(False)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If we cannot even fetch the data, just return what was passed to us....
     return (error_log, data_in)
   
   # Test that the data looks valid before passing
   try:
-    if DEBUG: print("Example k_index:          %s"%(tmp_data[0]["k_index"]))
-    if DEBUG: print("Example time_tag[0]:      %s"%(tmp_data[0]["time_tag"]))
-    if DEBUG: print("Example time_tag[-1]:     %s"%(tmp_data[-1]["time_tag"]))
-    if DEBUG: print("Example data[0]:          %s"%(tmp_data[0]))
-    if DEBUG: print("Example data[-1]:         %s"%(tmp_data[-1]))
-    if DEBUG: print("Length of data[0]:        %d"%(len(tmp_data[0])))
-    if DEBUG: print("Total data points: %d"%(len(tmp_data)))
-    if DEBUG: print("\n")
+    if DEBUGLEVEL == "info": print("Example k_index:          %s"%(tmp_data[0]["k_index"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[0]:      %s"%(tmp_data[0]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[-1]:     %s"%(tmp_data[-1]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Example data[0]:          %s"%(tmp_data[0]))
+    if DEBUGLEVEL == "info": print("Example data[-1]:         %s"%(tmp_data[-1]))
+    if DEBUGLEVEL == "info": print("Length of data[0]:        %d"%(len(tmp_data[0])))
+    if DEBUGLEVEL == "info": print("Total data points: %d"%(len(tmp_data)))
+    if DEBUGLEVEL == "info": print("\n")
 
     # If this doesn't throw an exception but doesn't meet these conditions, the data is corrupt
     if (len(tmp_data[0]) is not 2) or (len(tmp_data[-1]) is not 2):
       error_log["get_k_index_1m()"]["corrupt"].append(True)
+      if DEBUGLEVEL == "error": print("Corrupt error:")
+      if DEBUGLEVEL == "error": print(tmp_data)
+      if DEBUGLEVEL == "error": print("\n")
       return (error_log, data_in)
 
     # Format this data key
-    data["get_k_index_1m()"] = listOfDicts_to_dictOfLists(tmp_data)
+    data["get_k_index_1m()"] = listOfDicts_to_dictOfLists(tmp_data, DEBUGLEVEL)
 
     error_log["get_k_index_1m()"]["corrupt"].append(False)
     return (error_log, data)
-  except:
+  except Exception as e:
     error_log["get_k_index_1m()"]["corrupt"].append(True)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
   
 ###############################################################################
 # Solar Weather Measurements
 ###############################################################################
-def get_measurement_differential_electrons(period, error_log_in, data_in, date, DEBUG):
+def get_measurement_differential_electrons(period, error_log_in, data_in, date, DEBUGLEVEL):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -172,7 +190,7 @@ def get_measurement_differential_electrons(period, error_log_in, data_in, date, 
   # "satellite"
   # "flux"
   # "energy"
-  if DEBUG: print("get_measurement_differential_electrons(%s)"%(period))
+  if DEBUGLEVEL != "none": print("get_measurement_differential_electrons(%s)"%(period))
   if period == "6h": url = "https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-6-hour.json"
   if period == "1d": url = "https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-1-day.json"
   if period == "3d": url = "https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-3-day.json"
@@ -193,39 +211,48 @@ def get_measurement_differential_electrons(period, error_log_in, data_in, date, 
     with urllib.request.urlopen(url) as thisurl:
       tmp_data = json.loads(thisurl.read().decode())
     error_log["get_measurement_differential_electrons()"]["urlopen"].append(False)
-  except:
+  except Exception as e:
     # If Opening the URL is an issue, then append a False flag for the data corruption since it isn't being tested
     error_log["get_measurement_differential_electrons()"]["urlopen"].append(True)
     error_log["get_measurement_differential_electrons()"]["corrupt"].append(False)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If we cannot even fetch the data, just return what was passed to us....
     return (error_log, data_in)
   
   # Test that the data looks valid before passing
   try:
-    if DEBUG: print("Example satellite    : %s"%(tmp_data[0]["satellite"]))
-    if DEBUG: print("Example flux         : %s"%(tmp_data[0]["flux"]))
-    if DEBUG: print("Example energy       : %s"%(tmp_data[0]["energy"]))
-    if DEBUG: print("Example time_tag[0]  : %s"%(tmp_data[0]["time_tag"]))
-    if DEBUG: print("Example time_tag[-1] : %s"%(tmp_data[-1]["time_tag"]))
-    if DEBUG: print("Total data points: %d"%(len(tmp_data)))
-    if DEBUG: print("\n")
+    if DEBUGLEVEL == "info": print("Example satellite    : %s"%(tmp_data[0]["satellite"]))
+    if DEBUGLEVEL == "info": print("Example flux         : %s"%(tmp_data[0]["flux"]))
+    if DEBUGLEVEL == "info": print("Example energy       : %s"%(tmp_data[0]["energy"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[0]  : %s"%(tmp_data[0]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[-1] : %s"%(tmp_data[-1]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Total data points: %d"%(len(tmp_data)))
+    if DEBUGLEVEL == "info": print("\n")
   
     # If this doesn't throw an exception but doesn't meet these conditions, the data is corrupt
     if (len(tmp_data[0]) is not 4) or (len(tmp_data[-1]) is not 4):
       error_log["get_measurement_differential_electrons()"]["corrupt"].append(True)
+      if DEBUGLEVEL == "error": print("Corrupt error:")
+      if DEBUGLEVEL == "error": print(tmp_data)
+      if DEBUGLEVEL == "error": print("\n")
       return (error_log, data_in)
 
     # Format this data key
-    data["get_measurement_differential_electrons()"] = listOfDicts_to_dictOfLists(tmp_data)
+    data["get_measurement_differential_electrons()"] = listOfDicts_to_dictOfLists(tmp_data, DEBUGLEVEL)
 
     error_log["get_measurement_differential_electrons()"]["corrupt"].append(False)
     return (error_log, data)
-  except:
+  except Exception as e:
     error_log["get_measurement_differential_electrons()"]["corrupt"].append(True)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
-def get_measurement_differential_protons(period, error_log_in, data_in, date, DEBUG):
+def get_measurement_differential_protons(period, error_log_in, data_in, date, DEBUGLEVEL):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -235,7 +262,7 @@ def get_measurement_differential_protons(period, error_log_in, data_in, date, DE
   # "energy"
   # "yaw_flip"
   # "channel"
-  if DEBUG: print("get_measurement_differential_protons(%s)"%(period))
+  if DEBUGLEVEL != "none": print("get_measurement_differential_protons(%s)"%(period))
   if period == "6h": url = "https://services.swpc.noaa.gov/json/goes/primary/differential-protons-6-hour.json"
   if period == "1d": url = "https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json"
   if period == "3d": url = "https://services.swpc.noaa.gov/json/goes/primary/differential-protons-3-day.json"
@@ -256,41 +283,50 @@ def get_measurement_differential_protons(period, error_log_in, data_in, date, DE
     with urllib.request.urlopen(url) as thisurl:
       tmp_data = json.loads(thisurl.read().decode())
     error_log["get_measurement_differential_protons()"]["urlopen"].append(False)
-  except:
+  except Exception as e:
     # If Opening the URL is an issue, then append a False flag for the data corruption since it isn't being tested
     error_log["get_measurement_differential_protons()"]["urlopen"].append(True)
     error_log["get_measurement_differential_protons()"]["corrupt"].append(False)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If we cannot even fetch the data, just return what was passed to us....
     return (error_log, data_in)
   
   # Test that the data looks valid before passing
   try:
-    if DEBUG: print("Example satellite    : %s"%(tmp_data[0]["satellite"]))
-    if DEBUG: print("Example flux         : %s"%(tmp_data[0]["flux"]))
-    if DEBUG: print("Example energy       : %s"%(tmp_data[0]["energy"]))
-    if DEBUG: print("Example yaw_flip     : %s"%(tmp_data[0]["yaw_flip"]))
-    if DEBUG: print("Example channel      : %s"%(tmp_data[0]["channel"]))
-    if DEBUG: print("Example time_tag[0]  : %s"%(tmp_data[0]["time_tag"]))
-    if DEBUG: print("Example time_tag[-1] : %s"%(tmp_data[-1]["time_tag"]))
-    if DEBUG: print("Total data points: %d"%(len(tmp_data)))
-    if DEBUG: print("\n")
+    if DEBUGLEVEL == "info": print("Example satellite    : %s"%(tmp_data[0]["satellite"]))
+    if DEBUGLEVEL == "info": print("Example flux         : %s"%(tmp_data[0]["flux"]))
+    if DEBUGLEVEL == "info": print("Example energy       : %s"%(tmp_data[0]["energy"]))
+    if DEBUGLEVEL == "info": print("Example yaw_flip     : %s"%(tmp_data[0]["yaw_flip"]))
+    if DEBUGLEVEL == "info": print("Example channel      : %s"%(tmp_data[0]["channel"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[0]  : %s"%(tmp_data[0]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[-1] : %s"%(tmp_data[-1]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Total data points: %d"%(len(tmp_data)))
+    if DEBUGLEVEL == "info": print("\n")
   
     # If this doesn't throw an exception but doesn't meet these conditions, the data is corrupt
     if (len(tmp_data[0]) is not 6) or (len(tmp_data[-1]) is not 6):
       error_log["get_measurement_differential_protons()"]["corrupt"].append(True)
+      if DEBUGLEVEL == "error": print("Corrupt error:")
+      if DEBUGLEVEL == "error": print(tmp_data)
+      if DEBUGLEVEL == "error": print("\n")
       return (error_log, data_in)
 
     # Format this data key
-    data["get_measurement_differential_protons()"] = listOfDicts_to_dictOfLists(tmp_data)
+    data["get_measurement_differential_protons()"] = listOfDicts_to_dictOfLists(tmp_data, DEBUGLEVEL)
 
     error_log["get_measurement_differential_protons()"]["corrupt"].append(False)
     return (error_log, data)
-  except:
+  except Exception as e:
     error_log["get_measurement_differential_protons()"]["corrupt"].append(True)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
-def get_measurement_integral_electrons(period, error_log_in, data_in, date, DEBUG):
+def get_measurement_integral_electrons(period, error_log_in, data_in, date, DEBUGLEVEL):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -298,7 +334,7 @@ def get_measurement_integral_electrons(period, error_log_in, data_in, date, DEBU
   # "satellite"
   # "flux"
   # "energy"
-  if DEBUG: print("get_measurement_integral_electrons(%s)"%(period))
+  if DEBUGLEVEL != "none": print("get_measurement_integral_electrons(%s)"%(period))
   if period == "6h": url = "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-6-hour.json"
   if period == "1d": url = "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json"
   if period == "3d": url = "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-3-day.json"
@@ -319,39 +355,48 @@ def get_measurement_integral_electrons(period, error_log_in, data_in, date, DEBU
     with urllib.request.urlopen(url) as thisurl:
       tmp_data = json.loads(thisurl.read().decode())
     error_log["get_measurement_integral_electrons()"]["urlopen"].append(False)
-  except:
+  except Exception as e:
     # If Opening the URL is an issue, then append a False flag for the data corruption since it isn't being tested
     error_log["get_measurement_integral_electrons()"]["urlopen"].append(True)
     error_log["get_measurement_integral_electrons()"]["corrupt"].append(False)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If we cannot even fetch the data, just return what was passed to us....
     return (error_log, data_in)
   
   # Test that the data looks valid before passing
   try:
-    if DEBUG: print("Example satellite    : %s"%(tmp_data[0]["satellite"]))
-    if DEBUG: print("Example flux         : %s"%(tmp_data[0]["flux"]))
-    if DEBUG: print("Example energy       : %s"%(tmp_data[0]["energy"]))
-    if DEBUG: print("Example time_tag[0]  : %s"%(tmp_data[0]["time_tag"]))
-    if DEBUG: print("Example time_tag[-1] : %s"%(tmp_data[-1]["time_tag"]))
-    if DEBUG: print("Total data points: %d"%(len(tmp_data)))
-    if DEBUG: print("\n")
+    if DEBUGLEVEL == "info": print("Example satellite    : %s"%(tmp_data[0]["satellite"]))
+    if DEBUGLEVEL == "info": print("Example flux         : %s"%(tmp_data[0]["flux"]))
+    if DEBUGLEVEL == "info": print("Example energy       : %s"%(tmp_data[0]["energy"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[0]  : %s"%(tmp_data[0]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[-1] : %s"%(tmp_data[-1]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Total data points: %d"%(len(tmp_data)))
+    if DEBUGLEVEL == "info": print("\n")
   
     # If this doesn't throw an exception but doesn't meet these conditions, the data is corrupt
     if (len(tmp_data[0]) is not 4) or (len(tmp_data[-1]) is not 4):
       error_log["get_measurement_integral_electrons()"]["corrupt"].append(True)
+      if DEBUGLEVEL == "error": print("Corrupt error:")
+      if DEBUGLEVEL == "error": print(tmp_data)
+      if DEBUGLEVEL == "error": print("\n")
       return (error_log, data_in)
 
     # Format this data key
-    data["get_measurement_integral_electrons()"] = listOfDicts_to_dictOfLists(tmp_data)
+    data["get_measurement_integral_electrons()"] = listOfDicts_to_dictOfLists(tmp_data, DEBUGLEVEL)
 
     error_log["get_measurement_integral_electrons()"]["corrupt"].append(False)
     return (error_log, data)
-  except:
+  except Exception as e:
     error_log["get_measurement_integral_electrons()"]["corrupt"].append(True)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
-def get_measurement_integral_protons(period, error_log_in, data_in, date, DEBUG):
+def get_measurement_integral_protons(period, error_log_in, data_in, date, DEBUGLEVEL):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -359,7 +404,7 @@ def get_measurement_integral_protons(period, error_log_in, data_in, date, DEBUG)
   # "satellite"
   # "flux"
   # "energy"
-  if DEBUG: print("get_measurement_integral_protons(%s)"%(period))
+  if DEBUGLEVEL != "none": print("get_measurement_integral_protons(%s)"%(period))
   if period == "6h": url = "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-6-hour.json"
   if period == "1d": url = "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json"
   if period == "3d": url = "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-3-day.json"
@@ -380,39 +425,48 @@ def get_measurement_integral_protons(period, error_log_in, data_in, date, DEBUG)
     with urllib.request.urlopen(url) as thisurl:
       tmp_data = json.loads(thisurl.read().decode())
     error_log["get_measurement_integral_protons()"]["urlopen"].append(False)
-  except:
+  except Exception as e:
     # If Opening the URL is an issue, then append a False flag for the data corruption since it isn't being tested
     error_log["get_measurement_integral_protons()"]["urlopen"].append(True)
     error_log["get_measurement_integral_protons()"]["corrupt"].append(False)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If we cannot even fetch the data, just return what was passed to us....
     return (error_log, data_in)
   
   # Test that the data looks valid before passing
   try:
-    if DEBUG: print("Example satellite    : %s"%(tmp_data[0]["satellite"]))
-    if DEBUG: print("Example flux         : %s"%(tmp_data[0]["flux"]))
-    if DEBUG: print("Example energy       : %s"%(tmp_data[0]["energy"]))
-    if DEBUG: print("Example time_tag[0]  : %s"%(tmp_data[0]["time_tag"]))
-    if DEBUG: print("Example time_tag[-1] : %s"%(tmp_data[-1]["time_tag"]))
-    if DEBUG: print("Total data points: %d"%(len(tmp_data)))
-    if DEBUG: print("\n")
+    if DEBUGLEVEL == "info": print("Example satellite    : %s"%(tmp_data[0]["satellite"]))
+    if DEBUGLEVEL == "info": print("Example flux         : %s"%(tmp_data[0]["flux"]))
+    if DEBUGLEVEL == "info": print("Example energy       : %s"%(tmp_data[0]["energy"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[0]  : %s"%(tmp_data[0]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[-1] : %s"%(tmp_data[-1]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Total data points: %d"%(len(tmp_data)))
+    if DEBUGLEVEL == "info": print("\n")
   
     # If this doesn't throw an exception but doesn't meet these conditions, the data is corrupt
     if (len(tmp_data[0]) is not 4) or (len(tmp_data[-1]) is not 4):
       error_log["get_measurement_integral_protons()"]["corrupt"].append(True)
+      if DEBUGLEVEL == "error": print("Corrupt error:")
+      if DEBUGLEVEL == "error": print(tmp_data)
+      if DEBUGLEVEL == "error": print("\n")
       return (error_log, data_in)
 
     # Format this data key
-    data["get_measurement_integral_protons()"] = listOfDicts_to_dictOfLists(tmp_data)
+    data["get_measurement_integral_protons()"] = listOfDicts_to_dictOfLists(tmp_data, DEBUGLEVEL)
 
     error_log["get_measurement_integral_protons()"]["corrupt"].append(False)
     return (error_log, data)
-  except:
+  except Exception as e:
     error_log["get_measurement_integral_protons()"]["corrupt"].append(True)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
-def get_measurement_magnetometers(period, error_log_in, data_in, date, DEBUG):
+def get_measurement_magnetometers(period, error_log_in, data_in, date, DEBUGLEVEL):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -423,7 +477,7 @@ def get_measurement_magnetometers(period, error_log_in, data_in, date, DEBUG):
   # "Hn"
   # "total"
   # "arcjet_flag"
-  if DEBUG: print("get_measurement_magnetometers(%s)"%(period))
+  if DEBUGLEVEL != "none": print("get_measurement_magnetometers(%s)"%(period))
   if period == "6h": url = "https://services.swpc.noaa.gov/json/goes/primary/magnetometers-6-hour.json"
   if period == "1d": url = "https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json"
   if period == "3d": url = "https://services.swpc.noaa.gov/json/goes/primary/magnetometers-3-day.json"
@@ -444,42 +498,51 @@ def get_measurement_magnetometers(period, error_log_in, data_in, date, DEBUG):
     with urllib.request.urlopen(url) as thisurl:
       tmp_data = json.loads(thisurl.read().decode())
     error_log["get_measurement_magnetometers()"]["urlopen"].append(False)
-  except:
+  except Exception as e:
     # If Opening the URL is an issue, then append a False flag for the data corruption since it isn't being tested
     error_log["get_measurement_magnetometers()"]["urlopen"].append(True)
     error_log["get_measurement_magnetometers()"]["corrupt"].append(False)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If we cannot even fetch the data, just return what was passed to us....
     return (error_log, data_in)
   
   # Test that the data looks valid before passing
   try:
-    if DEBUG: print("Example satellite    : %s"%(tmp_data[0]["satellite"]))
-    if DEBUG: print("Example He           : %s"%(tmp_data[0]["He"]))
-    if DEBUG: print("Example Hp           : %s"%(tmp_data[0]["Hp"]))
-    if DEBUG: print("Example Hn           : %s"%(tmp_data[0]["Hn"]))
-    if DEBUG: print("Example total        : %s"%(tmp_data[0]["total"]))
-    if DEBUG: print("Example arcjet_flag  : %s"%(tmp_data[0]["arcjet_flag"]))
-    if DEBUG: print("Example time_tag[0]  : %s"%(tmp_data[0]["time_tag"]))
-    if DEBUG: print("Example time_tag[-1] : %s"%(tmp_data[-1]["time_tag"]))
-    if DEBUG: print("Total data points: %d"%(len(tmp_data)))
-    if DEBUG: print("\n")
+    if DEBUGLEVEL == "info": print("Example satellite    : %s"%(tmp_data[0]["satellite"]))
+    if DEBUGLEVEL == "info": print("Example He           : %s"%(tmp_data[0]["He"]))
+    if DEBUGLEVEL == "info": print("Example Hp           : %s"%(tmp_data[0]["Hp"]))
+    if DEBUGLEVEL == "info": print("Example Hn           : %s"%(tmp_data[0]["Hn"]))
+    if DEBUGLEVEL == "info": print("Example total        : %s"%(tmp_data[0]["total"]))
+    if DEBUGLEVEL == "info": print("Example arcjet_flag  : %s"%(tmp_data[0]["arcjet_flag"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[0]  : %s"%(tmp_data[0]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[-1] : %s"%(tmp_data[-1]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Total data points: %d"%(len(tmp_data)))
+    if DEBUGLEVEL == "info": print("\n")
   
     # If this doesn't throw an exception but doesn't meet these conditions, the data is corrupt
     if (len(tmp_data[0]) is not 7) or (len(tmp_data[-1]) is not 7):
       error_log["get_measurement_magnetometers()"]["corrupt"].append(True)
+      if DEBUGLEVEL == "error": print("Corrupt error:")
+      if DEBUGLEVEL == "error": print(tmp_data)
+      if DEBUGLEVEL == "error": print("\n")
       return (error_log, data_in)
 
     # Format this data key
-    data["get_measurement_magnetometers()"] = listOfDicts_to_dictOfLists(tmp_data)
+    data["get_measurement_magnetometers()"] = listOfDicts_to_dictOfLists(tmp_data, DEBUGLEVEL)
 
     error_log["get_measurement_magnetometers()"]["corrupt"].append(False)
     return (error_log, data)
-  except:
+  except Exception as e:
     error_log["get_measurement_magnetometers()"]["corrupt"].append(True)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
-def get_measurement_xrays(period, error_log_in, data_in, date, DEBUG):
+def get_measurement_xrays(period, error_log_in, data_in, date, DEBUGLEVEL):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -487,7 +550,7 @@ def get_measurement_xrays(period, error_log_in, data_in, date, DEBUG):
   # "satellite"
   # "flux"
   # "energy"
-  if DEBUG: print("get_measurement_xrays(%s)"%(period))
+  if DEBUGLEVEL != "none": print("get_measurement_xrays(%s)"%(period))
   if period == "6h": url = "https://services.swpc.noaa.gov/json/goes/primary/xrays-6-hour.json"
   if period == "1d": url = "https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json"
   if period == "3d": url = "https://services.swpc.noaa.gov/json/goes/primary/xrays-3-day.json"
@@ -508,42 +571,51 @@ def get_measurement_xrays(period, error_log_in, data_in, date, DEBUG):
     with urllib.request.urlopen(url) as thisurl:
       tmp_data = json.loads(thisurl.read().decode())
     error_log["get_measurement_xrays()"]["urlopen"].append(False)
-  except:
+  except Exception as e:
     # If Opening the URL is an issue, then append a False flag for the data corruption since it isn't being tested
     error_log["get_measurement_xrays()"]["urlopen"].append(True)
     error_log["get_measurement_xrays()"]["corrupt"].append(False)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If we cannot even fetch the data, just return what was passed to us....
     return (error_log, data_in)
   
   # Test that the data looks valid before passing
   try:
-    if DEBUG: print("Example satellite    : %s"%(tmp_data[0]["satellite"]))
-    if DEBUG: print("Example flux         : %s"%(tmp_data[0]["flux"]))
-    if DEBUG: print("Example energy       : %s"%(tmp_data[0]["energy"]))
-    if DEBUG: print("Example time_tag[0]  : %s"%(tmp_data[0]["time_tag"]))
-    if DEBUG: print("Example time_tag[-1] : %s"%(tmp_data[-1]["time_tag"]))
-    if DEBUG: print("Total data points: %d"%(len(tmp_data)))
-    if DEBUG: print("\n")
+    if DEBUGLEVEL == "info": print("Example satellite    : %s"%(tmp_data[0]["satellite"]))
+    if DEBUGLEVEL == "info": print("Example flux         : %s"%(tmp_data[0]["flux"]))
+    if DEBUGLEVEL == "info": print("Example energy       : %s"%(tmp_data[0]["energy"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[0]  : %s"%(tmp_data[0]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[-1] : %s"%(tmp_data[-1]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Total data points: %d"%(len(tmp_data)))
+    if DEBUGLEVEL == "info": print("\n")
 
     # If this doesn't throw an exception but doesn't meet these conditions, the data is corrupt
     if (len(tmp_data[0]) is not 4) or (len(tmp_data[-1]) is not 4):
       error_log["get_measurement_xrays()"]["corrupt"].append(True)
+      if DEBUGLEVEL == "error": print("Corrupt error:")
+      if DEBUGLEVEL == "error": print(tmp_data)
+      if DEBUGLEVEL == "error": print("\n")
       return (error_log, data_in)
 
     # Format this data key
-    data["get_measurement_xrays()"] = listOfDicts_to_dictOfLists(tmp_data)
+    data["get_measurement_xrays()"] = listOfDicts_to_dictOfLists(tmp_data, DEBUGLEVEL)
 
     error_log["get_measurement_xrays()"]["corrupt"].append(False)
     return (error_log, data)
-  except:
+  except Exception as e:
     error_log["get_measurement_xrays()"]["corrupt"].append(True)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
 ###############################################################################
 # The Sun Itself
 ###############################################################################
-def get_solar_regions(error_log_in, data_in, date, DEBUG):
+def get_solar_regions(error_log_in, data_in, date, DEBUGLEVEL):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -576,7 +648,7 @@ def get_solar_regions(error_log_in, data_in, date, DEBUG):
   # x_flare_probability
   # proton_probability
   # first_date
-  if DEBUG: print("get_solar_regions()")
+  if DEBUGLEVEL != "none": print("get_solar_regions()")
   url = "https://services.swpc.noaa.gov/json/solar_regions.json"
   
   # Create the error dict if necessary
@@ -594,64 +666,73 @@ def get_solar_regions(error_log_in, data_in, date, DEBUG):
     with urllib.request.urlopen(url) as thisurl:
       tmp_data = json.loads(thisurl.read().decode())
     error_log["get_solar_regions()"]["urlopen"].append(False)
-  except:
+  except Exception as e:
     # If Opening the URL is an issue, then append a False flag for the data corruption since it isn't being tested
     error_log["get_solar_regions()"]["urlopen"].append(True)
     error_log["get_solar_regions()"]["corrupt"].append(False)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If we cannot even fetch the data, just return what was passed to us....
     return (error_log, data_in)
 
   # Test that the data looks valid before passing
   try:
-    if DEBUG: print("Example region                  : %s"%(tmp_data[0]["region"]))
-    if DEBUG: print("Example latitude                : %s"%(tmp_data[0]["latitude"]))
-    if DEBUG: print("Example longitude               : %s"%(tmp_data[0]["longitude"]))
-    if DEBUG: print("Example location                : %s"%(tmp_data[0]["location"]))
-    if DEBUG: print("Example carrington_longitude    : %s"%(tmp_data[0]["carrington_longitude"]))
-    if DEBUG: print("Example old_carrington_longitude: %s"%(tmp_data[0]["old_carrington_longitude"]))
-    if DEBUG: print("Example area                    : %s"%(tmp_data[0]["area"]))
-    if DEBUG: print("Example spot_class              : %s"%(tmp_data[0]["spot_class"]))
-    if DEBUG: print("Example extent                  : %s"%(tmp_data[0]["extent"]))
-    if DEBUG: print("Example number_spots            : %s"%(tmp_data[0]["number_spots"]))
-    if DEBUG: print("Example mag_class               : %s"%(tmp_data[0]["mag_class"]))
-    if DEBUG: print("Example mag_string              : %s"%(tmp_data[0]["mag_string"]))
-    if DEBUG: print("Example status                  : %s"%(tmp_data[0]["status"]))
-    if DEBUG: print("Example c_xray_events           : %s"%(tmp_data[0]["c_xray_events"]))
-    if DEBUG: print("Example m_xray_events           : %s"%(tmp_data[0]["m_xray_events"]))
-    if DEBUG: print("Example x_xray_events           : %s"%(tmp_data[0]["x_xray_events"]))
-    if DEBUG: print("Example proton_events           : %s"%(tmp_data[0]["proton_events"]))
-    if DEBUG: print("Example s_flares                : %s"%(tmp_data[0]["s_flares"]))
-    if DEBUG: print("Example impulse_flares_1        : %s"%(tmp_data[0]["impulse_flares_1"]))
-    if DEBUG: print("Example impulse_flares_2        : %s"%(tmp_data[0]["impulse_flares_2"]))
-    if DEBUG: print("Example impulse_flares_3        : %s"%(tmp_data[0]["impulse_flares_3"]))
-    if DEBUG: print("Example impulse_flares_4        : %s"%(tmp_data[0]["impulse_flares_4"]))
-    if DEBUG: print("Example protons                 : %s"%(tmp_data[0]["protons"]))
-    if DEBUG: print("Example c_flare_probability     : %s"%(tmp_data[0]["c_flare_probability"]))
-    if DEBUG: print("Example m_flare_probability     : %s"%(tmp_data[0]["m_flare_probability"]))
-    if DEBUG: print("Example x_flare_probability     : %s"%(tmp_data[0]["x_flare_probability"]))
-    if DEBUG: print("Example proton_probability      : %s"%(tmp_data[0]["proton_probability"]))
-    if DEBUG: print("Example first_date              : %s"%(tmp_data[0]["first_date"]))
-    if DEBUG: print("Example observed_date[0]        : %s"%(tmp_data[0]["observed_date"]))
-    if DEBUG: print("Example observed_date[-1]       : %s"%(tmp_data[-1]["observed_date"]))
-    if DEBUG: print("Total data points               : %d"%(len(tmp_data)))
-    if DEBUG: print("\n")
+    if DEBUGLEVEL == "info": print("Example region                  : %s"%(tmp_data[0]["region"]))
+    if DEBUGLEVEL == "info": print("Example latitude                : %s"%(tmp_data[0]["latitude"]))
+    if DEBUGLEVEL == "info": print("Example longitude               : %s"%(tmp_data[0]["longitude"]))
+    if DEBUGLEVEL == "info": print("Example location                : %s"%(tmp_data[0]["location"]))
+    if DEBUGLEVEL == "info": print("Example carrington_longitude    : %s"%(tmp_data[0]["carrington_longitude"]))
+    if DEBUGLEVEL == "info": print("Example old_carrington_longitude: %s"%(tmp_data[0]["old_carrington_longitude"]))
+    if DEBUGLEVEL == "info": print("Example area                    : %s"%(tmp_data[0]["area"]))
+    if DEBUGLEVEL == "info": print("Example spot_class              : %s"%(tmp_data[0]["spot_class"]))
+    if DEBUGLEVEL == "info": print("Example extent                  : %s"%(tmp_data[0]["extent"]))
+    if DEBUGLEVEL == "info": print("Example number_spots            : %s"%(tmp_data[0]["number_spots"]))
+    if DEBUGLEVEL == "info": print("Example mag_class               : %s"%(tmp_data[0]["mag_class"]))
+    if DEBUGLEVEL == "info": print("Example mag_string              : %s"%(tmp_data[0]["mag_string"]))
+    if DEBUGLEVEL == "info": print("Example status                  : %s"%(tmp_data[0]["status"]))
+    if DEBUGLEVEL == "info": print("Example c_xray_events           : %s"%(tmp_data[0]["c_xray_events"]))
+    if DEBUGLEVEL == "info": print("Example m_xray_events           : %s"%(tmp_data[0]["m_xray_events"]))
+    if DEBUGLEVEL == "info": print("Example x_xray_events           : %s"%(tmp_data[0]["x_xray_events"]))
+    if DEBUGLEVEL == "info": print("Example proton_events           : %s"%(tmp_data[0]["proton_events"]))
+    if DEBUGLEVEL == "info": print("Example s_flares                : %s"%(tmp_data[0]["s_flares"]))
+    if DEBUGLEVEL == "info": print("Example impulse_flares_1        : %s"%(tmp_data[0]["impulse_flares_1"]))
+    if DEBUGLEVEL == "info": print("Example impulse_flares_2        : %s"%(tmp_data[0]["impulse_flares_2"]))
+    if DEBUGLEVEL == "info": print("Example impulse_flares_3        : %s"%(tmp_data[0]["impulse_flares_3"]))
+    if DEBUGLEVEL == "info": print("Example impulse_flares_4        : %s"%(tmp_data[0]["impulse_flares_4"]))
+    if DEBUGLEVEL == "info": print("Example protons                 : %s"%(tmp_data[0]["protons"]))
+    if DEBUGLEVEL == "info": print("Example c_flare_probability     : %s"%(tmp_data[0]["c_flare_probability"]))
+    if DEBUGLEVEL == "info": print("Example m_flare_probability     : %s"%(tmp_data[0]["m_flare_probability"]))
+    if DEBUGLEVEL == "info": print("Example x_flare_probability     : %s"%(tmp_data[0]["x_flare_probability"]))
+    if DEBUGLEVEL == "info": print("Example proton_probability      : %s"%(tmp_data[0]["proton_probability"]))
+    if DEBUGLEVEL == "info": print("Example first_date              : %s"%(tmp_data[0]["first_date"]))
+    if DEBUGLEVEL == "info": print("Example observed_date[0]        : %s"%(tmp_data[0]["observed_date"]))
+    if DEBUGLEVEL == "info": print("Example observed_date[-1]       : %s"%(tmp_data[-1]["observed_date"]))
+    if DEBUGLEVEL == "info": print("Total data points               : %d"%(len(tmp_data)))
+    if DEBUGLEVEL == "info": print("\n")
   
     # If this doesn't throw an exception but doesn't meet these conditions, the data is corrupt
     if (len(tmp_data[0]) is not 29) or (len(tmp_data[-1]) is not 29):
       error_log["get_solar_regions()"]["corrupt"].append(True)
+      if DEBUGLEVEL == "error": print("Corrupt error:")
+      if DEBUGLEVEL == "error": print(tmp_data)
+      if DEBUGLEVEL == "error": print("\n")
       return (error_log, data_in)
 
     # Format this data key
-    data["get_solar_regions()"] = listOfDicts_to_dictOfLists(tmp_data)
+    data["get_solar_regions()"] = listOfDicts_to_dictOfLists(tmp_data, DEBUGLEVEL)
 
     error_log["get_solar_regions()"]["corrupt"].append(False)
     return (error_log, data)
-  except:
+  except Exception as e:
     error_log["get_solar_regions()"]["corrupt"].append(True)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
-def get_sunspot_report(error_log_in, data_in, date, DEBUG):
+def get_sunspot_report(error_log_in, data_in, date, DEBUGLEVEL):
   # This function calls' error log and data are passed in to be updated, this allows the error handling to "recover" by
   # simply passing back the data that was in the json archive previously, keeping the stored data
   error_log = error_log_in
@@ -681,7 +762,7 @@ def get_sunspot_report(error_log_in, data_in, date, DEBUG):
   # "Obsid":6
   # "Report_Status":2
   # "ValidSpotClass":1}#
-  if DEBUG: print("get_sunspot_report()")
+  if DEBUGLEVEL != "none": print("get_sunspot_report()")
   url = "https://services.swpc.noaa.gov/json/sunspot_report.json"
   
   # Create the error dict if necessary
@@ -699,78 +780,92 @@ def get_sunspot_report(error_log_in, data_in, date, DEBUG):
     with urllib.request.urlopen(url) as thisurl:
       tmp_data = json.loads(thisurl.read().decode())
     error_log["get_sunspot_report()"]["urlopen"].append(False)
-  except:
+  except Exception as e:
     # If Opening the URL is an issue, then append a False flag for the data corruption since it isn't being tested
     error_log["get_sunspot_report()"]["urlopen"].append(True)
     error_log["get_sunspot_report()"]["corrupt"].append(False)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If we cannot even fetch the data, just return what was passed to us....
     return (error_log, data_in)
 
   # Test that the data looks valid before passing
   try:
-    if DEBUG: print("Example Obsdate          : %s"%(tmp_data[0]["Obsdate"]))
-    if DEBUG: print("Example Obstime          : %s"%(tmp_data[0]["Obstime"]))
-    if DEBUG: print("Example Station          : %s"%(tmp_data[0]["Station"]))
-    if DEBUG: print("Example Observatory      : %s"%(tmp_data[0]["Observatory"]))
-    if DEBUG: print("Example Type             : %s"%(tmp_data[0]["Type"]))
-    if DEBUG: print("Example Quality          : %s"%(tmp_data[0]["Quality"]))
-    if DEBUG: print("Example Region           : %s"%(tmp_data[0]["Region"]))
-    if DEBUG: print("Example Latitude         : %s"%(tmp_data[0]["Latitude"]))
-    if DEBUG: print("Example Report_Longitude : %s"%(tmp_data[0]["Report_Longitude"]))
-    if DEBUG: print("Example Longitude        : %s"%(tmp_data[0]["Longitude"]))
-    if DEBUG: print("Example Report_Location  : %s"%(tmp_data[0]["Report_Location"]))
-    if DEBUG: print("Example Location         : %s"%(tmp_data[0]["Location"]))
-    if DEBUG: print("Example Carlon           : %s"%(tmp_data[0]["Carlon"]))
-    if DEBUG: print("Example Extent           : %s"%(tmp_data[0]["Extent"]))
-    if DEBUG: print("Example Area             : %s"%(tmp_data[0]["Area"]))
-    if DEBUG: print("Example Numspot          : %s"%(tmp_data[0]["Numspot"]))
-    if DEBUG: print("Example Zurich           : %s"%(tmp_data[0]["Zurich"]))
-    if DEBUG: print("Example Penumbra         : %s"%(tmp_data[0]["Penumbra"]))
-    if DEBUG: print("Example Compact          : %s"%(tmp_data[0]["Compact"]))
-    if DEBUG: print("Example Spotclass        : %s"%(tmp_data[0]["Spotclass"]))
-    if DEBUG: print("Example Magcode          : %s"%(tmp_data[0]["Magcode"]))
-    if DEBUG: print("Example Magclass         : %s"%(tmp_data[0]["Magclass"]))
-    if DEBUG: print("Example Obsid            : %s"%(tmp_data[0]["Obsid"]))
-    if DEBUG: print("Example Report_Status    : %s"%(tmp_data[0]["Report_Status"]))
-    if DEBUG: print("Example ValidSpotClass   : %s"%(tmp_data[0]["ValidSpotClass"]))
-    if DEBUG: print("Example time_tag[0]      : %s"%(tmp_data[0]["time_tag"]))
-    if DEBUG: print("Example time_tag[-1]     : %s"%(tmp_data[-1]["time_tag"]))
-    if DEBUG: print("Total data points        : %d"%(len(tmp_data)))
-    if DEBUG: print("\n")
+    if DEBUGLEVEL == "info": print("Example Obsdate          : %s"%(tmp_data[0]["Obsdate"]))
+    if DEBUGLEVEL == "info": print("Example Obstime          : %s"%(tmp_data[0]["Obstime"]))
+    if DEBUGLEVEL == "info": print("Example Station          : %s"%(tmp_data[0]["Station"]))
+    if DEBUGLEVEL == "info": print("Example Observatory      : %s"%(tmp_data[0]["Observatory"]))
+    if DEBUGLEVEL == "info": print("Example Type             : %s"%(tmp_data[0]["Type"]))
+    if DEBUGLEVEL == "info": print("Example Quality          : %s"%(tmp_data[0]["Quality"]))
+    if DEBUGLEVEL == "info": print("Example Region           : %s"%(tmp_data[0]["Region"]))
+    if DEBUGLEVEL == "info": print("Example Latitude         : %s"%(tmp_data[0]["Latitude"]))
+    if DEBUGLEVEL == "info": print("Example Report_Longitude : %s"%(tmp_data[0]["Report_Longitude"]))
+    if DEBUGLEVEL == "info": print("Example Longitude        : %s"%(tmp_data[0]["Longitude"]))
+    if DEBUGLEVEL == "info": print("Example Report_Location  : %s"%(tmp_data[0]["Report_Location"]))
+    if DEBUGLEVEL == "info": print("Example Location         : %s"%(tmp_data[0]["Location"]))
+    if DEBUGLEVEL == "info": print("Example Carlon           : %s"%(tmp_data[0]["Carlon"]))
+    if DEBUGLEVEL == "info": print("Example Extent           : %s"%(tmp_data[0]["Extent"]))
+    if DEBUGLEVEL == "info": print("Example Area             : %s"%(tmp_data[0]["Area"]))
+    if DEBUGLEVEL == "info": print("Example Numspot          : %s"%(tmp_data[0]["Numspot"]))
+    if DEBUGLEVEL == "info": print("Example Zurich           : %s"%(tmp_data[0]["Zurich"]))
+    if DEBUGLEVEL == "info": print("Example Penumbra         : %s"%(tmp_data[0]["Penumbra"]))
+    if DEBUGLEVEL == "info": print("Example Compact          : %s"%(tmp_data[0]["Compact"]))
+    if DEBUGLEVEL == "info": print("Example Spotclass        : %s"%(tmp_data[0]["Spotclass"]))
+    if DEBUGLEVEL == "info": print("Example Magcode          : %s"%(tmp_data[0]["Magcode"]))
+    if DEBUGLEVEL == "info": print("Example Magclass         : %s"%(tmp_data[0]["Magclass"]))
+    if DEBUGLEVEL == "info": print("Example Obsid            : %s"%(tmp_data[0]["Obsid"]))
+    if DEBUGLEVEL == "info": print("Example Report_Status    : %s"%(tmp_data[0]["Report_Status"]))
+    if DEBUGLEVEL == "info": print("Example ValidSpotClass   : %s"%(tmp_data[0]["ValidSpotClass"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[0]      : %s"%(tmp_data[0]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Example time_tag[-1]     : %s"%(tmp_data[-1]["time_tag"]))
+    if DEBUGLEVEL == "info": print("Total data points        : %d"%(len(tmp_data)))
+    if DEBUGLEVEL == "info": print("\n")
   
     # If this doesn't throw an exception but doesn't meet these conditions, the data is corrupt
     if (len(tmp_data[0]) is not 26) or (len(tmp_data[-1]) is not 26):
       error_log["get_sunspot_report()"]["corrupt"].append(True)
+      if DEBUGLEVEL == "error": print("Corrupt error:")
+      if DEBUGLEVEL == "error": print(tmp_data)
+      if DEBUGLEVEL == "error": print("\n")
       return (error_log, data_in)
 
     # Format this data key
-    data["get_sunspot_report()"] = listOfDicts_to_dictOfLists(tmp_data)
+    data["get_sunspot_report()"] = listOfDicts_to_dictOfLists(tmp_data, DEBUGLEVEL)
 
     error_log["get_sunspot_report()"]["corrupt"].append(False)
     return (error_log, data)
-  except:
+  except Exception as e:
     error_log["get_sunspot_report()"]["corrupt"].append(True)
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     # If the data appears corrupt from some basic tests, return the original data
     return (error_log, data_in)
 
 ###############################################################################
 # Support Functions
 ###############################################################################
-def listOfDicts_to_dictOfLists(dataI, DEBUG):
+def listOfDicts_to_dictOfLists(dataI, DEBUGLEVEL):
   # The purpose of this function is directly tied to the returned data from the NOAA servers
   # The data from NOAA is a list of dictionaries, where one element in the list is a specific
   # sample point, and the list is the set of samples. This is somewhat annoyingly formatted
   # as it would make more sense to return a dictionary of lists instead which is why it is
   # being reformatted here.
-  if DEBUG: print("listOfDicts_to_dictOfLists()")
+  if DEBUGLEVEL != "none": print("listOfDicts_to_dictOfLists()")
   dataO = dict()
-  for sample in dataI:
-    for key, value in sample.items():
-      if key not in dataO:
-        dataO[key] = list()
-      dataO[key].append(value)
+  try:
+    for sample in dataI:
+      for key, value in sample.items():
+        if key not in dataO:
+          dataO[key] = list()
+        dataO[key].append(value)
+  except Exception as e:
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
 
-  if DEBUG:
+  if DEBUGLEVEL == "info":
     for key, value in dataO.items():
       print("Example dictionary list of key [%s]: %s"%(key,dataO[key]))
 
@@ -779,18 +874,23 @@ def listOfDicts_to_dictOfLists(dataI, DEBUG):
 ###############################################################################
 # File Accesses
 ###############################################################################
-def fetch_archive(file_to_read, DEBUG):
+def fetch_archive(file_to_read, DEBUGLEVEL):
+  if DEBUGLEVEL != "none": print("fetch_archive()")
   try:
     with open(file_to_read, 'r') as fh:
       data = json.load(fh)
-  except:
-    if DEBUG: print("No file %s detected, returning empty dictionary"%(file_to_read))
+  except Exception as e:
+    if DEBUGLEVEL: print("No file %s detected, returning empty dictionary"%(file_to_read))
+    if DEBUGLEVEL == "error": print("Exception:")
+    if DEBUGLEVEL == "error": print(e)
+    if DEBUGLEVEL == "error": print("\n")
     data = dict()
   return data
 
-def store_archive(file_to_write, data, DEBUG):
+def store_archive(file_to_write, data, DEBUGLEVEL):
+  if DEBUGLEVEL != "none": print("store_archive()")
   with open(file_to_write, 'w') as fh:
-    if DEBUG: print("Storing to file %s"%(file_to_write))
+    if DEBUGLEVEL == "info": print("Storing to file %s"%(file_to_write))
     json.dump(data, fh)
 
 ###############################################################################
@@ -806,7 +906,8 @@ if __name__ == "__main__":
   except:
     print("User config file not present, creating...")
     with open("fetch_summary_config.py", "w") as fh:
-      fh.write("DEBUG                = False\n")
+      fh.write("# none, info, error\n")
+      fh.write("DEBUGLEVEL           = \"none\"\n")
       fh.write("ENFILEWRITES         = True\n")
       fh.write("RECORDERRORS         = True\n")
       fh.write("ENINDICESkp          = True\n")
@@ -839,14 +940,14 @@ if __name__ == "__main__":
     import fetch_summary_config
 
   # Fetch the current data and error log
-  if fetch_summary_config.ENFILEWRITES:         data = fetch_archive('data.json', fetch_summary_config.DEBUG)
-  if fetch_summary_config.RECORDERRORS:         error_log = fetch_archive('errors.json', fetch_summary_config.DEBUG)
+  if fetch_summary_config.ENFILEWRITES:         data = fetch_archive('data.json', fetch_summary_config.DEBUGLEVEL)
+  if fetch_summary_config.RECORDERRORS:         error_log = fetch_archive('errors.json', fetch_summary_config.DEBUGLEVEL)
 
   # New Data and Error Collection Framework
   # Collect the Data and Errors, if the previous run was logging a type of data and the current run does not contain
   # that type of data, remove it from the error log as it has persistence
   if fetch_summary_config.ENINDICESkp:          # Catch the data and the error log
-                           all_info                                           = get_kp_index_1m(error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_kp_index_1m(error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
@@ -854,7 +955,7 @@ if __name__ == "__main__":
                            error_log.pop("get_kp_index_1m()", None)
 
   if fetch_summary_config.ENINDICESk:           # Catch the data and the error log
-                           all_info                                           = get_k_index_1m(error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_k_index_1m(error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
@@ -862,19 +963,19 @@ if __name__ == "__main__":
                            error_log.pop("get_k_index_1m()", None)
 
   if fetch_summary_config.ENWEATHERMEASURESd6e: # Catch the data and the error log
-                           all_info                                           = get_measurement_differential_electrons("6h", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_differential_electrons("6h", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURESd1e: # Catch the data and the error log
-                           all_info                                           = get_measurement_differential_electrons("1d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_differential_electrons("1d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURESd3e: # Catch the data and the error log
-                           all_info                                           = get_measurement_differential_electrons("3d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_differential_electrons("3d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURESd7e: # Catch the data and the error log
-                           all_info                                           = get_measurement_differential_electrons("7d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_differential_electrons("7d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
@@ -882,19 +983,19 @@ if __name__ == "__main__":
                            error_log.pop("get_measurement_differential_electrons()", None)
 
   if fetch_summary_config.ENWEATHERMEASURESd6p: # Catch the data and the error log
-                           all_info                                           = get_measurement_differential_protons("6h", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_differential_protons("6h", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURESd1p: # Catch the data and the error log
-                           all_info                                           = get_measurement_differential_protons("1d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_differential_protons("1d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURESd3p: # Catch the data and the error log
-                           all_info                                           = get_measurement_differential_protons("3d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_differential_protons("3d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURESd7p: # Catch the data and the error log
-                           all_info                                           = get_measurement_differential_protons("7d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_differential_protons("7d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
@@ -902,19 +1003,19 @@ if __name__ == "__main__":
                            error_log.pop("get_measurement_differential_protons()", None)
 
   if fetch_summary_config.ENWEATHERMEASURESi6e: # Catch the data and the error log
-                           all_info                                           = get_measurement_integral_electrons("6h", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_integral_electrons("6h", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURESi1e: # Catch the data and the error log
-                           all_info                                           = get_measurement_integral_electrons("1d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_integral_electrons("1d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURESi3e: # Catch the data and the error log
-                           all_info                                           = get_measurement_integral_electrons("3d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_integral_electrons("3d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURESi7e: # Catch the data and the error log
-                           all_info                                           = get_measurement_integral_electrons("7d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_integral_electrons("7d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
@@ -922,19 +1023,19 @@ if __name__ == "__main__":
                            error_log.pop("get_measurement_integral_electrons()", None)
 
   if fetch_summary_config.ENWEATHERMEASURESi6p: # Catch the data and the error log
-                           all_info                                           = get_measurement_integral_protons("6h", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_integral_protons("6h", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURESi1p: # Catch the data and the error log
-                           all_info                                           = get_measurement_integral_protons("1d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_integral_protons("1d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURESi3p: # Catch the data and the error log
-                           all_info                                           = get_measurement_integral_protons("3d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_integral_protons("3d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURESi7p: # Catch the data and the error log
-                           all_info                                           = get_measurement_integral_protons("7d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_integral_protons("7d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
@@ -942,19 +1043,19 @@ if __name__ == "__main__":
                            error_log.pop("get_measurement_integral_protons()", None)
 
   if fetch_summary_config.ENWEATHERMEASURES6m: # Catch the data and the error log
-                           all_info                                           = get_measurement_magnetometers("6h", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_magnetometers("6h", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURES1m: # Catch the data and the error log
-                           all_info                                           = get_measurement_magnetometers("1d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_magnetometers("1d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURES3m: # Catch the data and the error log
-                           all_info                                           = get_measurement_magnetometers("3d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_magnetometers("3d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURES7m: # Catch the data and the error log
-                           all_info                                           = get_measurement_magnetometers("7d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_magnetometers("7d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
@@ -962,19 +1063,19 @@ if __name__ == "__main__":
                            error_log.pop("get_measurement_magnetometers()", None)
 
   if fetch_summary_config.ENWEATHERMEASURES6x: # Catch the data and the error log
-                           all_info                                           = get_measurement_xrays("6h", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_xrays("6h", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURES1x: # Catch the data and the error log
-                           all_info                                           = get_measurement_xrays("1d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_xrays("1d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURES3x: # Catch the data and the error log
-                           all_info                                           = get_measurement_xrays("3d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_xrays("3d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.ENWEATHERMEASURES7x: # Catch the data and the error log
-                           all_info                                           = get_measurement_xrays("7d", error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_measurement_xrays("7d", error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
@@ -982,7 +1083,7 @@ if __name__ == "__main__":
                            error_log.pop("get_measurement_xrays()", None)
 
   if fetch_summary_config.ENSUNMEASURES: # Catch the data and the error log
-                           all_info                                           = get_solar_regions(error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_solar_regions(error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
@@ -990,7 +1091,7 @@ if __name__ == "__main__":
                            error_log.pop("get_solar_regions()", None)
 
   if fetch_summary_config.ENSUNMEASURES: # Catch the data and the error log
-                           all_info                                           = get_sunspot_report(error_log, data, now, fetch_summary_config.DEBUG)
+                           all_info                                           = get_sunspot_report(error_log, data, now, fetch_summary_config.DEBUGLEVEL)
                            error_log                                          = all_info[0]
                            data                                               = all_info[1]
   elif fetch_summary_config.RECORDERRORS:       # Strip the data and error log if this data type is no longer being sampled
@@ -998,5 +1099,5 @@ if __name__ == "__main__":
                            error_log.pop("get_sunspot_report()", None)
 
   # Store the updated data and error_log
-  if fetch_summary_config.ENFILEWRITES:         store_archive('data.json', data, fetch_summary_config.DEBUG)
-  if fetch_summary_config.RECORDERRORS:         store_archive('errors.json', error_log, fetch_summary_config.DEBUG)
+  if fetch_summary_config.ENFILEWRITES:         store_archive('data.json', data, fetch_summary_config.DEBUGLEVEL)
+  if fetch_summary_config.RECORDERRORS:         store_archive('errors.json', error_log, fetch_summary_config.DEBUGLEVEL)
