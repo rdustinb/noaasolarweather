@@ -1,17 +1,9 @@
 # This is the master data agent, it will enable and disable different data agents.
 from support import filehandling
 
-#"time_tag": "2024-09-29T16:34:00Z"
-#"satellite": 16
-#"flux": 9.165273695543874e-08
-#"observed_flux": 1.0357116053683058e-07
-#"electron_correction": 1.1918425357748674e-08
-#"electron_contaminaton": false
-#"energy": "0.05-0.4nm"
-
-allDataSourceURLs = {
-    "https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json"
-}
+#allDataSourceURLs = {
+#    "https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json"
+#}
 
 #allDataSourceURLs = {
 #    "https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json",
@@ -22,6 +14,16 @@ allDataSourceURLs = {
 #    "https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json"
 #}
 
+# Magnetometers uses a vector data value, not the energy key
+
+allDataSourceURLs = {
+    "https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json",
+    "https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-1-day.json",
+    "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json",
+    "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json",
+    "https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json"
+}
+
 pullAndUseLocalData = True
 
 localRawDataFolder = "localData"
@@ -30,6 +32,7 @@ localFormattedDataFolder = "formattedData"
 # Fetch the data
 for thisDataSourceURL in allDataSourceURLs:
     dataDict = dict()
+    print(" ")
     ################
     # Generate the local filename based off the URL... (is this a good idea?)
     thisDataFilename = thisDataSourceURL.split("/")[-1]

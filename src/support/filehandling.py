@@ -34,7 +34,7 @@ def remoteOrLocal(dataSourceURL: str, localDataFolder: str, pullAndUseLocalData:
 ################################
 # Fetch the remote data
 def fetchRemoteData(dataSourceURL: str):
-    print("Fetching data from %s"%(dataSourceURL))
+    print("Fetching remote data from %s"%(dataSourceURL))
     # Open the URL
     response = urlopen(dataSourceURL)
     # Fetch the Data
@@ -45,6 +45,7 @@ def fetchRemoteData(dataSourceURL: str):
 # Store the data to a local file
 def setLocalData(localDataFolder: str, localDataFilename: str, jsonData):
     localDataFilePath = Path(localDataFolder+"/"+localDataFilename)
+    print("Setting data to %s"%(localDataFilePath))
     # Store the data local
     with open(localDataFilePath, "w") as fh:
         json.dump(jsonData, fh)
@@ -53,7 +54,7 @@ def setLocalData(localDataFolder: str, localDataFilename: str, jsonData):
 # Get the data from a local file
 def getLocalData(localDataFolder: str, localDataFilename: str):
     localDataFilePath = Path(localDataFolder+"/"+localDataFilename)
-    print("Storing data to %s"%(localDataFilePath))
+    print("Getting data to %s"%(localDataFilePath))
     # Read the data from the local file...
     with open(localDataFilePath, "r") as fh:
         jsonData = json.load(fh)
