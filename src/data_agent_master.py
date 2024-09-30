@@ -1,34 +1,22 @@
 # This is the master data agent, it will enable and disable different data agents.
 from support import filehandling
+import configparser
 
-#allDataSourceURLs = {
-#    "https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json"
-#}
+################################
+# Get the configuration
+# Create a config parser object
+config = configparser.ConfigParser()
 
-#allDataSourceURLs = {
-#    "https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json",
-#    "https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-1-day.json",
-#    "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json",
-#    "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json",
-#    "https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json",
-#    "https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json"
-#}
+# Read the configuration file
+config.read('config.ini')
 
-# Magnetometers uses a vector data value, not the energy key
+# Access values from the configuration file
+pullAndUseLocalData         = config.getboolean('general', 'use_local')
+localRawDataFolder          = config.get('general', 'local_raw')
+localFormattedDataFolder    = config.get('general', 'local_formatted')
+allDataSourceURLs           = config.get('sources', 'urls').split()
 
-allDataSourceURLs = {
-    "https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json",
-    "https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-1-day.json",
-    "https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json",
-    "https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json",
-    "https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json"
-}
-
-pullAndUseLocalData = True
-
-localRawDataFolder = "localData"
-localFormattedDataFolder = "formattedData"
-
+################################
 # Fetch the data
 for thisDataSourceURL in allDataSourceURLs:
     dataDict = dict()

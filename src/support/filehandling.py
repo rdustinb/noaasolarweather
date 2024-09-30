@@ -54,7 +54,7 @@ def setLocalData(localDataFolder: str, localDataFilename: str, jsonData):
 # Get the data from a local file
 def getLocalData(localDataFolder: str, localDataFilename: str):
     localDataFilePath = Path(localDataFolder+"/"+localDataFilename)
-    print("Getting data to %s"%(localDataFilePath))
+    print("Getting data from %s"%(localDataFilePath))
     # Read the data from the local file...
     with open(localDataFilePath, "r") as fh:
         jsonData = json.load(fh)
