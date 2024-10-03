@@ -1,6 +1,7 @@
 # This is the master data agent, it will enable and disable different data agents.
 from support import filehandling
 import configparser
+import os 
 
 ################################
 # Get the configuration
@@ -19,6 +20,12 @@ dataPrecision               = config.get('data', 'precision')
 allDataSourceURLs           = config.get('sources', 'urls').split()
 
 dataPrecisionFormatter = "{:.%sf}"%(dataPrecision)
+
+################################
+# Create the local folders if needed
+for thisFolder in (localRawDataFolder, localFormattedDataFolder):
+    if not os.path.exists(thisFolder): 
+        os.makedirs(thisFolder) 
 
 ################################
 # Fetch the data
