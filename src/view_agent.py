@@ -1,10 +1,9 @@
 # This is the master view agent, it will display the local data files as graphs.
-from support import filehandling
+from support import filehandling, colors
 import configparser
 import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-
 
 ################################
 # Get the configuration
@@ -26,8 +25,9 @@ allDataSourceURLs           = config.get('sources', 'urls').split()
 fig = make_subplots(rows=3, cols=2)
 row_index = 1
 col_index = 1
+color_index = 1
 
-for thisDataSourceURL in allDataSourceURLs:
+for thisDataSourceURL,thisColorFamily in zip(allDataSourceURLs, colors.allColors):
     ################
     # Generate the local filename based off the URL... (is this a good idea?)
     thisDataFilename = thisDataSourceURL.split("/")[-1]
@@ -35,13 +35,30 @@ for thisDataSourceURL in allDataSourceURLs:
     # Store the Formatted Data
     dataDict = filehandling.getLocalData(localDataFolder=localFormattedDataFolder, localDataFilename=thisDataFilename)
     ################
+    # Generate the Data type string
+    dataTypeString = thisDataFilename.split(".")[0].replace("-", " ")
+    ################
     # Generate the Figure
     for thisKey in dataDict:
         if thisKey == "time_tag":
             next
         else:
             # Each energy for this data dictionary is added to the same plot row/col offset
-            fig.add_trace(go.Scatter(x=dataDict["time_tag"], y=dataDict[thisKey], name=thisKey), row=row_index, col=col_index)
+            fig.add_trace(
+                go.Scatter(
+                    x=dataDict["time_tag"],
+                    y=dataDict[thisKey],
+                    name="%s %s"%(dataTypeString,thisKey),
+                    mode='lines',
+                    line=dict(
+                        color=colors.allColors[color_index],
+                        width=2
+                    )
+                ),
+                row=row_index,
+                col=col_index
+            )
+            color_index += 1
     ################
     # Update the Indices
     col_index += 1
