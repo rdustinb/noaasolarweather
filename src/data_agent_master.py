@@ -30,8 +30,14 @@ for thisFolder in (localRawDataFolder, localFormattedDataFolder):
 ################################
 # Fetch the data
 for thisDataSourceURL in allDataSourceURLs:
+    # Dictionary:
+    #   "time_tag": string
+    #   "data_name": string
+    #   "<energy val 0>": list()
+    #   "<energy val 1>": list()
+    #       ...
+    #   "<energy val 2>": list()
     dataDict = dict()
-    print(" ")
     ################
     # Generate the local filename based off the URL... (is this a good idea?)
     thisDataFilename = thisDataSourceURL.split("/")[-1]
@@ -41,7 +47,6 @@ for thisDataSourceURL in allDataSourceURLs:
     thisJsonData = filehandling.remoteOrLocal(dataSourceURL=thisDataSourceURL, localDataFolder=localRawDataFolder, pullAndUseLocalData=pullAndUseLocalData)
     ################
     # Create an array of the energies...
-    print("Formatting data from %s"%(thisDataSourceURL))
     thisFirstEntryIndicator = ""
     for thisElement in thisJsonData:
         # If the time_tag hasn't been created in the dictionary yet, create it

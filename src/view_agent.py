@@ -18,10 +18,21 @@ pullAndUseLocalData         = config.getboolean('general', 'use_local')
 localRawDataFolder          = config.get('general', 'local_raw')
 localFormattedDataFolder    = config.get('general', 'local_formatted')
 allDataSourceURLs           = config.get('sources', 'urls').split()
+showGui                     = config.getboolean('debug', 'show_gui')
 
 ################################
 # Generate all the Subplots from all the Data
-fig = make_subplots(rows=3, cols=2)
+fig = make_subplots(
+    rows=3,
+    cols=2,
+    specs=[
+        [{"colspan": 2}, None],
+        [{}, {}],
+        [{}, {}],
+        ],
+    subplot_titles=[thisDataFilename.split("/")[-1].split(".")[0].replace("-"," ").split("1")[0].title() for thisDataFilename in allDataSourceURLs]
+    )
+
 row_index = 1
 col_index = 1
 
@@ -32,9 +43,6 @@ for thisDataSourceURL in allDataSourceURLs:
     ################
     # Store the Formatted Data
     dataDict = filehandling.getLocalData(localDataFolder=localFormattedDataFolder, localDataFilename=thisDataFilename)
-    ################
-    # Generate the Data type string
-    dataTypeString = thisDataFilename.split(".")[0].replace("-", " ")
     ################
     # Get the color family
     thisColorSet = colors.getColorSet(len(dataDict)-1)
@@ -49,7 +57,7 @@ for thisDataSourceURL in allDataSourceURLs:
                 go.Scatter(
                     x=dataDict["time_tag"],
                     y=dataDict[thisKey],
-                    name="%s %s"%(dataTypeString,thisKey),
+                    name=thisKey,
                     mode='lines',
                     line=dict(
                         color=thisColorSet[0],
@@ -62,16 +70,21 @@ for thisDataSourceURL in allDataSourceURLs:
             # Shift off the color at index 0
             thisColorSet = thisColorSet[1:]
     ################
+    # Change this subplot to logarithmic
+    fig.update_yaxes(type="log", row=row_index, col=col_index)
+    ################
     # Update the Indices
     col_index += 1
-    if col_index == 3:
+    # first row is different...
+    if col_index == 3 or row_index == 1:
         col_index = 1
         row_index += 1
         if row_index == 4:
             row_index = 1
 
 # Show the figure...
-fig.show()
+if showGui:
+    fig.show()
 
 # Runs as a Flash server webpage
 # Dependencies: pip3 install plotly pandas dash
