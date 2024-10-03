@@ -19,15 +19,13 @@ localRawDataFolder          = config.get('general', 'local_raw')
 localFormattedDataFolder    = config.get('general', 'local_formatted')
 allDataSourceURLs           = config.get('sources', 'urls').split()
 
-# Renders directly into a browser window
-# Dependencies: pip3 install plotly pandas
-
+################################
+# Generate all the Subplots from all the Data
 fig = make_subplots(rows=3, cols=2)
 row_index = 1
 col_index = 1
-color_index = 1
 
-for thisDataSourceURL,thisColorFamily in zip(allDataSourceURLs, colors.allColors):
+for thisDataSourceURL in allDataSourceURLs:
     ################
     # Generate the local filename based off the URL... (is this a good idea?)
     thisDataFilename = thisDataSourceURL.split("/")[-1]
@@ -37,6 +35,9 @@ for thisDataSourceURL,thisColorFamily in zip(allDataSourceURLs, colors.allColors
     ################
     # Generate the Data type string
     dataTypeString = thisDataFilename.split(".")[0].replace("-", " ")
+    ################
+    # Get the color family
+    thisColorSet = colors.getColorSet(len(dataDict)-1)
     ################
     # Generate the Figure
     for thisKey in dataDict:
@@ -51,14 +52,15 @@ for thisDataSourceURL,thisColorFamily in zip(allDataSourceURLs, colors.allColors
                     name="%s %s"%(dataTypeString,thisKey),
                     mode='lines',
                     line=dict(
-                        color=colors.allColors[color_index],
+                        color=thisColorSet[0],
                         width=2
                     )
                 ),
                 row=row_index,
                 col=col_index
             )
-            color_index += 1
+            # Shift off the color at index 0
+            thisColorSet = thisColorSet[1:]
     ################
     # Update the Indices
     col_index += 1
@@ -68,6 +70,7 @@ for thisDataSourceURL,thisColorFamily in zip(allDataSourceURLs, colors.allColors
         if row_index == 4:
             row_index = 1
 
+# Show the figure...
 fig.show()
 
 # Runs as a Flash server webpage

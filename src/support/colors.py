@@ -1,48 +1,67 @@
-# A dictionary of lists whose base color is used as the key
-allColors = [
-    "orange", "darkorange", "papayawhip", "peachpuff", "salmon",
-    "blue", "darkblue", "lightblue", "mediumblue", "deepskyblue","lightskyblue", "skyblue", "powderblue",
-    "green", "darkgreen", "lightgreen", "lawngreen", "yellowgreen", "limegreen", "mediumspringgreen", "springgreen", "lightseagreen", "seagreen", "mediumseagreen", "darkseagreen",
-    "yellow", "lightyellow", "greenyellow", "lightgoldenrodyellow",
-    "gray", "darkgray", "lightgray", "slategray", "darkslategray", "lightslategray",
-    "purple", "mediumpurple", "rebeccapurple", "plum",
-    "turquoise", "darkturquoise", "paleturquoise", "mediumturquoise",
-    "violet", "darkviolet", "blueviolet", "mediumvioletred", "palevioletred",
-    "brown", "rosybrown", "saddlebrown", "sandybrown",
-    "red", "darkred", "indianred", "orangered",
-];
-
-# All of the other color options that can be used in go.Scatter(line=dict(color=***))
-
-# "aliceblue", "antiquewhite", "aqua", "aquamarine", "azure",
-# "beige", "bisque", "black", "blanchedalmond", 
+# All of the other colors available that can be used in go.Scatter(line=dict(color=***))
+# "aliceblue", "antiquewhite", "azure",
+# "black", "blanchedalmond", 
 # "burlywood", "cadetblue",
-# "chartreuse", "chocolate", "coral", "cornflowerblue",
+# "chartreuse", "chocolate",
 # "cornsilk", "crimson", "cyan", "darkcyan",
-# "darkgoldenrod", "darkgrey",
-# "darkkhaki", "darkmagenta", "darkolivegreen", 
-# "darkorchid", "darksalmon",
+# "darkgrey",
+# "darkmagenta", "darkolivegreen", 
 # "darkslateblue", "darkslategrey",
 # "deeppink",
-# "dimgray", "dimgrey", "dodgerblue", "firebrick",
-# "floralwhite", "forestgreen", "fuchsia", "gainsboro",
-# "ghostwhite", "gold", "goldenrod", "grey",     "honeydew", "hotpink", "indigo",
-# "ivory", "khaki", "lavender", "lavenderblush",
-# "lemonchiffon", "lightcoral", "lightcyan",
+# "dimgray", "dimgrey", "firebrick",
+# "floralwhite", "forestgreen", "gainsboro",
+# "ghostwhite", "gold", "grey", "hotpink", "indigo",
+# "ivory", 
+# "lightcyan",
 # "lightgrey",
-# "lightpink", "lightsalmon",
+# "lightpink",
 # "lightslategrey",
 # "lightsteelblue", "lime",
-# "linen", "magenta", "maroon", "mediumaquamarine",
-# "mediumorchid",
+# "linen", "mediumaquamarine",
 # "mediumslateblue",
 # "midnightblue",
-# "mintcream", "mistyrose", "moccasin", "navajowhite", "navy",
-# "oldlace", "olive", "olivedrab", "orchid", "palegoldenrod", "palegreen", 
+# "mintcream", "moccasin", "navajowhite", "navy",
+# "oldlace", "olive", "palegreen", 
 # "pink",
-# "royalblue",
-# "seashell", "sienna", "silver",
-# "slateblue", "slategrey", "snow",
-# "steelblue", "tan", "teal", "thistle", "tomato",
+# "sienna", "silver",
+# "slategrey", "snow",
+# "tan", "thistle", "tomato",
 # "wheat", "white", "whitesmoke",
+
+# A dictionary of lists whose base color is used as the key
+allColors = {
+    "brown": ["brown", "rosybrown", "saddlebrown", "sandybrown", "bisque", "khaki", "darkkhaki"],
+    "orange": ["orange", "darkorange", "peachpuff", "salmon", "darksalmon", "lightsalmon", "coral", "lightcoral"],
+    "blue": ["blue", "darkblue", "lightblue", "mediumblue", "deepskyblue","lightskyblue", "skyblue", "powderblue", "dodgerblue", "royalblue", "steelblue", "slateblue", "cornflowerblue"],
+    "green": ["green", "darkgreen", "lightgreen", "lawngreen", "olivedrab", "yellowgreen", "limegreen", "mediumspringgreen", "springgreen", "lightseagreen", "seagreen", "mediumseagreen", "darkseagreen"],
+    "purple": ["purple", "mediumpurple", "rebeccapurple", "plum", "magenta", "maroon", "fuchsia", "lavender", "lavenderblush"],
+    "turquoise": ["turquoise", "darkturquoise", "paleturquoise", "mediumturquoise", "aqua", "aquamarine", "teal"],
+    "violet": ["violet", "darkviolet", "blueviolet", "mediumvioletred", "palevioletred", "orchid", "mediumorchid", "darkorchid"],
+    "red": ["red", "darkred", "indianred", "orangered", "mistyrose"],
+    "yellow": ["yellow", "lightyellow", "greenyellow", "goldenrod", "darkgoldenrod", "lightgoldenrodyellow", "palegoldenrod", "lemonchiffon"],
+    "gray": ["gray", "darkgray", "lightgray", "slategray", "darkslategray", "lightslategray"]
+};
+
+colorsUsed = list()
+
+DEBUG = False
+
+def initColors():
+    colorsUsed = list()
+
+def getColorSet(setSize):
+    if DEBUG:
+        print("\nRequested set size is: %d"%(setSize))
+        for thisColorKey in sorted(allColors, key=lambda thisKey: len(allColors[thisKey])):
+            if thisColorKey not in colorsUsed:
+                print("Key: %s, Number of Elements: %d"%(thisColorKey, len(allColors[thisColorKey])))
+    #for thisColorKey in allColors:
+    for thisColorKey in sorted(allColors, key=lambda thisKey: len(allColors[thisKey])):
+        if thisColorKey in colorsUsed:
+            next
+        else:
+            # If the number of colors available is the same or greater than those needed, return this color list
+            if len(allColors[thisColorKey]) >= setSize:
+                colorsUsed.append(thisColorKey)
+                return allColors[thisColorKey]
 
