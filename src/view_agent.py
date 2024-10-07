@@ -16,12 +16,14 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 
 # Access values from the configuration file
-pullAndUseLocalData         = config.getboolean('general', 'use_local')
-localRawDataFolder          = config.get('general', 'local_raw')
-localFormattedDataFolder    = config.get('general', 'local_formatted')
-guiStyle                    = config.get('general', 'gui_style')
-allDataSourceURLs           = config.get('sources', 'urls').split()
-showGui                     = config.getboolean('debug', 'show_gui')
+localFolder     = config.get('general', 'local_formatted')
+showGui         = config.getboolean('view', 'show_gui')
+guiStyle        = config.get('view', 'gui_style')
+dataTypes       = config.get('view', 'data_types').split()
+dataSpan        = config.get('view', 'data_span')
+
+# Generate the full URLs
+allSourceFiles  = [thisType+"-"+dataSpan+".json" for thisType in dataTypes]
 
 ################################
 # Using Graph Objects
@@ -35,19 +37,16 @@ if guiStyle == "Go":
             [{}, {}],
             [{}, {}],
             ],
-        subplot_titles=[thisDataFilename.split("/")[-1].split(".")[0].replace("-"," ").split("1")[0].title() for thisDataFilename in allDataSourceURLs]
+        subplot_titles=[thisSourceFile.replace(dataSpan, " ").split(".")[0].replace("-"," ").title() for thisSourceFile in allSourceFiles]
         )
     
     row_index = 1
     col_index = 1
     
-    for thisDataSourceURL in allDataSourceURLs:
-        ################
-        # Generate the local filename based off the URL... (is this a good idea?)
-        thisDataFilename = thisDataSourceURL.split("/")[-1]
+    for thisSourceFile in allSourceFiles:
         ################
         # Store the Formatted Data
-        dataDict = filehandling.getLocalData(localDataFolder=localFormattedDataFolder, localDataFilename=thisDataFilename)
+        dataDict = filehandling.getLocalData(localDataFolder=localFolder, localDataFilename=thisSourceFile)
         ################
         # Get the color family
         thisColorSet = colors.getColorSet(len(dataDict)-1)

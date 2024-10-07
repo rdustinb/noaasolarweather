@@ -12,13 +12,21 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 
 # Access values from the configuration file
-pullAndUseLocalData         = config.getboolean('general', 'use_local')
-localRawDataFolder          = config.get('general', 'local_raw')
+pullAndUseLocalData         = config.getboolean('data', 'use_local')
+localRawDataFolder          = config.get('data', 'local_raw')
 localFormattedDataFolder    = config.get('general', 'local_formatted')
 trimData                    = config.getboolean('data', 'trim_data')
 dataPrecision               = config.get('data', 'precision')
-allDataSourceURLs           = config.get('sources', 'urls').split()
+baseUrl                     = config.get('data', 'base_url')
+dataTypes                   = config.get('data', 'data_types').split()
+allDataSpan                 = config.get('data', 'all_data_span').split()
 
+# Generate the full URLs
+allDataSourceURLs           = [baseUrl+thisType+"-"+thisSpan+".json" for thisType in dataTypes for thisSpan in allDataSpan]
+
+print(len(allDataSourceURLs))
+
+# Generate the precision formatter
 dataPrecisionFormatter = "{:.%sf}"%(dataPrecision)
 
 ################################
