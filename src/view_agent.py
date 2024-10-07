@@ -33,7 +33,8 @@ if guiStyle == "Go":
         rows=3,
         cols=2,
         specs=[
-            [{"colspan": 2}, None],
+            [{}, {}],
+            #[{"colspan": 2}, None],
             [{}, {}],
             [{}, {}],
             ],
@@ -80,7 +81,7 @@ if guiStyle == "Go":
         # Update the Indices
         col_index += 1
         # first row is different...
-        if col_index == 3 or row_index == 1:
+        if col_index == 3: # or row_index == 1:
             col_index = 1
             row_index += 1
             if row_index == 4:

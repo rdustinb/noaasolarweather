@@ -38,13 +38,6 @@ for thisFolder in (localRawDataFolder, localFormattedDataFolder):
 ################################
 # Fetch the data
 for thisDataSourceURL in allDataSourceURLs:
-    # Dictionary:
-    #   "time_tag": string
-    #   "data_name": string
-    #   "<energy val 0>": list()
-    #   "<energy val 1>": list()
-    #       ...
-    #   "<energy val 2>": list()
     dataDict = dict()
     ################
     # Generate the local filename based off the URL... (is this a good idea?)
@@ -57,19 +50,53 @@ for thisDataSourceURL in allDataSourceURLs:
     # Create an array of the energies...
     thisFirstEntryIndicator = ""
     for thisElement in thisJsonData:
-        # If the time_tag hasn't been created in the dictionary yet, create it
-        if "time_tag" not in dataDict:
-            dataDict["time_tag"] = list()
-            thisFirstEntryIndicator = thisElement["energy"]
-        # Only append a new time_tag when the list element is the same type as the first one, this prevents duplicate
-        # time_tag entries due to multiple data sets in the same file.
-        elif thisFirstEntryIndicator == thisElement["energy"]:
+        if "energy" in thisElement:
+            # Dictionary:
+            #   "time_tag": string
+            #   "data_name": string
+            #   "<energy val 0>": list()
+            #   "<energy val 1>": list()
+            #       ...
+            #   "<energy val 2>": list()
+            # If the time_tag hasn't been created in the dictionary yet, create it
+            if "time_tag" not in dataDict:
+                dataDict["time_tag"] = list()
+                thisFirstEntryIndicator = thisElement["energy"]
+            # Only append a new time_tag when the list element is the same type as the first one, this prevents duplicate
+            # time_tag entries due to multiple data sets in the same file.
+            elif thisFirstEntryIndicator == thisElement["energy"]:
+                dataDict["time_tag"].append(thisElement["time_tag"])
+            # Create the dictionary element of this energy level as a list
+            if thisElement["energy"] not in dataDict:
+                dataDict[thisElement["energy"]] = list()
+            # Append to the list
+            dataDict[thisElement["energy"]].append(float(dataPrecisionFormatter.format(thisElement["flux"])))
+        else:
+            # Dictionary (Magnetometer only):
+            #   "time_tag": string
+            #   "data_name": string
+            #   "He": list()
+            #   "Hn": list()
+            #   "Hp": list()
+            #   "total": list()
+            # If the time_tag hasn't been created in the dictionary yet, create it
+            if "time_tag" not in dataDict:
+                dataDict["time_tag"] = list()
             dataDict["time_tag"].append(thisElement["time_tag"])
-        # Create the dictionary element of this energy level as a list
-        if thisElement["energy"] not in dataDict:
-            dataDict[thisElement["energy"]] = list()
-        # Append to the list
-        dataDict[thisElement["energy"]].append(float(dataPrecisionFormatter.format(thisElement["flux"])))
+            # Create the dictionary element of this energy level as a list
+            if "He" not in dataDict:
+                dataDict["He"] = list()
+            if "Hn" not in dataDict:
+                dataDict["Hn"] = list()
+            if "Hp" not in dataDict:
+                dataDict["Hp"] = list()
+            if "total" not in dataDict:
+                dataDict["total"] = list()
+            # Append to the list
+            dataDict["He"].append(float(dataPrecisionFormatter.format(thisElement["He"])))
+            dataDict["Hn"].append(float(dataPrecisionFormatter.format(thisElement["Hn"])))
+            dataDict["Hp"].append(float(dataPrecisionFormatter.format(thisElement["Hp"])))
+            dataDict["total"].append(float(dataPrecisionFormatter.format(thisElement["total"])))
     ################
     # Trim data to a small set
     if trimData:
