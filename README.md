@@ -1,43 +1,53 @@
-This Python application pulls data from the NOAA Satellite near real-time server files located here:
+The application is divided up into two top-level scripts, one for data and the other for view, meant to be run
+independently. The data agent will download a local copy of the four different time spans of the different data sources
+from this base URL:
 
-**http://services.swpc.noaa.gov/text/**
+**https://services.swpc.noaa.gov/json/**
 
+All configuration is handled through the config.ini file with different groups for the data and view agents.
+Configuration allows for all supported Plotly template color themes to be used.
 
-The application parses the data from the NOAA servers and initializes a timer for each plot,
+Plotly White
 
-which is embedded within a Qt Widget and thus updated individually.
+![Graph Image](screenshots/plotly_white.png "Multiple data graphs in the single browser tab.")
 
-Light Mode
+Plotly Dark
 
-![Graph Image](screenshots/light.png "Multiple data graphs in the single application window.")
-
-Dark Mode
-
-![Graph Image](screenshots/dark.png "Multiple data graphs in the single application window.")
+![Graph Image](screenshots/plotly_dark.png "Multiple data graphs in the single browser tab.")
 
 Data
 ===
 GOES Satellites
 ---
- * Differential Proton Flux
- * Geomagnetic Components and Total Field
- * Discrete Energetic Particle Flux
- * Solar Particle and Electron Flux
- * xRay Flux
+ * Differential Protons
+ * Differential Electrons
+ * Integral Protons
+ * Integral Electrons
+ * Magnetometer
+ * Xrays
 
-ACE Satellites
+Data Spans
 ---
- * Differential Electron / Proton Flux
- * Solar Isotope Spectrometer
- * Interplanetary Magnetic Field
- * Solar Wind Plasma
+ * 6 hour
+ * 1 day
+ * 3 day
+ * 7 day
 
 Required Packages
 ===
-The required packages to be installed to run this application are:
- * matplotlib
- * pyside or pyqt4
- * numpy
+The Data Agent requires the following packages to be installed:
+ * os
+ * filehandling
+ * configparser
 
-Most of the data sets are updated by the NOAA Satellites once every 60 seconds though there
-are a few data sets that only update once every 5 minutes.
+The View Agent requires the following packages to be installed:
+ * support
+ * configparser
+ * plotly
+ * json
+ * dash
+
+The support packages require the following packages to be installed:
+ * json
+ * urllib
+ * pathlib

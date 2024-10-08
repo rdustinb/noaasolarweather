@@ -79,3 +79,12 @@ Here is an example of the data found at just one of those listed JSON locations.
     }
   ]
 }
+
+## All Sources
+
+https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
+https://services.swpc.noaa.gov/json/goes/primary/differential-electrons-1-day.json
+https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
+https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
+https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
+https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json
