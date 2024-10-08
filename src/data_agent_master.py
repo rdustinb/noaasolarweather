@@ -24,8 +24,6 @@ allDataSpan                 = config.get('data', 'all_data_span').split()
 # Generate the full URLs
 allDataSourceURLs           = [baseUrl+thisType+"-"+thisSpan+".json" for thisType in dataTypes for thisSpan in allDataSpan]
 
-print(len(allDataSourceURLs))
-
 # Generate the precision formatter
 dataPrecisionFormatter = "{:.%sf}"%(dataPrecision)
 

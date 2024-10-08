@@ -21,6 +21,9 @@ showGui         = config.getboolean('view', 'show_gui')
 guiStyle        = config.get('view', 'gui_style')
 dataTypes       = config.get('view', 'data_types').split()
 dataSpan        = config.get('view', 'data_span')
+colorMode       = config.get('view', 'color_mode')
+
+templates = ("plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white", "none")
 
 # Generate the full URLs
 allSourceFiles  = [thisType+"-"+dataSpan+".json" for thisType in dataTypes]
@@ -43,7 +46,7 @@ if guiStyle == "Go":
     
     row_index = 1
     col_index = 1
-    
+
     for thisSourceFile in allSourceFiles:
         ################
         # Store the Formatted Data
@@ -89,30 +92,34 @@ if guiStyle == "Go":
     
     # Show the figure...
     if showGui:
+        fig.layout.template = colorMode
         fig.show()
 
 # Using Graph Objects
 if guiStyle == "Dash":
     fig1 = px.line(
         x=["a","b","c"], y=[1,3,2], # replace with your own data source
-        title="sample 1 figure", height=325
+        title="sample 1 figure", height=325,
+        template="plotly_dark"
     )
     fig2 = px.line(
         x=["d","e","f"], y=[4,1,2], # replace with your own data source
-        title="sample 2 figure", height=325
+        title="sample 2 figure", height=325,
+        template="plotly_dark"
     )
     fig3 = px.line(
         x=["a","b","c"], y=[3,1,1], # replace with your own data source
-        title="sample 3 figure", height=325
+        title="sample 3 figure", height=325,
+        template="plotly_dark"
     )
     
     app = Dash(__name__)
     
     app.layout = html.Div([
         html.H4('Displaying figure structure as JSON'),
-        dcc.Graph(id="graph", figure=fig1),
-        dcc.Graph(id="graph", figure=fig2),
-        dcc.Graph(id="graph", figure=fig3),
+        dcc.Graph(id="graph1", figure=fig1),
+        dcc.Graph(id="graph2", figure=fig2),
+        dcc.Graph(id="graph3", figure=fig3),
         dcc.Clipboard(target_id="structure"),
         html.Pre(
             id='structure',
@@ -126,7 +133,10 @@ if guiStyle == "Dash":
 
     @app.callback(
         Output("structure", "children"), 
-        Input("graph", "figure"))
+        Input("graph1", "figure"),
+        Input("graph2", "figure"),
+        Input("graph3", "figure"),
+        )
     
     # This is required though not called directly here...
     def display_structure(fig_json):
