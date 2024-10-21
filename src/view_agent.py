@@ -52,14 +52,13 @@ if guiStyle == "Go":
         # Store the Formatted Data
         dataDict = filehandling.getLocalData(localDataFolder=localFolder, localDataFilename=thisSourceFile)
         ################
-        # Get the color family
-        thisColorSet = colors.getColorSet(len(dataDict)-1)
+        # Get the color family (only request colors for the keys which have data in them)
+        thisColorSet = colors.getColorSet(len(dataDict["data_keys"]))
         ################
         # Generate the Figure
         for thisKey in dataDict:
-            if thisKey == "time_tag":
-                next
-            else:
+            # Skip the Time Tag array and the Last Update information
+            if thisKey in dataDict["data_keys"]:
                 # Each energy for this data dictionary is added to the same plot row/col offset
                 fig.add_trace(
                     go.Scatter(
