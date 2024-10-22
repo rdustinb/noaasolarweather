@@ -40,8 +40,8 @@ if guiStyle == "Go":
             #[{"colspan": 2}, None],
             [{}, {}],
             [{}, {}],
-            ],
-        subplot_titles=[thisSourceFile.replace(dataSpan, " ").split(".")[0].replace("-"," ").title() for thisSourceFile in allSourceFiles]
+            ]#,
+        #subplot_titles=[thisSourceFile.replace(dataSpan, " ").split(".")[0].replace("-"," ").title() for thisSourceFile in allSourceFiles]
         )
     
     row_index = 1
@@ -52,14 +52,13 @@ if guiStyle == "Go":
         # Store the Formatted Data
         dataDict = filehandling.getLocalData(localDataFolder=localFolder, localDataFilename=thisSourceFile)
         ################
-        # Get the color family
-        thisColorSet = colors.getColorSet(len(dataDict)-1)
+        # Get the color family (only request colors for the keys which have data in them)
+        thisColorSet = colors.getColorSet(len(dataDict["data_keys"]))
         ################
         # Generate the Figure
         for thisKey in dataDict:
-            if thisKey == "time_tag":
-                next
-            else:
+            # Skip the Time Tag array and the Last Update information
+            if thisKey in dataDict["data_keys"]:
                 # Each energy for this data dictionary is added to the same plot row/col offset
                 fig.add_trace(
                     go.Scatter(
@@ -75,8 +74,20 @@ if guiStyle == "Go":
                     row=row_index,
                     col=col_index
                 )
-                # Shift off the color at index 0
                 thisColorSet = thisColorSet[1:]
+        # Create the Title and Subtitle
+        thisTitle = thisSourceFile.replace(dataSpan, " ").split(".")[0].replace("-"," ").title()
+        thisSubTitle = "<br><sup>Last Updated: %s</sup>"%(dataDict["last_update"])
+        fig.add_annotation(
+            xref="x domain",
+            yref="y domain",
+            x=0.5, 
+            y=1.2, 
+            showarrow=False,
+            text="%s %s"%(thisTitle,thisSubTitle), 
+            row=row_index, 
+            col=col_index
+        )
         ################
         # Change this subplot to logarithmic
         fig.update_yaxes(type="log", row=row_index, col=col_index)
