@@ -40,8 +40,8 @@ if guiStyle == "Go":
             #[{"colspan": 2}, None],
             [{}, {}],
             [{}, {}],
-            ],
-        subplot_titles=[thisSourceFile.replace(dataSpan, " ").split(".")[0].replace("-"," ").title() for thisSourceFile in allSourceFiles]
+            ]#,
+        #subplot_titles=[thisSourceFile.replace(dataSpan, " ").split(".")[0].replace("-"," ").title() for thisSourceFile in allSourceFiles]
         )
     
     row_index = 1
@@ -74,8 +74,20 @@ if guiStyle == "Go":
                     row=row_index,
                     col=col_index
                 )
-                # Shift off the color at index 0
                 thisColorSet = thisColorSet[1:]
+        # Create the Title and Subtitle
+        thisTitle = thisSourceFile.replace(dataSpan, " ").split(".")[0].replace("-"," ").title()
+        thisSubTitle = "<br><sup>Last Updated: %s</sup>"%(dataDict["last_update"])
+        fig.add_annotation(
+            xref="x domain",
+            yref="y domain",
+            x=0.5, 
+            y=1.2, 
+            showarrow=False,
+            text="%s %s"%(thisTitle,thisSubTitle), 
+            row=row_index, 
+            col=col_index
+        )
         ################
         # Change this subplot to logarithmic
         fig.update_yaxes(type="log", row=row_index, col=col_index)
