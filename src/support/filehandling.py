@@ -5,7 +5,7 @@ from pathlib import Path
 
 ################################
 # Fetch the URL data and return, or use the local raw data and return (fetching a storing once if needed)
-def remoteOrLocal(dataSourceURL: str, localDataFolder: str, pullAndUseLocalData: bool):
+def remoteOrLocal(dataSourceURL: str, localDataFolder: str, pullAndUseLocalData: bool, urlMaxRetries: int):
     ################
     # Store and use a local copy of the data
     if pullAndUseLocalData:
@@ -17,7 +17,7 @@ def remoteOrLocal(dataSourceURL: str, localDataFolder: str, pullAndUseLocalData:
         # If there is no local data file, fetch and create it
         if not localDataFilePath.is_file():
             # Fetch the file from the server...
-            jsonData = fetchRemoteData(dataSourceURL=dataSourceURL)
+            jsonData = fetchRemoteData(dataSourceURL=dataSourceURL, urlMaxRetries=urlMaxRetries)
             # Store the data local
             setLocalData(localDataFolder=localDataFolder, localDataFilename=localDataFilename, jsonData=jsonData)
         else:
@@ -27,19 +27,30 @@ def remoteOrLocal(dataSourceURL: str, localDataFolder: str, pullAndUseLocalData:
     else:
         ########
         # Fetch the file from the server...
-        jsonData = fetchRemoteData(dataSourceURL=dataSourceURL)
+        jsonData = fetchRemoteData(dataSourceURL=dataSourceURL, urlMaxRetries=urlMaxRetries)
     # Return the JSON Data Object
     return jsonData
 
 ################################
 # Fetch the remote data
-def fetchRemoteData(dataSourceURL: str):
+def fetchRemoteData(dataSourceURL: str, urlMaxRetries: int):
+    initialDelay = 1
+    backoffMultiplier = 2
+    thisDelay = 1
     print("Fetching remote data from %s"%(dataSourceURL))
-    # Open the URL
-    response = urlopen(dataSourceURL)
-    # Fetch the Data
-    jsonData = json.load(response)
-    return jsonData
+    for thisRetry in range(urlMaxRetries):
+        try:
+            # Open the URL
+            response = urlopen(dataSourceURL)
+            # Fetch the Data
+            jsonData = json.load(response)
+            # Return if everything above succeeds...
+            return jsonData
+        except Exception as e:
+            print("URL data fetch failed, retrying in %d second(s)..."%(thisDelay))
+            thisDelay *= backoffMultiplier
+            time.sleep(thisDelay)
+    raise ExceededRetries("Failed to poll %s within %d retries."%(dataSourceURL, urlMaxRetries))
 
 ################################
 # Store the data to a local file

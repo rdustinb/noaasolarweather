@@ -20,6 +20,7 @@ dataPrecision               = config.get('data', 'precision')
 baseUrl                     = config.get('data', 'base_url')
 dataTypes                   = config.get('data', 'data_types').split()
 allDataSpan                 = config.get('data', 'all_data_span').split()
+urlMaxRetries               = int(config.get('data', 'url_max_retries'))
 
 # Generate the full URLs
 allDataSourceURLs           = [baseUrl+thisType+"-"+thisSpan+".json" for thisType in dataTypes for thisSpan in allDataSpan]
@@ -43,7 +44,7 @@ for thisDataSourceURL in allDataSourceURLs:
     ################
     # Get the data...
     # This is in the support/filehandling.py file, a local library:
-    thisJsonData = filehandling.remoteOrLocal(dataSourceURL=thisDataSourceURL, localDataFolder=localRawDataFolder, pullAndUseLocalData=pullAndUseLocalData)
+    thisJsonData = filehandling.remoteOrLocal(dataSourceURL=thisDataSourceURL, localDataFolder=localRawDataFolder, pullAndUseLocalData=pullAndUseLocalData, urlMaxRetries=urlMaxRetries)
     ################
     # Create an array of the energies...
     thisFirstEntryIndicator = ""
