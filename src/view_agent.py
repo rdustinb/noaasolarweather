@@ -1,5 +1,5 @@
 # This is the master view agent, it will display the local data files as graphs.
-from support import filehandling, colors
+from support import filehandling, timestamp, colors
 import configparser
 from dash import Dash, dcc, html, Input, Output
 import plotly.express as px
@@ -22,6 +22,7 @@ guiStyle        = config.get('view', 'gui_style')
 dataTypes       = config.get('view', 'data_types').split()
 dataSpan        = config.get('view', 'data_span')
 colorMode       = config.get('view', 'color_mode')
+localTimeData   = config.getboolean('view', 'local_time_data')
 
 templates = ("plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white", "none")
 
@@ -51,6 +52,10 @@ if guiStyle == "Go":
         ################
         # Store the Formatted Data
         dataDict = filehandling.getLocalData(localDataFolder=localFolder, localDataFilename=thisSourceFile)
+        ################
+        # Convert the time_tag array to the local time
+        if(localTimeData):
+            dataDict["time_tag"] = timestamp.convertTimestamps(theseTimestamps=dataDict["time_tag"])
         ################
         # Get the color family (only request colors for the keys which have data in them)
         thisColorSet = colors.getColorSet(len(dataDict["data_keys"]))

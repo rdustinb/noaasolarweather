@@ -117,6 +117,7 @@ for thisDataSourceURL in allDataSourceURLs:
             dataDict["Hn"].append(float(dataPrecisionFormatter.format(thisElement["Hn"])))
             dataDict["Hp"].append(float(dataPrecisionFormatter.format(thisElement["Hp"])))
             dataDict["total"].append(float(dataPrecisionFormatter.format(thisElement["total"])))
+    ################
     # After the data has been formatted and appended, add the last_update string
     dataDict["last_update"] = timestamp.getTimestamp()
     ################
