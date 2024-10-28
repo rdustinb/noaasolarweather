@@ -105,6 +105,9 @@ if guiStyle == "Go":
             row_index += 1
             if row_index == 4:
                 row_index = 1
+
+    # Disable the Legend as it is too cluttered being a single legend for all subplots
+    fig.update(layout_showlegend=False)
     
     # Show the figure...
     if showGui:
