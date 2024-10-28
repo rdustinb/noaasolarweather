@@ -108,6 +108,10 @@ if guiStyle == "Go":
 
     # Disable the Legend as it is too cluttered being a single legend for all subplots
     fig.update(layout_showlegend=False)
+
+    # Make the hover annotations legible
+    #fig.update_layout(hovermode="x unified") # This one adds "though bubbles" at each data point where the cursor is
+    fig.update_layout(hovermode="x unified") # This one adds a "floating legend" at the x position where the cursor is
     
     # Show the figure...
     if showGui:
