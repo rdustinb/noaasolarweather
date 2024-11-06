@@ -55,10 +55,14 @@ def interquartileMethod(thisDataArray: list):
     return thisNewDataArray
 
 def filterMethod(thisDataArray: list):
-    n = 15  # the larger n is, the smoother curve will be
+    n = 10  # the larger n is, the smoother curve will be
     b = [1.0 / n] * n
     a = 1
-    thisNewDataArray = lfilter(b,a,thisDataArray)
+
+    # Expand the original dataset "backwards" with the same set of data to remove the glitch
+    thisWorkingDataSet = thisDataArray[:10] + thisDataArray
+    thisNewDataArray = lfilter(b,a,thisWorkingDataSet)
+    thisNewDataArray = thisNewDataArray[10:]
 
     # Finally return the new array...
     return thisNewDataArray
