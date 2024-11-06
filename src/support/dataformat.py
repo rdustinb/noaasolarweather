@@ -1,8 +1,9 @@
 import statistics
 from collections import Counter
 import math
+from scipy.signal import lfilter
 
-def cleanupData(thisDataArray: list):
+def interquartileMethod(thisDataArray: list):
     thisNewDataArray = list()
 
     # Get a list of repeating values
@@ -52,3 +53,23 @@ def cleanupData(thisDataArray: list):
 
     # Finally return the new array...
     return thisNewDataArray
+
+def filterMethod(thisDataArray: list):
+    n = 15  # the larger n is, the smoother curve will be
+    b = [1.0 / n] * n
+    a = 1
+    thisNewDataArray = lfilter(b,a,thisDataArray)
+
+    # Finally return the new array...
+    return thisNewDataArray
+
+# Branch which method to use...
+def cleanupData(thisDataArray: list, thisDetectionMethod: str = "Interquartile"):
+    if(thisDetectionMethod == "Interquartile"):
+        return interquartileMethod(thisDataArray=thisDataArray)
+    elif(thisDetectionMethod == "Filter"):
+        return filterMethod(thisDataArray=thisDataArray)
+    else:
+        # No normalization, return original array
+        return thisDataArray
+

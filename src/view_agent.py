@@ -24,7 +24,7 @@ dataFilters     = config.get('view', 'data_filters').split()
 dataSpan        = config.get('view', 'data_span')
 colorMode       = config.get('view', 'color_mode')
 localTimeData   = config.getboolean('view', 'local_time_data')
-cleanZeroData   = config.getboolean('view', 'clean_zero_data')
+cleanDataMethod = config.get('view', 'clean_data_method')
 
 templates = ("plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white", "none")
 
@@ -70,8 +70,7 @@ if guiStyle == "Go":
                 print("Plotting data key %s"%(thisKey))
                 ################
                 # Clean the data arrays if they contain 0s
-                if(cleanZeroData):
-                    dataDict[thisKey] = dataformat.cleanupData(thisDataArray=dataDict[thisKey])
+                dataDict[thisKey] = dataformat.cleanupData(thisDataArray=dataDict[thisKey], thisDetectionMethod=cleanDataMethod)
                 # Each energy for this data dictionary is added to the same plot row/col offset
                 fig.add_trace(
                     go.Scatter(
