@@ -55,13 +55,29 @@ def interquartileMethod(thisDataArray: list):
     return thisNewDataArray
 
 def filterMethod(thisDataArray: list):
-    n = 10  # the larger n is, the smoother curve will be
+    # The larger this is, the longer the b-list is and the smaller the b-list element values are
+    n = 10
+    # This is a list of floating numbers
     b = [1.0 / n] * n
     a = 1
 
-    # Expand the original dataset "backwards" with the same set of data to remove the glitch
+    # Extrapolate the dataset before x=0
     thisWorkingDataSet = thisDataArray[:10] + thisDataArray
+
+    # Filter the dataset
+    #
+    # https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.signal.lfilter.html#scipy.signal.lfilter
+    #
+    # scipy.signal.lfilter(b, a, x, axis=-1, zi=None)
+    # b : array_like
+    #   The numerator coefficient vector in a 1-D sequence.
+    # a : array_like
+    #   The denominator coefficient vector in a 1-D sequence. If a[0] is not 1, then both a and b are normalized by a[0].
+    # x : array_like
+    #   An N-dimensional input array.
     thisNewDataArray = lfilter(b,a,thisWorkingDataSet)
+
+    # Remove the extrapolated data
     thisNewDataArray = thisNewDataArray[10:]
 
     # Finally return the new array...
