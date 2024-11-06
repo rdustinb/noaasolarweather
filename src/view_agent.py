@@ -1,5 +1,5 @@
 # This is the master view agent, it will display the local data files as graphs.
-from support import filehandling, timestamp, colors
+from support import filehandling, dataformat, timestamp, colors
 import configparser
 from dash import Dash, dcc, html, Input, Output
 import plotly.express as px
@@ -20,9 +20,11 @@ localFolder     = config.get('general', 'local_formatted')
 showGui         = config.getboolean('view', 'show_gui')
 guiStyle        = config.get('view', 'gui_style')
 dataTypes       = config.get('view', 'data_types').split()
+dataFilters     = config.get('view', 'data_filters').split()
 dataSpan        = config.get('view', 'data_span')
 colorMode       = config.get('view', 'color_mode')
 localTimeData   = config.getboolean('view', 'local_time_data')
+cleanDataMethod = config.get('view', 'clean_data_method')
 
 templates = ("plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white", "none")
 
@@ -48,7 +50,8 @@ if guiStyle == "Go":
     row_index = 1
     col_index = 1
 
-    for thisSourceFile in allSourceFiles:
+    for (thisSourceFilter,thisSourceFile) in zip(dataFilters,allSourceFiles):
+        print("Data key filter is set to: %s"%(thisSourceFilter))
         ################
         # Store the Formatted Data
         dataDict = filehandling.getLocalData(localDataFolder=localFolder, localDataFilename=thisSourceFile)
@@ -63,7 +66,11 @@ if guiStyle == "Go":
         # Generate the Figure
         for thisKey in dataDict:
             # Skip the Time Tag array and the Last Update information
-            if thisKey in dataDict["data_keys"]:
+            if (thisSourceFilter == "all" or thisSourceFilter in thisKey) and thisKey in dataDict["data_keys"]:
+                print("Plotting data key %s"%(thisKey))
+                ################
+                # Clean the data arrays if they contain 0s
+                dataDict[thisKey] = dataformat.cleanupData(thisDataArray=dataDict[thisKey], thisDetectionMethod=cleanDataMethod)
                 # Each energy for this data dictionary is added to the same plot row/col offset
                 fig.add_trace(
                     go.Scatter(
@@ -110,8 +117,8 @@ if guiStyle == "Go":
     fig.update(layout_showlegend=False)
 
     # Make the hover annotations legible
-    #fig.update_layout(hovermode="x unified") # This one adds "though bubbles" at each data point where the cursor is
-    fig.update_layout(hovermode="x unified") # This one adds a "floating legend" at the x position where the cursor is
+    fig.update_layout(hovermode="x") # This one adds "thought bubbles" at each data point where the cursor is
+    #fig.update_layout(hovermode="x unified") # This one adds a "floating legend" at the x position where the cursor is
     
     # Show the figure...
     if showGui:
