@@ -83,12 +83,32 @@ def filterMethod(thisDataArray: list):
     # Finally return the new array...
     return thisNewDataArray
 
+def removeZeros(thisDataArray: list):
+    thisNewDataArray = list()
+    lastValue = thisDataArray[0]
+
+    for thisValue in thisDataArray:
+        if thisValue == float(0):
+            thisNewDataArray.append(lastValue)
+        else:
+            thisNewDataArray.append(thisValue)
+            lastValue = thisValue
+
+    return thisNewDataArray
+
 # Branch which method to use...
 def cleanupData(thisDataArray: list, thisDetectionMethod: str = "Interquartile"):
+    filterZeros = True
+
+    if(filterZeros):
+        thisNewDataArray = removeZeros(thisDataArray=thisDataArray)
+    else:
+        thisNewDataArray = thisDataArray
+
     if(thisDetectionMethod == "Interquartile"):
-        return interquartileMethod(thisDataArray=thisDataArray)
+        return interquartileMethod(thisDataArray=thisNewDataArray)
     elif(thisDetectionMethod == "Filter"):
-        return filterMethod(thisDataArray=thisDataArray)
+        return filterMethod(thisDataArray=thisNewDataArray)
     else:
         # No normalization, return original array
         return thisDataArray
