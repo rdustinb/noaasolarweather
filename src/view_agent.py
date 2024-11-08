@@ -125,51 +125,55 @@ if guiStyle == "Go":
         fig.layout.template = colorMode
         fig.show()
 
-# Using Graph Objects
-if guiStyle == "Dash":
-    fig1 = px.line(
-        x=["a","b","c"], y=[1,3,2], # replace with your own data source
-        title="sample 1 figure", height=325,
-        template="plotly_dark"
-    )
-    fig2 = px.line(
-        x=["d","e","f"], y=[4,1,2], # replace with your own data source
-        title="sample 2 figure", height=325,
-        template="plotly_dark"
-    )
-    fig3 = px.line(
-        x=["a","b","c"], y=[3,1,1], # replace with your own data source
-        title="sample 3 figure", height=325,
-        template="plotly_dark"
-    )
-    
-    app = Dash(__name__)
-    
-    app.layout = html.Div([
-        html.H4('Displaying figure structure as JSON'),
-        dcc.Graph(id="graph1", figure=fig1),
-        dcc.Graph(id="graph2", figure=fig2),
-        dcc.Graph(id="graph3", figure=fig3),
-        dcc.Clipboard(target_id="structure"),
-        html.Pre(
-            id='structure',
-            style={
-                'border': 'thin lightgrey solid', 
-                'overflowY': 'scroll',
-                'height': '275px'
-            }
-        ),
-    ])
+# Other View GUIs are not currently supported
+else:
+    print("Other GUI modes are not currently supported, please change config.ini to use Go")
 
-    @app.callback(
-        Output("structure", "children"), 
-        Input("graph1", "figure"),
-        Input("graph2", "figure"),
-        Input("graph3", "figure"),
-        )
-    
-    # This is required though not called directly here...
-    def display_structure(fig_json):
-        return json.dumps(fig_json, indent=2)
-
-    app.run_server(debug=True)
+# Using Dash Server
+#if guiStyle == "Dash":
+#    fig1 = px.line(
+#        x=["a","b","c"], y=[1,3,2], # replace with your own data source
+#        title="sample 1 figure", height=325,
+#        template="plotly_dark"
+#    )
+#    fig2 = px.line(
+#        x=["d","e","f"], y=[4,1,2], # replace with your own data source
+#        title="sample 2 figure", height=325,
+#        template="plotly_dark"
+#    )
+#    fig3 = px.line(
+#        x=["a","b","c"], y=[3,1,1], # replace with your own data source
+#        title="sample 3 figure", height=325,
+#        template="plotly_dark"
+#    )
+#    
+#    app = Dash(__name__)
+#    
+#    app.layout = html.Div([
+#        html.H4('Displaying figure structure as JSON'),
+#        dcc.Graph(id="graph1", figure=fig1),
+#        dcc.Graph(id="graph2", figure=fig2),
+#        dcc.Graph(id="graph3", figure=fig3),
+#        dcc.Clipboard(target_id="structure"),
+#        html.Pre(
+#            id='structure',
+#            style={
+#                'border': 'thin lightgrey solid', 
+#                'overflowY': 'scroll',
+#                'height': '275px'
+#            }
+#        ),
+#    ])
+#
+#    @app.callback(
+#        Output("structure", "children"), 
+#        Input("graph1", "figure"),
+#        Input("graph2", "figure"),
+#        Input("graph3", "figure"),
+#        )
+#    
+#    # This is required though not called directly here...
+#    def display_structure(fig_json):
+#        return json.dumps(fig_json, indent=2)
+#
+#    app.run_server(debug=True)
