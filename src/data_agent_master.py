@@ -37,7 +37,8 @@ for thisFolder in (localRawDataFolder, localFormattedDataFolder):
 ################################
 # Fetch the data
 for thisDataSourceURL in allDataSourceURLs:
-    dataDict = dict()
+    plotDataDict = dict()
+    metaDataDict = dict()
     ################
     # Generate the local filename based off the URL... (is this a good idea?)
     thisDataFilename = thisDataSourceURL.split("/")[-1]
@@ -52,79 +53,102 @@ for thisDataSourceURL in allDataSourceURLs:
     for thisElement in thisJsonData:
         if "energy" in thisElement:
             # Dictionary:
-            #   "last_update": string
-            #   "time_tag": list()
-            #   "data_keys": list()
-            #   "data_name": string
-            #   "<energy val 0>": list()
-            #   "<energy val 1>": list()
-            #       ...
-            #   "<energy val 2>": list()
+            #   "plot_data": {
+            #       "time_tag": list()
+            #       "<energy val 0>": list()
+            #       "<energy val 1>": list()
+            #           ...
+            #       "<energy val 2>": list()
+            #   }
+            #   "meta_data": {
+            #       "last_update": string
+            #       "data_keys": list()
+            #       "data_name": string
+            #   }
             # If the time_tag hasn't been created in the dictionary yet, create it
-            if "time_tag" not in dataDict:
-                dataDict["time_tag"] = list()
+            if "time_tag" not in plotDataDict:
+                plotDataDict["time_tag"] = list()
                 thisFirstEntryIndicator = thisElement["energy"]
             # Only append a new time_tag when the list element is the same type as the first one, this prevents duplicate
             # time_tag entries due to multiple data sets in the same file.
             elif thisFirstEntryIndicator == thisElement["energy"]:
-                dataDict["time_tag"].append(thisElement["time_tag"])
+                plotDataDict["time_tag"].append(thisElement["time_tag"])
                 # After one set of keys have been capture, disable the capturing of the data unique keys
                 captureDataKeys = 0
             # Create the data_keys list at the beginning
-            if "data_keys" not in dataDict:
-                dataDict["data_keys"] = list()
+            if "data_keys" not in metaDataDict:
+                metaDataDict["data_keys"] = list()
             # Only capture the first set of data keys, as they repeat in the data set from the NOAA JSON files
             if captureDataKeys == 1:
-                dataDict["data_keys"].append(thisElement["energy"])
+                metaDataDict["data_keys"].append(thisElement["energy"])
             # Create the dictionary element of this energy level as a list
-            if thisElement["energy"] not in dataDict:
-                dataDict[thisElement["energy"]] = list()
+            if thisElement["energy"] not in plotDataDict:
+                plotDataDict[thisElement["energy"]] = list()
             # Append the data sample to the list
-            dataDict[thisElement["energy"]].append(float(dataPrecisionFormatter.format(thisElement["flux"])))
+            plotDataDict[thisElement["energy"]].append(float(dataPrecisionFormatter.format(thisElement["flux"])))
             # Append the data key to the list
         else:
             # Dictionary (Magnetometer only):
-            #   "last_update": string
-            #   "time_tag": list()
-            #   "data_keys": list()
-            #   "data_name": string
-            #   "He": list()
-            #   "Hn": list()
-            #   "Hp": list()
-            #   "total": list()
+            #   "plot_data": {
+            #       "time_tag": list()
+            #       "He": list()
+            #       "Hn": list()
+            #       "Hp": list()
+            #       "total": list()
+            #   }
+            #   "meta_data": {
+            #       "last_update": string
+            #       "data_keys": list()
+            #       "data_name": string
+            #   }
             # If the time_tag hasn't been created in the dictionary yet, create it
-            if "time_tag" not in dataDict:
-                dataDict["time_tag"] = list()
+            if "time_tag" not in plotDataDict:
+                plotDataDict["time_tag"] = list()
             # Create the data_keys list at the beginning
-            if "data_keys" not in dataDict:
-                dataDict["data_keys"] = list()
-            dataDict["time_tag"].append(thisElement["time_tag"])
+            if "data_keys" not in metaDataDict:
+                metaDataDict["data_keys"] = list()
+            plotDataDict["time_tag"].append(thisElement["time_tag"])
             # Create the dictionary element of this energy level as a list
-            if "He" not in dataDict:
-                dataDict["He"] = list()
-                dataDict["data_keys"].append("He")
-            if "Hn" not in dataDict:
-                dataDict["Hn"] = list()
-                dataDict["data_keys"].append("Hn")
-            if "Hp" not in dataDict:
-                dataDict["Hp"] = list()
-                dataDict["data_keys"].append("Hp")
-            if "total" not in dataDict:
-                dataDict["total"] = list()
-                dataDict["data_keys"].append("total")
+            if "He" not in plotDataDict:
+                plotDataDict["He"] = list()
+                metaDataDict["data_keys"].append("He")
+            if "Hn" not in plotDataDict:
+                plotDataDict["Hn"] = list()
+                metaDataDict["data_keys"].append("Hn")
+            if "Hp" not in plotDataDict:
+                plotDataDict["Hp"] = list()
+                metaDataDict["data_keys"].append("Hp")
+            if "total" not in plotDataDict:
+                plotDataDict["total"] = list()
+                metaDataDict["data_keys"].append("total")
             # Append to the list
-            dataDict["He"].append(float(dataPrecisionFormatter.format(thisElement["He"])))
-            dataDict["Hn"].append(float(dataPrecisionFormatter.format(thisElement["Hn"])))
-            dataDict["Hp"].append(float(dataPrecisionFormatter.format(thisElement["Hp"])))
-            dataDict["total"].append(float(dataPrecisionFormatter.format(thisElement["total"])))
+            plotDataDict["He"].append(float(dataPrecisionFormatter.format(thisElement["He"])))
+            plotDataDict["Hn"].append(float(dataPrecisionFormatter.format(thisElement["Hn"])))
+            plotDataDict["Hp"].append(float(dataPrecisionFormatter.format(thisElement["Hp"])))
+            plotDataDict["total"].append(float(dataPrecisionFormatter.format(thisElement["total"])))
     ################
     # After the data has been formatted and appended, add the last_update string
-    dataDict["last_update"] = timestamp.getTimestamp()
+    metaDataDict["last_update"] = timestamp.getTimestamp()
+    ################
+    # Make sure the arrays are the same length
+    minLength = 100000000000000
+    for thisKey in plotDataDict:
+        # Low-water level
+        if len(plotDataDict[thisKey]) < minLength:
+            minLength = len(plotDataDict[thisKey])
+    # Trim all the arrays in the one dataset to the same length
+    for thisKey in plotDataDict:
+        plotDataDict[thisKey] = plotDataDict[thisKey][:minLength]
     ################
     # Trim data to a small set
     if trimData:
-        for thisKey in dataDict:
-            dataDict[thisKey] = dataDict[thisKey][:5]
+        for thisKey in plotDataDict:
+            plotDataDict[thisKey] = plotDataDict[thisKey][:5]
+    ################
+    # Create the Top-Level Dictionary
+    dataDict = dict()
+    dataDict["plot_data"] = plotDataDict
+    dataDict["meta_data"] = metaDataDict
     ################
     # Store the Formatted Data
     filehandling.setLocalData(localDataFolder=localFormattedDataFolder, localDataFilename=thisDataFilename, jsonData=dataDict)
