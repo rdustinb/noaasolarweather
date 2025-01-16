@@ -2,6 +2,8 @@
 from support import filehandling, dataformat, timestamp, colors
 import configparser
 from dash import Dash, dcc, html, Input, Output
+import dash_bootstrap_components as dbc
+import pandas as pd
 import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
@@ -26,119 +28,65 @@ colorMode       = config.get('view', 'color_mode')
 localTimeData   = config.getboolean('view', 'local_time_data')
 cleanDataMethod = config.get('view', 'clean_data_method')
 
-templates = ("plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white", "none")
-
 # Generate the full URLs
 allSourceFiles  = [thisType+"-"+dataSpan+".json" for thisType in dataTypes]
 
-################################
-# Generate all the Subplots from all the Data
-fig = make_subplots(
-    rows=3,
-    cols=2,
-    specs=[
-        [{}, {}],
-        #[{"colspan": 2}, None],
-        [{}, {}],
-        [{}, {}],
-        ]#,
-    #subplot_titles=[thisSourceFile.replace(dataSpan, " ").split(".")[0].replace("-"," ").title() for thisSourceFile in allSourceFiles]
-    )
-
-row_index = 1
-col_index = 1
-
-for (thisSourceFilter,thisSourceFile) in zip(dataFilters,allSourceFiles):
-    print("Data key filter is set to: %s"%(thisSourceFilter))
-    ################
-    # Store the Formatted Data
-    dataDict = filehandling.getLocalData(localDataFolder=localFolder, localDataFilename=thisSourceFile)
-    ################
-    # Convert the time_tag array to the local time
-    if(localTimeData):
-        dataDict["time_tag"] = timestamp.convertTimestamps(theseTimestamps=dataDict["time_tag"])
-    ################
-    # Get the color family (only request colors for the keys which have data in them)
-    thisColorSet = colors.getColorSet(len(dataDict["data_keys"]))
-    ################
-    # Generate the Figure
-    for thisKey in dataDict:
-        # Skip the Time Tag array and the Last Update information
-        if (thisSourceFilter == "all" or thisSourceFilter in thisKey) and thisKey in dataDict["data_keys"]:
-            print("Plotting data key %s"%(thisKey))
-            ################
-            # Clean the data arrays if they contain 0s
-            dataDict[thisKey] = dataformat.cleanupData(thisDataArray=dataDict[thisKey], thisDetectionMethod=cleanDataMethod)
-            # Each energy for this data dictionary is added to the same plot row/col offset
-            fig.add_trace(
-                go.Scatter(
-                    x=dataDict["time_tag"],
-                    y=dataDict[thisKey],
-                    name=thisKey,
-                    mode='lines',
-                    line=dict(
-                        color=thisColorSet[0],
-                        width=2
+# Iris bar figure
+def drawFigure():
+    return  html.Div([
+        dbc.Card(
+            dbc.CardBody([
+                dcc.Graph(
+                    figure=px.line(
+                        df, x="time_tag", y="1000-1900 keV"
                     )
-                ),
-                row=row_index,
-                col=col_index
-            )
-            thisColorSet = thisColorSet[1:]
-    # Create the Title and Subtitle
-    thisTitle = thisSourceFile.replace(dataSpan, " ").split(".")[0].replace("-"," ").title()
-    thisSubTitle = "<br><sup>Last Updated: %s</sup>"%(dataDict["last_update"])
-    fig.add_annotation(
-        xref="x domain",
-        yref="y domain",
-        x=0.5, 
-        y=1.2, 
-        showarrow=False,
-        text="%s %s"%(thisTitle,thisSubTitle), 
-        row=row_index, 
-        col=col_index
-    )
-    ################
-    # Change this subplot to logarithmic
-    fig.update_yaxes(type="log", row=row_index, col=col_index)
-    ################
-    # Update the Indices
-    col_index += 1
-    # first row is different...
-    if col_index == 3: # or row_index == 1:
-        col_index = 1
-        row_index += 1
-        if row_index == 4:
-            row_index = 1
-
-# Disable the Legend as it is too cluttered being a single legend for all subplots
-fig.update(layout_showlegend=False)
-
-# Make the hover annotations legible
-fig.update_layout(hovermode="x") # This one adds "thought bubbles" at each data point where the cursor is
-#fig.update_layout(hovermode="x unified") # This one adds a "floating legend" at the x position where the cursor is
-
-# Show the figure...
-if showGui:
-    fig.layout.template = colorMode
-
-################################
-# Specify the GUI
-if guiStyle == "Go":
-
-    # Plot Mode
-    fig.show()
-
-elif guiStyle == "Dash":
-
-    # Dash Mode
-    app = Dash()
-    app.layout = html.Div([
-        dcc.Graph(figure=fig)
+                ) 
+            ])
+        ),  
     ])
-        
-    app.run_server(debug=True)
 
-else:
+# Full Dictionary:
+#   "last_update": string
+#   "time_tag": list()
+#   "data_keys": list()
+#   "data_name": string
+#   "<energy val 0>": list()
+#   "<energy val 1>": list()
+#       ...
+#   "<energy val 2>": list()
 
-    print("This GUI mode doesn't exist.")
+# Data Dictionary:
+#   "time_tag": list()
+#   "<energy val 0>": list()
+#   "<energy val 1>": list()
+#       ...
+#   "<energy val 2>": list()
+
+df = filehandling.getLocalData(localDataFolder=localFolder, localDataFilename="differential-electrons-6-hour.json")
+df.pop("last_update", None)
+df.pop("data_keys", None)
+df.pop("data_name", None)
+
+
+#print(len(df["time_tag"]))
+#print(len(df["1000-1900 keV"]))
+#print(len(df["115-165 keV"]))
+#print(len(df["165-235 keV"]))
+#print(len(df["1900-3200 keV"]))
+#print(len(df["235-340 keV"]))
+#print(len(df["3200-6500 keV"]))
+#print(len(df["340-500 keV"]))
+#print(len(df["500-700 keV"]))
+#print(len(df["700-1000 keV"]))
+#print(len(df["80-115 keV"]))
+
+# Dash Mode
+app = Dash(external_stylesheets=[dbc.themes.SLATE])
+
+app.layout = html.Div([
+    dbc.Card(
+        drawFigure()
+    )
+])
+
+app.run_server(debug=True)
