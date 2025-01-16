@@ -1,13 +1,10 @@
 # This is the master view agent, it will display the local data files as graphs.
-from support import filehandling, dataformat, timestamp, colors
+from support import filehandling
 import configparser
-from dash import Dash, dcc, html, Input, Output
+
+from dash import Dash, dcc, html
 import dash_bootstrap_components as dbc
-import pandas as pd
 import plotly.express as px
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
-import json
 
 ################################
 # Get the configuration
@@ -28,19 +25,29 @@ colorMode       = config.get('view', 'color_mode')
 localTimeData   = config.getboolean('view', 'local_time_data')
 cleanDataMethod = config.get('view', 'clean_data_method')
 
-# Generate the full URLs
-allSourceFiles  = [thisType+"-"+dataSpan+".json" for thisType in dataTypes]
-
 # Iris bar figure
-def drawFigure():
+def drawFigure(thisTitle: str, thisYAxis: str, thisLegendTitle: str):
     return  html.Div([
         dbc.Card(
             dbc.CardBody([
                 dcc.Graph(
                     figure=px.line(
-                        df, x="time_tag", y="1000-1900 keV"
-                    )
-                ) 
+                        plotDataDict, x="time_tag", y=[thisY for thisY in plotDataDict.keys() if thisY != "time_tag"]
+                    ).update_layout(
+                        title=thisTitle,
+                        yaxis_title=thisYAxis,
+                        xaxis_title=None,
+                        legend_title=thisLegendTitle,
+                        template='plotly_dark',
+                        plot_bgcolor= 'rgba(0, 0, 0, 0)',
+                        paper_bgcolor= 'rgba(0, 0, 0, 0)',
+                    ).update_yaxes(
+                        type="log"
+                    ),
+                    config={
+                        'displayModeBar': False
+                    }
+                ),
             ])
         ),  
     ])
@@ -62,30 +69,25 @@ def drawFigure():
 #       ...
 #   "<energy val 2>": list()
 
-df = filehandling.getLocalData(localDataFolder=localFolder, localDataFilename="differential-electrons-6-hour.json")
-df.pop("last_update", None)
-df.pop("data_keys", None)
-df.pop("data_name", None)
-
-
-#print(len(df["time_tag"]))
-#print(len(df["1000-1900 keV"]))
-#print(len(df["115-165 keV"]))
-#print(len(df["165-235 keV"]))
-#print(len(df["1900-3200 keV"]))
-#print(len(df["235-340 keV"]))
-#print(len(df["3200-6500 keV"]))
-#print(len(df["340-500 keV"]))
-#print(len(df["500-700 keV"]))
-#print(len(df["700-1000 keV"]))
-#print(len(df["80-115 keV"]))
+dataType = "Differential Electrons"
+dataFilename = '-'.join(dataType.lower().split(" "))+'-'+dataSpan+'.json'
+dataDict = filehandling.getLocalData(localDataFolder=localFolder, localDataFilename=dataFilename)
+plotDataDict = dataDict["plot_data"]
+metaDataDict = dataDict["meta_data"]
 
 # Dash Mode
 app = Dash(external_stylesheets=[dbc.themes.SLATE])
 
 app.layout = html.Div([
     dbc.Card(
-        drawFigure()
+        dbc.CardBody([
+            dbc.Row([
+                dbc.Col([
+                    drawFigure(thisTitle=dataType, thisYAxis='Flux', thisLegendTitle='Particle Energy')
+                ], width=12),
+            ], align='center'),
+            html.Br(),
+        ]), color = 'dark'
     )
 ])
 
