@@ -30,8 +30,8 @@ dataPrecisionFormatter = "{:.%sf}"%(dataPrecision)
 
 ################################
 # Create the local folders if needed
-for thisFolder in (localRawDataFolder, localFormattedDataFolder):
-    if not os.path.exists(thisFolder): 
+for thisFolder, thisEnable in zip((localRawDataFolder, localFormattedDataFolder), (pullAndUseLocalData, True)):
+    if not os.path.exists(thisFolder) and thisEnable: 
         os.makedirs(thisFolder) 
 
 ################################
