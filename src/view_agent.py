@@ -8,7 +8,7 @@ import plotly.express as px
 
 ################################
 # Draw a line graph inside an HTML Div
-def drawFigure(plotDataDict: dict, thisTitle: str, thisYAxis: str, thisLegendTitle: str, thisColorTemplate: str):
+def drawFigure(plotDataDict: dict, thisTitle: str, thisYAxis: str, thisLegendTitle: str):
     return  html.Div([
         dbc.Card(
             dbc.CardBody([
@@ -36,7 +36,7 @@ def drawFigure(plotDataDict: dict, thisTitle: str, thisYAxis: str, thisLegendTit
 
 ################################
 # Create the Dash Application
-app = Dash(external_stylesheets=[dbc.themes.SLATE])
+app = Dash(external_stylesheets=[dbc.themes.SLATE, dbc.icons.FONT_AWESOME])
 
 # Define the layout of the webpage
 app.layout = html.Div([
@@ -48,7 +48,7 @@ app.layout = html.Div([
     ),
     dcc.Interval(
         id='interval-component',
-        interval=30*1000, # in milliseconds
+        interval=5*1000, # in milliseconds
         n_intervals=0
     )
 ])
@@ -107,10 +107,11 @@ def update_graph_settings(n):
             plotDataDict[thisKey] = dataformat.cleanupData(thisDataArray=plotDataDict[thisKey], thisDetectionMethod=cleanDataMethod)
         # Append the plot to the layout array
         dbc_Row_array.append(dbc.Row([
-            drawFigure(plotDataDict=plotDataDict, thisTitle=thisDataTypeName, thisYAxis='Flux', thisLegendTitle='Particle Energy', thisColorTemplate=colorMode)
+            drawFigure(plotDataDict=plotDataDict, thisTitle=thisDataTypeName, thisYAxis='Flux', thisLegendTitle='Particle Energy')
         ], align='center'))
         dbc_Row_array.append(html.Br())
 
+    # Create the Card Body
     return dbc_Row_array
 
 if __name__ == '__main__':
