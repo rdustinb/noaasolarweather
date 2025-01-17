@@ -44,10 +44,15 @@ The View Agent requires the following packages to be installed:
  * support
  * configparser
  * plotly
+ * pandas
  * json
  * dash
+ * dash_bootstrap_components
 
 The support packages require the following packages to be installed:
  * json
  * urllib
  * pathlib
+ * tzlocal
+ * python-dateutil
+ * scipy
