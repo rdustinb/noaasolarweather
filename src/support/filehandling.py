@@ -37,7 +37,7 @@ def fetchRemoteData(dataSourceURL: str, urlMaxRetries: int):
     initialDelay = 1
     backoffMultiplier = 2
     thisDelay = 1
-    print("Fetching remote data from %s"%(dataSourceURL))
+    #print("Fetching remote data from %s"%(dataSourceURL))
     for thisRetry in range(urlMaxRetries):
         try:
             # Open the URL
@@ -56,7 +56,7 @@ def fetchRemoteData(dataSourceURL: str, urlMaxRetries: int):
 # Store the data to a local file
 def setLocalData(localDataFolder: str, localDataFilename: str, jsonData):
     localDataFilePath = Path(localDataFolder+"/"+localDataFilename)
-    print("Setting data to %s"%(localDataFilePath))
+    #print("Setting data to %s"%(localDataFilePath))
     # Store the data local
     with open(localDataFilePath, "w") as fh:
         json.dump(jsonData, fh)
@@ -65,7 +65,7 @@ def setLocalData(localDataFolder: str, localDataFilename: str, jsonData):
 # Get the data from a local file
 def getLocalData(localDataFolder: str, localDataFilename: str):
     localDataFilePath = Path(localDataFolder+"/"+localDataFilename)
-    print("Getting data from %s"%(localDataFilePath))
+    #print("Getting data from %s"%(localDataFilePath))
     # Read the data from the local file...
     with open(localDataFilePath, "r") as fh:
         jsonData = json.load(fh)

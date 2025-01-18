@@ -1,5 +1,5 @@
 # This is the master view agent, it will display the local data files as graphs.
-from support import filehandling, dataformat
+from support import filehandling, dataformat, timestamp
 import configparser
 
 from dash import Dash, dcc, html, Input, Output, callback
@@ -48,7 +48,7 @@ app.layout = html.Div([
     ),
     dcc.Interval(
         id='interval-component',
-        interval=5*1000, # in milliseconds
+        interval=60*1000, # in milliseconds
         n_intervals=0
     )
 ])
@@ -94,6 +94,8 @@ def update_graph_settings(n):
     ################################
     # Generate the plot data
     dbc_Row_array = list()
+
+    print("Updating Dash application at "+timestamp.getTimestamp())
     
     for thisDataType in dataTypes:
         thisDataTypeName = ' '.join(thisDataType.split('-')).title()
@@ -105,6 +107,10 @@ def update_graph_settings(n):
         # Clean the data arrays if they contain 0s
         for thisKey in [thisY for thisY in plotDataDict.keys() if thisY != "time_tag"]:
             plotDataDict[thisKey] = dataformat.cleanupData(thisDataArray=plotDataDict[thisKey], thisDetectionMethod=cleanDataMethod)
+        ################
+        # Convert the time_tag array to the local time
+        if(localTimeData):
+            plotDataDict["time_tag"] = timestamp.convertTimestamps(theseTimestamps=plotDataDict["time_tag"])
         # Append the plot to the layout array
         dbc_Row_array.append(dbc.Row([
             drawFigure(plotDataDict=plotDataDict, thisTitle=thisDataTypeName, thisYAxis='Flux', thisLegendTitle='Particle Energy')
