@@ -6,6 +6,8 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import json
 
+DEBUG = False
+
 ################################
 # Get the configuration
 # Create a config parser object
@@ -48,7 +50,7 @@ row_index = 1
 col_index = 1
 
 for (thisSourceFilter,thisSourceFile) in zip(dataFilters,allSourceFiles):
-    print("Data key filter is set to: %s"%(thisSourceFilter))
+    if DEBUG: print("Data key filter is set to: %s"%(thisSourceFilter))
     ################
     # Store the Master Data Dictionary
     dataDict = filehandling.getLocalData(localDataFolder=localFolder, localDataFilename=thisSourceFile)
@@ -66,7 +68,7 @@ for (thisSourceFilter,thisSourceFile) in zip(dataFilters,allSourceFiles):
     for thisKey in plotDataDict:
         # Skip the Time Tag array and the Last Update information
         if (thisSourceFilter == "all" or thisSourceFilter in thisKey) and thisKey in metaDataDict["data_keys"]:
-            print("Plotting data key %s"%(thisKey))
+            if DEBUG: print("Plotting data key %s"%(thisKey))
             ################
             # Clean the data arrays if they contain 0s
             plotDataDict[thisKey] = dataformat.cleanupData(thisDataArray=plotDataDict[thisKey], thisDetectionMethod=cleanDataMethod)
