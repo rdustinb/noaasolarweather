@@ -113,7 +113,7 @@ def update_graph_settings(n):
             plotDataDict["time_tag"] = timestamp.convertTimestamps(theseTimestamps=plotDataDict["time_tag"])
         # Append the plot to the layout array
         dbc_Row_array.append(dbc.Row([
-            drawFigure(plotDataDict=plotDataDict, thisTitle=thisDataTypeName, thisYAxis='Flux', thisLegendTitle='Particle Energy')
+            drawFigure(plotDataDict=plotDataDict, thisTitle=thisDataTypeName, thisYAxis=metaDataDict['yAxisUnit'], thisLegendTitle='Particle Energy')
         ], align='center'))
         dbc_Row_array.append(html.Br())
 
