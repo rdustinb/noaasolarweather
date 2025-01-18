@@ -86,7 +86,6 @@ for thisDataSourceURL in allDataSourceURLs:
                 plotDataDict[thisElement["energy"]] = list()
             # Append the data sample to the list
             plotDataDict[thisElement["energy"]].append(float(dataPrecisionFormatter.format(thisElement["flux"])))
-            # Append the data key to the list
         else:
             # Dictionary (Magnetometer only):
             #   "plot_data": {
@@ -126,6 +125,17 @@ for thisDataSourceURL in allDataSourceURLs:
             plotDataDict["Hn"].append(float(dataPrecisionFormatter.format(thisElement["Hn"])))
             plotDataDict["Hp"].append(float(dataPrecisionFormatter.format(thisElement["Hp"])))
             plotDataDict["total"].append(float(dataPrecisionFormatter.format(thisElement["total"])))
+    ################
+    # Create the y-axis unit
+    if thisDataSourceURL.find('magnetometers') != -1:
+        # Magnetometers are in units of nanotesla
+        metaDataDict['yAxisUnit'] = 'nT'
+    elif thisDataSourceURL.find('xrays') != -1:
+        # Xrays are a cross sectional flux in watts per decameter squared
+        metaDataDict['yAxisUnit'] = 'W * m^-2'
+    else:
+        # All the other particle fluxes are somethin special
+        metaDataDict['yAxisUnit'] = 'Particles * cm^-2 * s^-1 * sr^-1'
     ################
     # After the data has been formatted and appended, add the last_update string
     metaDataDict["last_update"] = timestamp.getTimestamp()
