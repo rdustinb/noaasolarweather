@@ -2,17 +2,19 @@
 from support import filehandling, dataformat, timestamp
 import configparser
 
-from dash import Dash, dcc, html, Input, Output, callback
+#from dash import Dash, dcc, html, Input, Output, callback
+import dash
 import dash_bootstrap_components as dbc
+from flask import Flask
 import plotly.express as px
 
 ################################
 # Draw a line graph inside an HTML Div
 def drawFigure(plotDataDict: dict, thisTitle: str, thisYAxis: str, thisLegendTitle: str):
-    return  html.Div([
+    return  dash.html.Div([
         dbc.Card(
             dbc.CardBody([
-                dcc.Graph(
+                dash.dcc.Graph(
                     figure=px.line(
                         plotDataDict, x="time_tag", y=[thisY for thisY in plotDataDict.keys() if thisY != "time_tag"]
                     ).update_layout(
@@ -35,18 +37,25 @@ def drawFigure(plotDataDict: dict, thisTitle: str, thisYAxis: str, thisLegendTit
     ])
 
 ################################
+# Create the Flask Server
+server = Flask(__name__)
+
+################################
 # Create the Dash Application
-app = Dash(external_stylesheets=[dbc.themes.SLATE, dbc.icons.FONT_AWESOME])
+app = dash.Dash(name="NOAA View Agent",
+           server=server,
+           external_stylesheets=[dbc.themes.SLATE, dbc.icons.FONT_AWESOME]
+           )
 
 # Define the layout of the webpage
-app.layout = html.Div([
+app.layout = dash.html.Div([
     dbc.Card(
         dbc.CardBody(
             # This ID name calls to the callback below with the same name, every time the interval is reached
             id='live-update-text'
         ), color = 'dark'
     ),
-    dcc.Interval(
+    dash.dcc.Interval(
         id='interval-component',
         interval=60*1000, # in milliseconds
         n_intervals=0
@@ -54,8 +63,8 @@ app.layout = html.Div([
 ])
 
 # Multiple components can update everytime interval gets fired.
-@callback(Output('live-update-text', 'children'),
-              Input('interval-component', 'n_intervals'))
+@dash.callback(dash.Output('live-update-text', 'children'),
+              dash.Input('interval-component', 'n_intervals'))
 def update_graph_settings(n):
     ################################
     # Get the configuration
@@ -115,10 +124,10 @@ def update_graph_settings(n):
         dbc_Row_array.append(dbc.Row([
             drawFigure(plotDataDict=plotDataDict, thisTitle=thisDataTypeName, thisYAxis=metaDataDict['yAxisUnit'], thisLegendTitle='Particle Energy')
         ], align='center'))
-        dbc_Row_array.append(html.Br())
+        dbc_Row_array.append(dash.html.Br())
 
     # Create the Card Body
     return dbc_Row_array
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(host='0.0.0.0', port='8050', debug=True)
