@@ -13,6 +13,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy files to the container directory
 COPY . /home/noaa/noaasolarweather
 
+# Run the initial data fetch
+RUN python data_agent_master.py
+
 # Run the app in gunicorn
 #CMD gunicorn -b 0.0.0.0:80 view_agent:server
 # This is being put in the docker compose file along with nginx. Is nginx required?

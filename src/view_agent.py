@@ -129,5 +129,6 @@ def update_graph_settings(n):
     # Create the Card Body
     return dbc_Row_array
 
+# This is only used when the view agent is run directly, rather than through gunicorn
 if __name__ == '__main__':
     app.run_server(host='0.0.0.0', port='8080', debug=True)
