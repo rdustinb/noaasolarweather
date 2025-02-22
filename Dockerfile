@@ -7,14 +7,11 @@ RUN mkdir -p /home/noaa/noaasolarweather
 WORKDIR /home/noaa/noaasolarweather
 
 # Using Layered approach for the installation of requirements
-COPY requirements.txt /home/noaa/noaasolarweather/requirements.txt
+COPY docker/requirements.txt /home/noaa/noaasolarweather/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy files to the container directory
-COPY . /home/noaa/noaasolarweather
-
-# Run the initial data fetch
-RUN python data_agent_master.py
+COPY src /home/noaa/noaasolarweather
 
 # Run the app in gunicorn
 #CMD gunicorn -b 0.0.0.0:80 view_agent:server
