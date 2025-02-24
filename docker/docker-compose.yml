@@ -1,0 +1,12 @@
+services:
+  #####################################################################
+  # This container runs the NOAA Space Weather Flask app under a
+  # gunicorn framework.
+  noaaspaceweather:
+    container_name: noaaspaceweather
+    image: noaa-view-agent:latest
+    restart: always
+    environment:
+      TZ: 'America/Denver'
+    ports:
+      - '8000:8000'
