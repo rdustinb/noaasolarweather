@@ -4,7 +4,8 @@ services:
   # gunicorn framework.
   noaaspaceweather:
     container_name: noaaspaceweather
-    image: noaa-view-agent:latest
+    platform: linux/arm64
+    image: digitalkrampus/noaasolarweather:latest
     restart: always
     environment:
       TZ: 'America/Denver'

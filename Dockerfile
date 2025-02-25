@@ -1,5 +1,5 @@
 # Use Python!
-FROM python:3.13.2-slim
+FROM python:3.13.2
 
 # Create a working directory in the docker container's 'home' folder
 RUN mkdir -p /home/noaa/noaasolarweather
@@ -17,4 +17,4 @@ COPY src /home/noaa/noaasolarweather
 #CMD gunicorn -b 0.0.0.0:80 view_agent:server
 # This is being put in the docker compose file along with nginx. Is nginx required?
 # Let's try to build this docker image here and run it without the docker compose file and see what happens...
-CMD gunicorn -w 1 -b :8000 view_agent:server
+CMD ["gunicorn", "-w", "1", "-b", ":8000", "view_agent:server"]
