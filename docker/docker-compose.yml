@@ -2,8 +2,8 @@ services:
   #####################################################################
   # This container runs the NOAA Space Weather Flask app under a
   # gunicorn framework.
-  noaaspaceweather:
-    container_name: noaaspaceweather
+  noaa:
+    container_name: noaa
     platform: linux/arm64
     image: digitalkrampus/noaasolarweather:latest
     restart: always
