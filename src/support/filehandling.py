@@ -3,10 +3,13 @@ File handling support functions for NOAA Solar Weather data fetching and local s
 """
 
 # Support definitions
-import json
-import time
+from urllib import error as urlerror
 from urllib.request import urlopen
 from pathlib import Path
+import json
+import time
+import socket
+import ssl
 
 # Custom Exceptions
 class ExceededRetries(Exception):
@@ -25,7 +28,7 @@ def remoteOrLocal(dataSourceURL: str, localDataFolder: str, pullAndUseLocalData:
         # Only fetch the file once...
         # Use the original filename as the local filename
         localDataFilename = dataSourceURL.split("/")[-1]
-        localDataFilePath = Path(localDataFolder+"/"+localDataFilename)
+        localDataFilePath = Path(localDataFolder) / localDataFilename
         # If there is no local data file, fetch and create it
         if not localDataFilePath.is_file():
             # Fetch the file from the server...
@@ -96,7 +99,9 @@ def setLocalData(localDataFolder: str, localDataFilename: str, jsonData):
     """
     Store the data to a local file which allows for the local data to be used later
     """
-    localDataFilePath = Path(localDataFolder+"/"+localDataFilename)
+    local_dir = Path(localDataFolder)
+    local_dir.mkdir(parents=True, exist_ok=True)
+    localDataFilePath = local_dir / localDataFilename
     #print("Setting data to %s"%(localDataFilePath))
     # Store the data local
     with open(localDataFilePath, "w", encoding='utf-8') as fh:
@@ -108,8 +113,7 @@ def getLocalData(localDataFolder: str, localDataFilename: str):
     """
     Get the data from a local file
     """
-    localDataFilePath = Path(localDataFolder+"/"+localDataFilename)
-    #print("Getting data from %s"%(localDataFilePath))
+    localDataFilePath = Path(localDataFolder) / localDataFilename
     # Read the data from the local file...
     with open(localDataFilePath, "r", encoding='utf-8') as fh:
         jsonData = json.load(fh)

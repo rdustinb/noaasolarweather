@@ -24,6 +24,9 @@ RUN python3 -m venv /home/noaauser/.venv_noaa
 # No more sourcing the activate tool is needed, the path is modified from here on out...
 ENV PATH="/home/noaauser/.venv_noaa/bin:$PATH"
 
+# Update PIP and the base tools
+RUN pip install --upgrade pip setuptools wheel
+
 # Install dependencies:
 COPY docker/requirements.txt /home/noaauser/requirements.txt
 
