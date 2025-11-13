@@ -1,11 +1,23 @@
+"""
+File handling support functions for NOAA Solar Weather data fetching and local storage
+"""
+
 # Support definitions
 import json
+import time
 from urllib.request import urlopen
 from pathlib import Path
+
+# Custom Exceptions
+class ExceededRetries(Exception):
+    """Raised when the maximum number of retries for a URL fetch is exceeded."""
 
 ################################
 # Fetch the URL data and return, or use the local raw data and return (fetching a storing once if needed)
 def remoteOrLocal(dataSourceURL: str, localDataFolder: str, pullAndUseLocalData: bool, urlMaxRetries: int):
+    """
+    Fetch the URL data and return, or use the local raw data and return (fetching a storing once if needed)
+    """
     ################
     # Store and use a local copy of the data
     if pullAndUseLocalData:
@@ -34,39 +46,71 @@ def remoteOrLocal(dataSourceURL: str, localDataFolder: str, pullAndUseLocalData:
 ################################
 # Fetch the remote data
 def fetchRemoteData(dataSourceURL: str, urlMaxRetries: int):
-    initialDelay = 1
+    """
+    Fetch the remote data, one of the branches used from remoteOrLocal()
+    """
     backoffMultiplier = 2
     thisDelay = 1
     #print("Fetching remote data from %s"%(dataSourceURL))
-    for thisRetry in range(urlMaxRetries):
+    for _ in range(urlMaxRetries):
         try:
-            # Open the URL
-            response = urlopen(dataSourceURL)
-            # Fetch the Data
-            jsonData = json.load(response)
-            # Return if everything above succeeds...
-            return jsonData
-        except Exception as e:
-            print("URL data fetch failed, retrying in %d second(s)..."%(thisDelay))
-            thisDelay *= backoffMultiplier
-            time.sleep(thisDelay)
-    raise ExceededRetries("Failed to poll %s within %d retries."%(dataSourceURL, urlMaxRetries))
+            # Open the URL using a context manager
+            with urlopen(dataSourceURL) as response:
+                # Fetch the Data
+                jsonData = json.load(response)
+                # Return if everything above succeeds...
+                return jsonData
+
+        except urlerror.HTTPError as e:
+            # Retry for server errors (5xx) and some transient client codes like 429/408
+            if 500 <= getattr(e, "code", 0) < 600 or getattr(e, "code", 0) in (429, 408):
+                print(f"HTTP {e.code} transient error, retrying in {thisDelay}s...")
+            else:
+                raise
+
+        except urlerror.URLError as e:
+            print(f"URLError: {e.reason!s}, retrying in {thisDelay}s...")
+
+        except socket.timeout:
+            print(f"Socket timeout, retrying in {thisDelay}s...")
+
+        except ssl.SSLError:
+            # TLS issues are usually not transient; surface them to caller
+            raise
+
+        except ValueError:
+            # Malformed response or URL — don't retry
+            raise
+
+        except OSError as e:
+            print(f"OSError: {e!s}, retrying in {thisDelay}s...")
+
+        time.sleep(thisDelay)
+        thisDelay *= backoffMultiplier
+
+    raise ExceededRetries(f"Failed to poll {dataSourceURL} within {urlMaxRetries} retries.")
 
 ################################
 # Store the data to a local file
 def setLocalData(localDataFolder: str, localDataFilename: str, jsonData):
+    """
+    Store the data to a local file which allows for the local data to be used later
+    """
     localDataFilePath = Path(localDataFolder+"/"+localDataFilename)
     #print("Setting data to %s"%(localDataFilePath))
     # Store the data local
-    with open(localDataFilePath, "w") as fh:
+    with open(localDataFilePath, "w", encoding='utf-8') as fh:
         json.dump(jsonData, fh)
 
 ################################
 # Get the data from a local file
 def getLocalData(localDataFolder: str, localDataFilename: str):
+    """
+    Get the data from a local file
+    """
     localDataFilePath = Path(localDataFolder+"/"+localDataFilename)
     #print("Getting data from %s"%(localDataFilePath))
     # Read the data from the local file...
-    with open(localDataFilePath, "r") as fh:
+    with open(localDataFilePath, "r", encoding='utf-8') as fh:
         jsonData = json.load(fh)
     return jsonData
